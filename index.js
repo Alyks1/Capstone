@@ -4,7 +4,7 @@ const fs = require('fs');
 
 async function start() {
     const browser = await puppeteer.launch({
-        headless: false
+        headless: true
     });
     const page = await browser.newPage();
     await page.goto('https://www.reddit.com/r/ArtefactPorn/')
@@ -14,20 +14,23 @@ async function start() {
     const text = await page.$eval(textQuerySelector, t => t.textContent);
     console.log(text);
     const imgSrc = await page.$eval(imgQuerySelector, i => i.src);
-    await page.goto(imgSrc);
-    await page.on('response', async resp => {
-        console.log(resp);
-        const url = resp.url();
-        if (resp.request().resourceType() === 'image') {
-            resp.buffer().then(file => {
-                const fileName = url.split('/').pop();
-                const filePath = path.resolve(__dirname, fileName);
+
+    page.on('response', response => {
+        const url = response.url();
+        console.log(response.request());
+        if (response.request().resourceType() === 'document') {
+            console.log("img");
+            response.buffer().then(file => {
+                const fileName = url.split('/').pop().split('?')[0];
+                const filePath = path.resolve('Images', fileName);
                 const writeStream = fs.createWriteStream(filePath);
                 writeStream.write(file);
             })
         }
     })
 
+    await page.goto(imgSrc);
+    console.log(page.listenerCount());
     await sleep(2000);
 
     await browser.close();
