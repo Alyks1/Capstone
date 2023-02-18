@@ -1,9 +1,10 @@
 {
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node index.js"
+    "start": "ts-node index.ts"
   },
   "dependencies": {
-    "puppeteer": "^19.7.1"
+    "puppeteer": "^19.7.1",
+    "ts-node": "^10.9.1"
   }
 }
