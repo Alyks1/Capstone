@@ -1,8 +1,14 @@
 [
     {
         "url": "https://www.reddit.com/r/ArtefactPorn/",
+        "group": "Reddit",
         "weight": 1,
-        "textQuery": "#t3_114vnau > div._1poyrkZ7g36PawDueRza-J._11R7M_VOgKO1RJyRSRErT3 > div._2FCtq-QzlfuN-SwVMUZMM3._3wiKjmhpIpoTE2r5KCm2o6.t3_114vnau > div.y8HYJ-y_lTUHkQIc1mdCq._2INHSNB8V5eaWp4P0rY_mE > a > div > h3",
-        "imgQuery": "#t3_114vnau > div._1poyrkZ7g36PawDueRza-J._11R7M_VOgKO1RJyRSRErT3 > div.STit0dLageRsa2yR4te_b > div > div._3JgI-GOrkmyIeDeyzXdyUD._2CSlKHjH7lsjx0IpjORx14 > div > a > div > div > img"
+        "nrOfData": 10
+    },
+    {
+        "url": "https://www.reddit.com/r/AncientCivilizations/",
+        "group": "Reddit",
+        "weight": 1,
+        "nrOfData": 10
     }
 ]

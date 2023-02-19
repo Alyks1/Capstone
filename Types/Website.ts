@@ -1,7 +1,6 @@
 export interface Website {
     url: string;
+    group: string;
     weight: number;
-    textQuery: string;
-    imgQuery: string;
-
+    nrOfData: number;
 }
