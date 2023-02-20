@@ -1,6 +1,8 @@
 import puppeteer from 'puppeteer';
 import { Website } from './Types/Website';
 import { ScrapeReddit } from './Scrapers/scrapeReddit'
+import { Post } from "./Types/Post";
+import { CreateDataSetFromPost } from './createData';
 
 async function start() {
     const browser = await puppeteer.launch({
@@ -10,15 +12,15 @@ async function start() {
     const websites = await LoadWebsites();
     for (let website of websites) {
         await page.goto(website.url)
+        var posts: Post[] = [];
 
-        //Reddit shows 7 posts
         switch (website.group) {
             case "Reddit": {
-                await ScrapeReddit(website, page);
+                posts = await ScrapeReddit(website, page);
                 break;
             }
         }
-
+        await CreateDataSetFromPost(posts, page);
     }
     await browser.close();
 }

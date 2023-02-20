@@ -10,7 +10,7 @@ export async function ScrapeReddit(website: Website, page: Page) {
     //Reddit shows 7 post at once
     const postElements = await root.$$('._1poyrkZ7g36PawDueRza-J');
 
-    const posts: Post[] = []
+    const posts: Post[] = [];
     for (let postElement of postElements) {
         const text = await postElement.$eval('._eYtD2XCVieq6emjKBH3m', t => t.textContent);
         let imgSrc = "";
@@ -21,20 +21,8 @@ export async function ScrapeReddit(website: Website, page: Page) {
             continue;
         }
 
-        posts.push({ text: text, imgSrc: imgSrc })
+        posts.push({ text: text, imgSrc: imgSrc });
     }
 
-    await getImages(posts, page);
-}
-
-async function getImages(posts: Post[], page: Page) {
-    //Goto each imageSrc and screenshot/pdf it
-    //Use text as name
-    //There must be a better way to do this but here we are
-    for (let post of posts) {
-        //TODO: Fix this
-        const filename = post.text.slice(0, 25);
-        await page.goto(post.imgSrc);
-        await page.pdf({ path: `./Images/${filename}.pdf` })
-    };
+    return posts;
 }
