@@ -16,7 +16,16 @@ export async function CreateDataSetFromPost(posts: Post[], page: Page) {
 
 function extractDates(text: string) {
     //Remove all , and . before this.
+
+    //Maybe convert all BCE and CE to BC and AD?
     const sanatizedText = text.replace(/[.,]/g, "");
+
+    //TODO: Fix this. I think the regex is wrong because its using different groups by using ()
+    //I think these need to be changed somehow
+
+    // Try ([0-9]+[A-Z ]+)*(\b century \b)(AD|BCE|CE|BC)? for range
+    // Try ([0-9]+)([– 0-9-])*([ABCD]{2})? for year
+    // Try ([\(\[])([0-9])*([x× ])*[0-9]*([\)\]]) to remove image resolutions
 
     //This matches year numbers like 1532 and 24-56AD
     const yearRegexp = /(?<![[(])[0-9]+(BCE|AD|BC|CE)?(-[0-9]+)?( )?(BCE|AD|BC|CE)?(S| |-)(?!X|×)/ig;
