@@ -25,18 +25,16 @@ function extractDates(text: string) {
         .replace(/(\bBCE\b)/gi, "BC")
         .replace(/(\bCE\b)/gi, "AD")
 
-    const regexp = /(([0-9]+[stndrh]{2}) +(\bcentury\b)[ ABCD]*)|(([0-9]+)([– 0-9-])*([ABCD]{2})?)/ig
+    const regexp = /(([0-9]+[stndrh]{2})+[– -](\bcentury\b)[ ABCD]*)|(([0-9]+)([– 0-9-])*([ABCD]{2})?)/ig
 
     console.log(sanatizedText);
-    let results = [];
+    let results: string[] = [];
 
-    if (sanatizedText.matchAll(regexp)) {
-        console.log("matching");
-        results = [...sanatizedText.matchAll(regexp)];
-    }
+    for (const match of sanatizedText.matchAll(regexp) || [])
+        results.push(match[0]);
 
     if (results.length <= 0) return sanatizedText;
 
     console.log(results)
-    return results[0][0];
+    return results;
 }
