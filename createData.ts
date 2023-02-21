@@ -15,38 +15,27 @@ export async function CreateDataSetFromPost(posts: Post[], page: Page) {
 }
 
 function extractDates(text: string) {
-    //Remove all , and . before this.
+    //Remove . and ,
+    //Remove img resolution eg (1080x960)
+    //Replace BCE with BC
+    //Replace CE with AD
+    const sanatizedText = text
+        .replace(/[.,]/g, "")
+        .replace(/([\(\[])([0-9])*([x× ])*[0-9]*([\)\]])/g, "")
+        .replace(/(\bBCE\b)/gi, "BC")
+        .replace(/(\bCE\b)/gi, "AD")
 
-    //Maybe convert all BCE and CE to BC and AD?
-    const sanatizedText = text.replace(/[.,]/g, "");
-
-    //TODO: Fix this. I think the regex is wrong because its using different groups by using ()
-    //I think these need to be changed somehow
-
-    // Try ([0-9]+[A-Z ]+)*(\b century \b)(AD|BCE|CE|BC)? for range
-    // Try ([0-9]+)([– 0-9-])*([ABCD]{2})? for year
-    // Try ([\(\[])([0-9])*([x× ])*[0-9]*([\)\]]) to remove image resolutions
-
-    //This matches year numbers like 1532 and 24-56AD
-    const yearRegexp = /(?<![[(])[0-9]+(BCE|AD|BC|CE)?(-[0-9]+)?( )?(BCE|AD|BC|CE)?(S| |-)(?!X|×)/ig;
-    //This matches time frames like 7th century BC
-    const rangeRegexp = /[0-9]+(ST|ND|RD|TH)( )*[A-Z]*( )?[0-9]*(ST|ND|RD|TH)*( )?(\bcentury\b)+( )?(BCE|AD|BC|CE)?/ig;
+    const regexp = /(([0-9]+[stndrh]{2}) +(\bcentury\b)[ ABCD]*)|(([0-9]+)([– 0-9-])*([ABCD]{2})?)/ig
 
     console.log(sanatizedText);
     let results = [];
 
-    if (sanatizedText.matchAll(yearRegexp)) {
-        results = [...sanatizedText.matchAll(yearRegexp)]
-    }
-    else if (sanatizedText.matchAll(rangeRegexp)) {
-        results = [...sanatizedText.matchAll(rangeRegexp)]
+    if (sanatizedText.matchAll(regexp)) {
+        console.log("matching");
+        results = [...sanatizedText.matchAll(regexp)];
     }
 
-    // if (yearRegexp.test(sanatizedText)) {
-    //     results = yearRegexp.exec(sanatizedText);
-    // } else if (rangeRegexp.test(sanatizedText)) {
-    //     results = rangeRegexp.exec(sanatizedText);
-    // }
+    if (results.length <= 0) return sanatizedText;
 
     console.log(results)
     return results[0][0];
