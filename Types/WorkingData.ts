@@ -1,6 +1,5 @@
 export class WorkingData {
     dates: string[];
-    reversedDates: string[];
     WorkingDates: string[];
     yearLabels: string[];
     centuries: boolean[];
