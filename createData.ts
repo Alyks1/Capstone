@@ -78,26 +78,23 @@ function evaluateDates(dates: string[]) {
 
 //TODO: Refactor this
 //Only translates centuries into numbers
-//Fix this issue ([ '3', '4th century' ] only being [ '3', '400' ]) by checking a variance of up to 2 centuries
 function convertCenturies(data: WorkingData) {
     const temp: string[] = []
+    const startsWithNumberRegex = /[0-9]+/g;
     for (let i = 0; i < data.WorkingDates.length; i++) {
         if (data.centuries[i] === true) {
-            const startsWithNumberRegex = /[0-9]+/g;
-            let bc = "";
-            if (data.WorkingDates[i].includes("bc")) bc = "bc";
+            let bc = data.yearLabels[i];
             const number = data.WorkingDates[i].match(startsWithNumberRegex)[0];
             temp[i] = number;
             data.WorkingDates[i] = number + "00" + bc;
         } else {
+            //If the number has no 'century' text, add one if the numbers are 2 number apart
+            //eg '3rd to 4th century' or [ '3', '4th century' ] only being [ '3', '400' ]. Now [ '300', '400' ]
             temp.forEach(x => {
                 if (Math.abs(+x - +data.WorkingDates[i]) < 3) {
-                    const startsWithNumberRegex = /[0-9]+/g;
-                    let bc = "";
-                    if (data.WorkingDates[i].includes("bc")) bc = "bc";
+                    //BC logic can be negated because it is ignored anyway
                     const number = data.WorkingDates[i].match(startsWithNumberRegex)[0];
-                    temp[i] = number;
-                    data.WorkingDates[i] = number + "00" + bc;
+                    data.WorkingDates[i] = number + "00";
                 }
             });
         }
