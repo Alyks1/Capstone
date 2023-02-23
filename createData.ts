@@ -1,12 +1,17 @@
 import { Page } from "puppeteer";
 import { Post } from "./Types/Post";
+import { Website } from "./Types/Website";
 import { WorkingData } from "./Types/WorkingData";
 import { Utility } from "./Utility/utility";
 
 //Within 100 years difference allow a range to be calculated
 const AD_TIME_INTERVAL = 276; //Qing Dynasty
 
-export async function CreateDataSetFromPost(posts: Post[], page: Page) {
+export async function CreateDataSetFromPost(
+	posts: Post[],
+	page: Page,
+	website: Website,
+) {
 	//Goto each imageSrc and screenshot/pdf it
 	//Use text as name
 	//There must be a better way to do this but here we are
@@ -21,8 +26,11 @@ export async function CreateDataSetFromPost(posts: Post[], page: Page) {
 		//Remove trailing whitespaces and makes everything lowercase
 		data = evaluateDates(data);
 
+		//TODO: use Website weight and post trust to weigh the outcome
+
 		//Use fetch to download img
 		await page.goto(post.imgSrc);
+		//TODO: Image name needs ID so duplicates cannot overwrite
 		await page.pdf({ path: `./Images/${data.date}.pdf` });
 	}
 }
@@ -75,7 +83,6 @@ function evaluateDates(data: WorkingData) {
 	return r;
 }
 
-//TODO: Refactor this
 //Only translates centuries into numbers
 function convertCenturies(data: WorkingData) {
 	const temp: string[] = [];

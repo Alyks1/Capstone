@@ -1,6 +1,6 @@
 export interface Website {
-    url: string;
-    group: string;
-    weight: number;
-    nrOfData: number;
+	url: string;
+	group: string;
+	weight: number;
+	nrOfPages: number;
 }
