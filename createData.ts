@@ -1,6 +1,7 @@
 import { Page } from "puppeteer";
 import { Post } from "./Types/Post";
 import { WorkingData } from "./Types/WorkingData";
+import { Utility } from "./Utility/utility";
 
 //Within 100 years difference allow a range to be calculated
 const AD_TIME_INTERVAL = 276; //Qing Dynasty
@@ -65,6 +66,7 @@ function evaluateDates(dates: string[]) {
     data.yearLabels = reversedDates.map(d => {
         if (d.includes("bc")) return "bc";
         if (d.includes("ad")) return "";
+        return "";
     });
 
     data.WorkingDates = convertCenturies(data);
@@ -105,14 +107,14 @@ function convertCenturies(data: WorkingData) {
 
 //Takes format: [ '37 BC', '31 AD' ], [ '37', '31 BC' ], [ '3', '400' ]
 //Converts both sides to BC or AD depending on first one if only one
-//Finds differences of ADs and averages their range console
+//Finds differences of ADs and averages their range
 function averageRanges(data: WorkingData) {
     let label: string;
     for (let i = 0; i < data.WorkingDates.length; i++) {
         if (data.yearLabels[i] != '') label = data.yearLabels[i];
         data.yearLabels[i] = label;
         let bc = '';
-        if (data.yearLabels[i] == "bc") bc = "-";
+        if (data.yearLabels[i] === "bc") bc = "-";
         const number = data.WorkingDates[i].replace(/(bc|ad)/ig, '').trim();
         data.WorkingDates[i] = bc + number;
     }
@@ -120,7 +122,7 @@ function averageRanges(data: WorkingData) {
     //if any of the WorkingDates numbers start with -, ignore this step
     if (data.WorkingDates.findIndex(x => x.startsWith("-")) < 0) {
         const newData: string[] = [];
-        const differences = getDifferences(data.WorkingDates);
+        const differences = Utility.getDifferences(data.WorkingDates);
 
         for (let i = 0; i < differences.length; i++) {
             //Reduce trust for each skip
@@ -128,30 +130,18 @@ function averageRanges(data: WorkingData) {
             newData[i] = data.WorkingDates[i];
             newData[i + 1] = data.WorkingDates[i + 1]
         }
-        //What if nothing works ie [1940,1100]
-        if (newData.length == 0) {
+        //What if nothing works ie [1940,1100] ie only continues ^
+        if (newData.length === 0) {
             const numbers = data.WorkingDates.map(x => +x);
+            //Choose the lowest number (subject to change)
             newData[0] = Math.min(...numbers).toString();
             //Reduce Trust
         }
-        data.WorkingDates = newData;
+        data.WorkingDates = newData.filter(x => x);
     }
 
     //TODO: implement trust
     const numbers = data.WorkingDates.map(x => +x);
     const total = numbers.reduce((acc: number, x: number) => x + acc, 0);
     return Math.round(total / data.WorkingDates.length).toString();
-}
-
-function difference(a: number, b: number) {
-    return Math.abs(a - b);
-}
-
-function getDifferences(data: string[]): number[] {
-    let result: number[] = []
-    for (let i = 0; i < data.length; i++) {
-        if ((i + 1) < data.length)
-            result.push(difference(+data[i], +data[i + 1]));
-    }
-    return result;
 }
