@@ -119,6 +119,16 @@ function convertYearWords(data: WorkingData) {
 //Converts both sides to BC or AD depending on first one if only one
 //Finds differences of ADs and averages their range
 function averageRanges(data: WorkingData) {
+	//TODO: implement trust
+	const numbers = data.workingDates.map((x) => +x);
+	const total = numbers.reduce((acc: number, x: number) => x + acc, 0);
+	data.date = Math.round(total / data.workingDates.length).toString();
+	return data;
+}
+
+function removeAnomalies(data: WorkingData) {
+	//ignores nr above 1940
+	data.workingDates = data.workingDates.filter((x) => +x < 1940);
 	//if any of the WorkingDates numbers start with -, ignore this step
 	if (data.workingDates.findIndex((x) => x.startsWith("-")) < 0) {
 		const newData: string[] = [];
@@ -139,17 +149,6 @@ function averageRanges(data: WorkingData) {
 		}
 		data.workingDates = newData.filter((x) => x);
 	}
-
-	//TODO: implement trust
-	const numbers = data.workingDates.map((x) => +x);
-	const total = numbers.reduce((acc: number, x: number) => x + acc, 0);
-	data.date = Math.round(total / data.workingDates.length).toString();
-	return data;
-}
-
-function removeAnomalies(data: WorkingData) {
-	//ignores nr above 1940
-	data.workingDates = data.workingDates.filter((x) => +x < 1940);
 	return data;
 }
 
