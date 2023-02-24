@@ -16,14 +16,14 @@ export async function CreateDataSetFromPost(
 	//Use text as name
 	//There must be a better way to do this but here we are
 	for (let post of posts) {
-		//TODO: Fix this
 		const dates = extractDates(post.text);
 		if (dates.length <= 0) continue;
 
+		//Remove trailing whitespaces and makes everything lowercase
 		let data: WorkingData = {
 			dates: dates.map((d) => d.trim().toLowerCase()),
 		};
-		//Remove trailing whitespaces and makes everything lowercase
+
 		data = evaluateDates(data);
 
 		//TODO: use Website weight and post trust to weigh the outcome
@@ -46,6 +46,7 @@ function extractDates(text: string) {
 		.replace(/(\bBCE\b)/gi, "BC")
 		.replace(/(\bCE\b)/gi, "AD");
 
+		//TODO: Add millenium
 	const regexp =
 		/(([0-9]+[stndrh]{2})+[– -](\bcentury\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
 
@@ -121,6 +122,8 @@ function averageRanges(data: WorkingData) {
 		const number = data.workingDates[i].replace(/(bc|ad)/gi, "").trim();
 		data.workingDates[i] = bc + number;
 	}
+
+	//TODO: Fix multiple numbers like 5th-4th century BC and 1950 using the 1950
 
 	//if any of the WorkingDates numbers start with -, ignore this step
 	if (data.workingDates.findIndex((x) => x.startsWith("-")) < 0) {

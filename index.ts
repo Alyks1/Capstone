@@ -6,7 +6,7 @@ import { CreateDataSetFromPost } from "./createData";
 
 async function start() {
 	const browser = await puppeteer.launch({
-		headless: false,
+		headless: true,
 	});
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();
