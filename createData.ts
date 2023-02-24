@@ -79,8 +79,9 @@ function evaluateDates(data: WorkingData) {
 		return "";
 	});
 
-	data.workingDates = convertYearWords(data);
-	data.workingDates = removeAnomalies(data);
+	data = convertYearWords(data);
+	data = convertToNumbers(data);
+	data = removeAnomalies(data);
 
 	const r = averageRanges(data);
 	console.log(`(Date: ${data.date}, Trust: ${data.trust})`);
@@ -111,23 +112,13 @@ function convertYearWords(data: WorkingData) {
 			});
 		}
 	}
-	return data.workingDates;
+	return data;
 }
 
 //Takes format: [ '37 BC', '31 AD' ], [ '37', '31 BC' ], [ '3', '400' ]
 //Converts both sides to BC or AD depending on first one if only one
 //Finds differences of ADs and averages their range
 function averageRanges(data: WorkingData) {
-	let label: string;
-	for (let i = 0; i < data.workingDates.length; i++) {
-		if (data.yearLabels[i] !== "") label = data.yearLabels[i];
-		data.yearLabels[i] = label;
-		let bc = "";
-		if (data.yearLabels[i] === "bc") bc = "-";
-		const number = data.workingDates[i].replace(/(bc|ad)/gi, "").trim();
-		data.workingDates[i] = bc + number;
-	}
-
 	//if any of the WorkingDates numbers start with -, ignore this step
 	if (data.workingDates.findIndex((x) => x.startsWith("-")) < 0) {
 		const newData: string[] = [];
@@ -158,6 +149,19 @@ function averageRanges(data: WorkingData) {
 
 function removeAnomalies(data: WorkingData) {
 	//ignores nr above 1940
-	data.workingDates = data.workingDates.filter(x => +x < 1940);
-	return data.workingDates;
+	data.workingDates = data.workingDates.filter((x) => +x < 1940);
+	return data;
+}
+
+function convertToNumbers(data: WorkingData) {
+	let label: string;
+	for (let i = 0; i < data.workingDates.length; i++) {
+		if (data.yearLabels[i] !== "") label = data.yearLabels[i];
+		data.yearLabels[i] = label;
+		let bc = "";
+		if (data.yearLabels[i] === "bc") bc = "-";
+		const number = data.workingDates[i].replace(/(bc|ad)/gi, "").trim();
+		data.workingDates[i] = bc + number;
+	}
+	return data;
 }
