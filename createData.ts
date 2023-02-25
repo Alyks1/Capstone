@@ -46,7 +46,7 @@ function extractDates(text: string) {
 		.replace(/(\bBCE\b)/gi, "BC")
 		.replace(/(\bCE\b)/gi, "AD");
 
-		//TODO: Add millenium
+		//TODO: Add "year old" or "years ago" logic
 	const regexp =
 		/(([0-9]+[stndrh]{2})+[– -](\bmillenium\b|\bcentury\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
 
@@ -90,11 +90,14 @@ function evaluateDates(data: WorkingData) {
 
 //Only translates centuries into numbers
 function convertYearWords(data: WorkingData) {
+	console.log("converting year words: ");
+	console.log(data.workingDates);
 	const temp: string[] = [];
 	const startsWithNumberRegex = /[0-9]+/g;
 	for (let i = 0; i < data.workingDates.length; i++) {
-		let tens = "00";
+		let tens = "";
 		if (data.yearWords[i] === "m") tens = "000";
+		if (data.yearWords[i] === "c") tens = "00";
 		if (data.yearWords[i] !== "") {
 			const bc = data.yearLabels[i];
 			const number = data.workingDates[i].match(startsWithNumberRegex)[0];
@@ -112,6 +115,8 @@ function convertYearWords(data: WorkingData) {
 			});
 		}
 	}
+	console.log("finished converting year words: ");
+	console.log(data.workingDates);
 	return data;
 }
 
@@ -119,6 +124,8 @@ function convertYearWords(data: WorkingData) {
 //Converts both sides to BC or AD depending on first one if only one
 //Finds differences of ADs and averages their range
 function averageRanges(data: WorkingData) {
+	console.log("Averaging: ");
+	console.log(data.workingDates);
 	//TODO: implement trust
 	const numbers = data.workingDates.map((x) => +x);
 	const total = numbers.reduce((acc: number, x: number) => x + acc, 0);
@@ -127,6 +134,10 @@ function averageRanges(data: WorkingData) {
 }
 
 function removeAnomalies(data: WorkingData) {
+	console.log("removing anomlalies: ")
+	console.log(data.workingDates);
+	//TODO: Maybe not ignore but remove trust?
+	data.workingDates = data.workingDates.filter(x => x.length > 1);
 	//ignores nr above 1940
 	data.workingDates = data.workingDates.filter((x) => +x < 1940);
 	//if any of the WorkingDates numbers start with -, ignore this step
@@ -149,10 +160,14 @@ function removeAnomalies(data: WorkingData) {
 		}
 		data.workingDates = newData.filter((x) => x);
 	}
+	console.log("Anomalies removed: ");
+	console.log(data.workingDates);
 	return data;
 }
 
 function convertToNumbers(data: WorkingData) {
+	console.log("converting to nr: ");
+	console.log(data.workingDates);
 	let label: string;
 	for (let i = 0; i < data.workingDates.length; i++) {
 		if (data.yearLabels[i] !== "") label = data.yearLabels[i];
@@ -162,5 +177,7 @@ function convertToNumbers(data: WorkingData) {
 		const number = data.workingDates[i].replace(/(bc|ad)/gi, "").trim();
 		data.workingDates[i] = bc + number;
 	}
+	console.log("converted to nr: ");
+	console.log(data.workingDates);
 	return data;
 }
