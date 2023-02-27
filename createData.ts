@@ -120,8 +120,7 @@ function convertYearWords(data: WorkingData) {
 }
 
 //Takes format: [ '37 BC', '31 AD' ], [ '37', '31 BC' ], [ '3', '400' ]
-//Converts both sides to BC or AD depending on first one if only one
-//Finds differences of ADs and averages their range
+//and averages their range
 function averageRanges(data: WorkingData) {
 	//TODO: implement trust
 	const numbers = data.workingDates.map((x) => +x);
@@ -130,6 +129,8 @@ function averageRanges(data: WorkingData) {
 	return data;
 }
 
+//Converts both sides to BC or AD depending on first one if only one
+//Finds differences of ADs
 function removeAnomalies(data: WorkingData) {
 	//TODO: Maybe not ignore but remove trust?
 	data.workingDates = data.workingDates.filter(x => x.length > 1);
