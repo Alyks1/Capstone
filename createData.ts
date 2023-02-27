@@ -6,6 +6,8 @@ import { Utility } from "./Utility/utility";
 
 //Within 100 years difference allow a range to be calculated
 const AD_TIME_INTERVAL = 276; //Qing Dynasty
+const START_TRUST = 2;
+const MAX_YEAR_ALLOWED = 1940;
 
 export async function CreateDataSetFromPost(
 	posts: Post[],
@@ -22,11 +24,15 @@ export async function CreateDataSetFromPost(
 		//Remove trailing whitespaces and makes everything lowercase
 		let data: WorkingData = {
 			dates: dates.map((d) => d.trim().toLowerCase()),
+			trust: START_TRUST,
 		};
 
 		data = evaluateDates(data);
 
-		//TODO: use Website weight and post trust to weigh the outcome
+		//Use Website weight and post trust to weigh the outcome
+		data.trust = CalculateTotalTrust(data, website);
+
+		console.log(`(Date: ${data.date}, Trust: ${data.trust})`);
 
 		//Use fetch to download img
 		await page.goto(post.imgSrc);
@@ -46,7 +52,7 @@ function extractDates(text: string) {
 		.replace(/(\bBCE\b)/gi, "BC")
 		.replace(/(\bCE\b)/gi, "AD");
 
-		//TODO: Add "year old" or "years ago" logic
+	//TODO: Add "year old" or "years ago" logic
 	const regexp =
 		/(([0-9]+[stndrh]{2})+[– -](\bmillenium\b|\bcentury\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
 
@@ -84,13 +90,12 @@ function evaluateDates(data: WorkingData) {
 	data = removeAnomalies(data);
 
 	const r = averageRanges(data);
-	console.log(`(Date: ${data.date}, Trust: ${data.trust})`);
 	return r;
 }
 
 //Only translates centuries into numbers
 function convertYearWords(data: WorkingData) {
-	data.workingDates = data.workingDates.map((x) => x.replace(/ /ig, ""));
+	data.workingDates = data.workingDates.map((x) => x.replace(/ /gi, ""));
 	const temp: string[] = [];
 	const startsWithNumberRegex = /[0-9]+/g;
 	for (let i = 0; i < data.workingDates.length; i++) {
@@ -122,7 +127,6 @@ function convertYearWords(data: WorkingData) {
 //Takes format: [ '37 BC', '31 AD' ], [ '37', '31 BC' ], [ '3', '400' ]
 //and averages their range
 function averageRanges(data: WorkingData) {
-	//TODO: implement trust
 	const numbers = data.workingDates.map((x) => +x);
 	const total = numbers.reduce((acc: number, x: number) => x + acc, 0);
 	data.date = Math.round(total / data.workingDates.length).toString();
@@ -132,10 +136,10 @@ function averageRanges(data: WorkingData) {
 //Converts both sides to BC or AD depending on first one if only one
 //Finds differences of ADs
 function removeAnomalies(data: WorkingData) {
-	//TODO: Maybe not ignore but remove trust?
-	data.workingDates = data.workingDates.filter(x => x.length > 1);
+	//TODO: Maybe not ignore but reduce trust?
+	data.workingDates = data.workingDates.filter((x) => x.length > 1);
 	//ignores nr above 1940
-	data.workingDates = data.workingDates.filter((x) => +x < 1940);
+	data.workingDates = data.workingDates.filter((x) => +x < MAX_YEAR_ALLOWED);
 	//if any of the WorkingDates numbers start with -, ignore this step
 	if (data.workingDates.findIndex((x) => x.startsWith("-")) < 0) {
 		const newData: string[] = [];
@@ -143,7 +147,10 @@ function removeAnomalies(data: WorkingData) {
 
 		for (let i = 0; i < differences.length; i++) {
 			//Reduce trust for each skip
-			if (differences[i] > AD_TIME_INTERVAL) continue;
+			if (differences[i] > AD_TIME_INTERVAL) {
+				data.trust--;
+				continue;
+			}
 			newData[i] = data.workingDates[i];
 			newData[i + 1] = data.workingDates[i + 1];
 		}
@@ -153,6 +160,7 @@ function removeAnomalies(data: WorkingData) {
 			//Choose the lowest number (subject to change)
 			newData[0] = Math.min(...numbers).toString();
 			//Reduce Trust
+			data.trust = data.trust - 2;
 		}
 		data.workingDates = newData.filter((x) => x);
 	}
@@ -174,4 +182,14 @@ function convertToNumbers(data: WorkingData) {
 	console.log("finished converting to nr: ");
 	console.log(data.workingDates);
 	return data;
+}
+
+function CalculateTotalTrust(data: WorkingData, website: Website) {
+	const normalizeWeight = 1;
+	const websiteWeight = website.weight;
+	let dataTrust = data.trust;
+	//Always use data. if one is set to 0 here, data could be negated
+	if (dataTrust < 1) dataTrust = 1;
+	const multiplicator = normalizeWeight + websiteWeight;
+	return Math.round(multiplicator * dataTrust);
 }
