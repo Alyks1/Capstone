@@ -45,7 +45,7 @@ async function saveData(data: WorkingData, page: Page, post: Post) {
 	//The higher the trust, the more often an image is in the dataset
 	for (let i = 0; i < data.trust; i++) {
 		//Image name needs ID so duplicates cannot overwrite
-		const id = uuidv4().toString().substring(0, 8).replace(/-/g, "");
+		const id = uuidv4().toString();
 		const filename = `${data.date}_${id}`;
 
 		await page.pdf({ path: `./Images/${filename}.pdf` });
