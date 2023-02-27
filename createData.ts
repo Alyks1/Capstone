@@ -3,6 +3,7 @@ import { Post } from "./Types/Post";
 import { Website } from "./Types/Website";
 import { WorkingData } from "./Types/WorkingData";
 import { Utility } from "./Utility/utility";
+import { v4 as uuidv4 } from "uuid";
 
 //Within 100 years difference allow a range to be calculated
 const AD_TIME_INTERVAL = 276; //Qing Dynasty
@@ -34,10 +35,20 @@ export async function CreateDataSetFromPost(
 
 		console.log(`(Date: ${data.date}, Trust: ${data.trust})`);
 
-		//Use fetch to download img
-		await page.goto(post.imgSrc);
-		//TODO: Image name needs ID so duplicates cannot overwrite
-		await page.pdf({ path: `./Images/${data.date}.pdf` });
+		await saveData(data, page, post);
+	}
+}
+
+async function saveData(data: WorkingData, page: Page, post: Post) {
+	//Use fetch to download img
+	await page.goto(post.imgSrc);
+	//The higher the trust, the more often an image is in the dataset
+	for (let i = 0; i < data.trust; i++) {
+		//Image name needs ID so duplicates cannot overwrite
+		const id = uuidv4().toString().substring(0, 8).replace(/-/g, "");
+		const filename = `${data.date}_${id}`;
+
+		await page.pdf({ path: `./Images/${filename}.pdf` });
 	}
 }
 
