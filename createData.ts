@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 //Within 100 years difference allow a range to be calculated
 const AD_TIME_INTERVAL = 276; //Qing Dynasty
+const AD_TIME_INTERVAL_CENURIES = 3;
 const START_TRUST = 2;
 const MAX_YEAR_ALLOWED = 1940;
 
@@ -85,8 +86,9 @@ function evaluateDates(data: WorkingData) {
 	console.log(data.workingDates);
 	//Saves a boolean array to see where centuries need to be converted
 	data.yearWords = data.workingDates.map((d) => {
-		if (d.includes("century")) return "c";
-		if (d.includes("millenium")) return "m";
+		if (d.includes("century")) return "00";
+		if (d.includes("millenium")) return "000";
+		return "";
 	});
 
 	//Stores each BC in a seperate array
@@ -110,22 +112,19 @@ function convertYearWords(data: WorkingData) {
 	const temp: string[] = [];
 	const startsWithNumberRegex = /[0-9]+/g;
 	for (let i = 0; i < data.workingDates.length; i++) {
-		let tens = "";
-		if (data.yearWords[i] === "m") tens = "000";
-		if (data.yearWords[i] === "c") tens = "00";
 		if (data.yearWords[i] !== "") {
 			const bc = data.yearLabels[i];
 			const number = data.workingDates[i].match(startsWithNumberRegex)[0];
 			temp[i] = number;
-			data.workingDates[i] = `${number}${tens}${bc}`;
+			data.workingDates[i] = `${number}${data.yearWords[i]}${bc}`;
 		} else {
-			//If the number has no 'century' text, add one if the numbers are 2 number apart
+			//If the number has no 'century' text, add one if the numbers are AD_TIME_INTERVAL_CENURIES apart
 			//eg '3rd to 4th century' or [ '3', '4th century' ] only being [ '3', '400' ]. Now [ '300', '400' ]
-			temp.forEach((x) => {
-				if (Math.abs(+x - +data.workingDates[i]) < 3) {
+			temp.forEach((x, index) => {
+				if (Math.abs(+x - +data.workingDates[i]) < AD_TIME_INTERVAL_CENURIES) {
 					//BC logic can be negated because it is ignored anyway
 					const number = data.workingDates[i].match(startsWithNumberRegex)[0];
-					data.workingDates[i] = `${number}${tens}`;
+					data.workingDates[i] = `${number}${data.yearWords[index]}`;
 				}
 			});
 		}
@@ -147,7 +146,6 @@ function averageRanges(data: WorkingData) {
 //Converts both sides to BC or AD depending on first one if only one
 //Finds differences of ADs
 function removeAnomalies(data: WorkingData) {
-	//TODO: Maybe not ignore but reduce trust?
 	data.workingDates = data.workingDates.filter((x) => x.length > 1);
 	//ignores nr above 1940
 	data.workingDates = data.workingDates.filter((x) => +x < MAX_YEAR_ALLOWED);
@@ -165,13 +163,15 @@ function removeAnomalies(data: WorkingData) {
 			newData[i] = data.workingDates[i];
 			newData[i + 1] = data.workingDates[i + 1];
 		}
-		//What if nothing works eg [1940,1100] ie only continues ^
+		//What if nothing works eg [1940,1100] ie only continues
 		if (newData.length === 0) {
 			const numbers = data.workingDates.map((x) => +x);
 			//Choose the lowest number (subject to change)
+			//TODO: Add trust to individual data and use that before using the lowest nr
 			newData[0] = Math.min(...numbers).toString();
-			//Reduce Trust
-			data.trust = data.trust - 2;
+			//Reduce Trust if a choice had to be made
+			if (data.workingDates.length !== newData.length)
+				data.trust = data.trust - 2;
 		}
 		data.workingDates = newData.filter((x) => x);
 	}
