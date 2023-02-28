@@ -1,4 +1,5 @@
 import { parseArgs } from "node:util";
+import { Utility } from "./utility";
 
 enum Loglevel {
 	Trace = 1,
@@ -29,19 +30,26 @@ export class Logger {
 		}
 	}
 
-	static Info(string) {
-		if (this.loglevel < 4) console.log(`${string}\x1b[0m`);
+	static info(string) {
+		if (this.loglevel < 4)
+			console.log(`${Utility.makeBold("INFO:")} ${string}\x1b[0m`);
 	}
 
-	static Debug(string) {
+	static debug(string) {
 		if (this.loglevel < 3) {
-			console.log(`\x1b[33m${string}\x1b[0m`);
+			console.log(`${Utility.makeBold("DEBUG:")} \x1b[33m${string}\x1b[0m`);
 		}
 	}
 
-	static Trace(string) {
+	static trace(string) {
 		if (this.loglevel < 2) {
-			console.log(`   | \x1b[36m${string}\x1b[0m`);
+			console.log(`${Utility.makeBold("TRACE:")} \x1b[36m${string}\x1b[0m`);
+		}
+	}
+
+	static blocking(string) {
+		if (this.loglevel < 2) {
+			console.log(`${Utility.makeBold("BLOCK:")} \x1b[31m${string}\x1b[0m`);
 		}
 	}
 }
