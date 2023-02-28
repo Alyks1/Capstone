@@ -3,15 +3,17 @@ import { Website } from "./Types/Website";
 import { ScrapeReddit } from "./Scrapers/scrapeReddit";
 import { Post } from "./Types/Post";
 import { CreateDataSetFromPost } from "./createData";
+import { Logger } from "./Utility/logging";
 
 async function start() {
+	Logger.SetLoglevel();
+
 	const browser = await puppeteer.launch({
 		headless: true,
 	});
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();
 	//TODO: Install Addblock https://www.npmjs.com/package/@cliqz/adblocker-puppeteer
-	//TODO: Add logging and tracing
 	for (let website of websites) {
 		await page.goto(website.url);
 		var posts: Post[] = [];

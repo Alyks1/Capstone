@@ -1,12 +1,14 @@
 {
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts -l"
   },
   "dependencies": {
+    "process.argv": "^0.6.1",
     "puppeteer": "^19.7.1",
     "rome": "^11.0.0",
     "ts-node": "^10.9.1",
+    "ucmd": "^0.4.0",
     "uuid": "^9.0.0"
   }
 }

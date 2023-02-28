@@ -4,6 +4,7 @@ import { Website } from "./Types/Website";
 import { WorkingData } from "./Types/WorkingData";
 import { Utility } from "./Utility/utility";
 import { v4 as uuidv4 } from "uuid";
+import { Logger } from "./Utility/logging";
 
 //Within 100 years difference allow a range to be calculated
 const AD_TIME_INTERVAL = 276; //Qing Dynasty
@@ -34,13 +35,14 @@ export async function CreateDataSetFromPost(
 		//Use Website weight and post trust to weigh the outcome
 		data.trust = CalculateTotalTrust(data, website);
 
-		console.log(`(Date: ${data.date}, Trust: ${data.trust})`);
+		Logger.Info(`(Date: ${data.date}, Trust: ${data.trust})`);
 
 		await saveData(data, page, post);
 	}
 }
 
 async function saveData(data: WorkingData, page: Page, post: Post) {
+	Logger.Trace("Saving data");
 	//Use fetch to download img
 	await page.goto(post.imgSrc);
 	//The higher the trust, the more often an image is in the dataset
@@ -54,6 +56,7 @@ async function saveData(data: WorkingData, page: Page, post: Post) {
 }
 
 function extractDates(text: string) {
+	Logger.Trace("Extracting dates");
 	//Remove . and ,
 	//Remove img resolution eg (1080x960)
 	//Replace BCE with BC
@@ -68,7 +71,7 @@ function extractDates(text: string) {
 	const regexp =
 		/(([0-9]+[stndrh]{2})+[– -](\bmillenium\b|\bcentury\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
 
-	console.log(sanatizedText);
+	Logger.Debug(sanatizedText);
 	const results: string[] = [];
 
 	for (const match of sanatizedText.matchAll(regexp) || [])
@@ -83,7 +86,7 @@ function evaluateDates(data: WorkingData) {
 	//Reverse array to have BC, century etc words that are normally at the end
 	//of the sentence at the front
 	data.workingDates = data.dates.reverse();
-	console.log(data.workingDates);
+	Logger.Debug(`[ ${data.workingDates} ]`);
 	//Saves a boolean array to see where centuries need to be converted
 	data.yearWords = data.workingDates.map((d) => {
 		if (d.includes("century")) return "00";
@@ -129,8 +132,8 @@ function convertYearWords(data: WorkingData) {
 			});
 		}
 	}
-	console.log("finished converting year words: ");
-	console.log(data.workingDates);
+	Logger.Trace("finished converting year words: ");
+	Logger.Trace(data.workingDates);
 	return data;
 }
 
@@ -179,8 +182,8 @@ function removeAnomalies(data: WorkingData) {
 		}
 		data.workingDates = newData.filter((x) => x);
 	}
-	console.log("Finished removing anomalies: ");
-	console.log(data.workingDates);
+	Logger.Trace("Finished removing anomalies: ");
+	Logger.Trace(data.workingDates);
 	return data;
 }
 
@@ -194,8 +197,8 @@ function convertToNumbers(data: WorkingData) {
 		const number = data.workingDates[i].replace(/[bcad]/gi, "").trim();
 		data.workingDates[i] = bc + number;
 	}
-	console.log("finished converting to nr: ");
-	console.log(data.workingDates);
+	Logger.Trace("finished converting to nr: ");
+	Logger.Trace(data.workingDates);
 	return data;
 }
 
