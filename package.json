@@ -6,6 +6,7 @@
   "dependencies": {
     "puppeteer": "^19.7.1",
     "rome": "^11.0.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "uuid": "^9.0.0"
   }
 }

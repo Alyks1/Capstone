@@ -11,6 +11,7 @@ async function start() {
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();
 	//TODO: Install Addblock https://www.npmjs.com/package/@cliqz/adblocker-puppeteer
+	//TODO: Add logging and tracing
 	for (let website of websites) {
 		await page.goto(website.url);
 		var posts: Post[] = [];
