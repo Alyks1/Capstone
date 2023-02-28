@@ -35,14 +35,14 @@ export async function CreateDataSetFromPost(
 		//Use Website weight and post trust to weigh the outcome
 		data.trust = CalculateTotalTrust(data, website);
 
-		Logger.Info(`(Date: ${data.date}, Trust: ${data.trust})`);
+		Logger.info(`(Date: ${data.date.padEnd(5, " ")}, Trust: ${data.trust})`);
 
 		await saveData(data, page, post);
 	}
 }
 
 async function saveData(data: WorkingData, page: Page, post: Post) {
-	Logger.Trace("Saving data");
+	Logger.trace("Saving data");
 	//Use fetch to download img
 	await page.goto(post.imgSrc);
 	//The higher the trust, the more often an image is in the dataset
@@ -56,7 +56,7 @@ async function saveData(data: WorkingData, page: Page, post: Post) {
 }
 
 function extractDates(text: string) {
-	Logger.Trace("Extracting dates");
+	Logger.trace("Extracting dates");
 	//Remove . and ,
 	//Remove img resolution eg (1080x960)
 	//Replace BCE with BC
@@ -71,7 +71,7 @@ function extractDates(text: string) {
 	const regexp =
 		/(([0-9]+[stndrh]{2})+[– -](\bmillenium\b|\bcentury\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
 
-	Logger.Debug(sanatizedText);
+	Logger.debug(sanatizedText);
 	const results: string[] = [];
 
 	for (const match of sanatizedText.matchAll(regexp) || [])
@@ -86,7 +86,7 @@ function evaluateDates(data: WorkingData) {
 	//Reverse array to have BC, century etc words that are normally at the end
 	//of the sentence at the front
 	data.workingDates = data.dates.reverse();
-	Logger.Debug(`[ ${data.workingDates} ]`);
+	Logger.debug(`[ ${data.workingDates} ]`);
 	//Saves a boolean array to see where centuries need to be converted
 	data.yearWords = data.workingDates.map((d) => {
 		if (d.includes("century")) return "00";
@@ -132,8 +132,8 @@ function convertYearWords(data: WorkingData) {
 			});
 		}
 	}
-	Logger.Trace("finished converting year words: ");
-	Logger.Trace(data.workingDates);
+	Logger.trace("finished converting year words: ");
+	Logger.trace(data.workingDates);
 	return data;
 }
 
@@ -182,8 +182,8 @@ function removeAnomalies(data: WorkingData) {
 		}
 		data.workingDates = newData.filter((x) => x);
 	}
-	Logger.Trace("Finished removing anomalies: ");
-	Logger.Trace(data.workingDates);
+	Logger.trace("Finished removing anomalies: ");
+	Logger.trace(data.workingDates);
 	return data;
 }
 
@@ -197,8 +197,8 @@ function convertToNumbers(data: WorkingData) {
 		const number = data.workingDates[i].replace(/[bcad]/gi, "").trim();
 		data.workingDates[i] = bc + number;
 	}
-	Logger.Trace("finished converting to nr: ");
-	Logger.Trace(data.workingDates);
+	Logger.trace("finished converting to nr: ");
+	Logger.trace(data.workingDates);
 	return data;
 }
 

@@ -1,9 +1,10 @@
 import { Post } from "../Types/Post";
 import { ElementHandle, Page } from "puppeteer";
 import { Utility } from "../Utility/utility";
+import { Logger } from "../Utility/logging";
 
 export async function ScrapeReddit(page: Page, pages: number) {
-	console.log(`Scraping ${pages} Reddit pages`);
+	Logger.info(`Scraping ${pages} Reddit pages`);
 
 	if (pages === 0) return [];
 

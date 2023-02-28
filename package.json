@@ -1,9 +1,10 @@
 {
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node index.ts -l"
+    "start": "ts-node index.ts"
   },
   "dependencies": {
+    "@cliqz/adblocker-puppeteer": "^1.26.1",
     "process.argv": "^0.6.1",
     "puppeteer": "^19.7.1",
     "rome": "^11.0.0",

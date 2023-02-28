@@ -15,4 +15,8 @@ export class Utility {
 	static sleep(ms: number) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
+
+	static makeBold(string: string) {
+		return `\x1B[1m${string}\x1B[0m`;
+	}
 }
