@@ -159,6 +159,8 @@ function removeAnomalies(data: WorkingData) {
 			if (differences[i] > AD_TIME_INTERVAL) {
 				data.trust--;
 				continue;
+			} else if (differences[i] < 50) {
+				data.trust++;
 			}
 			newData[i] = data.workingDates[i];
 			newData[i + 1] = data.workingDates[i + 1];
@@ -172,6 +174,8 @@ function removeAnomalies(data: WorkingData) {
 			//Reduce Trust if a choice had to be made
 			if (data.workingDates.length !== newData.length)
 				data.trust = data.trust - 2;
+			//Increase trust if only one number is found
+			if (data.workingDates.length === 1) data.trust++;
 		}
 		data.workingDates = newData.filter((x) => x);
 	}
@@ -187,7 +191,7 @@ function convertToNumbers(data: WorkingData) {
 		data.yearLabels[i] = label;
 		let bc = "";
 		if (data.yearLabels[i] === "bc") bc = "-";
-		const number = data.workingDates[i].replace(/(bc|ad)/gi, "").trim();
+		const number = data.workingDates[i].replace(/[bcad]/gi, "").trim();
 		data.workingDates[i] = bc + number;
 	}
 	console.log("finished converting to nr: ");
