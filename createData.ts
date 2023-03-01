@@ -5,6 +5,7 @@ import { WorkingData } from "./Types/WorkingData";
 import { Utility } from "./Utility/utility";
 import { v4 as uuidv4 } from "uuid";
 import { Logger } from "./Utility/logging";
+import { Anomalies } from "./Utility/removeAnomalies/removeAnomalies";
 
 //Within 100 years difference allow a range to be calculated
 const AD_TIME_INTERVAL = 276; //Qing Dynasty
@@ -51,7 +52,7 @@ async function saveData(data: WorkingData, page: Page, post: Post) {
 		const id = uuidv4().toString();
 		const filename = `${data.date}_${id}`;
 
-		await page.pdf({ path: `./Images/${filename}.pdf` });
+		//await page.pdf({ path: `./Images/${filename}.pdf` });
 	}
 }
 
@@ -149,39 +150,15 @@ function averageRanges(data: WorkingData) {
 //Converts both sides to BC or AD depending on first one if only one
 //Finds differences of ADs
 function removeAnomalies(data: WorkingData) {
-	data.workingDates = data.workingDates.filter((x) => x.length > 1);
-	//ignores nr above 1940
-	data.workingDates = data.workingDates.filter((x) => +x < MAX_YEAR_ALLOWED);
-	//if any of the WorkingDates numbers start with -, ignore this step
-	if (data.workingDates.findIndex((x) => x.startsWith("-")) < 0) {
-		const newData: string[] = [];
-		const differences = Utility.getDifferences(data.workingDates);
+	data.workingDates = Anomalies.removeSingleCharYears(data.workingDates);
+	data.workingDates = Anomalies.removeYearsAboveThreashold(
+		data.workingDates,
+		MAX_YEAR_ALLOWED,
+	);
+	//Ignore year differences when BC
+	if (data.workingDates.findIndex((x) => x.startsWith("-")) < 0)
+		data = Anomalies.ignoreYearsToFarApart(data, AD_TIME_INTERVAL);
 
-		for (let i = 0; i < differences.length; i++) {
-			//Reduce trust for each skip
-			if (differences[i] > AD_TIME_INTERVAL) {
-				data.trust--;
-				continue;
-			} else if (differences[i] < 50) {
-				data.trust++;
-			}
-			newData[i] = data.workingDates[i];
-			newData[i + 1] = data.workingDates[i + 1];
-		}
-		//What if nothing works eg [1940,1100] ie only continues
-		if (newData.length === 0) {
-			const numbers = data.workingDates.map((x) => +x);
-			//Choose the lowest number (subject to change)
-			//TODO: Add trust to individual data and use that before using the lowest nr
-			newData[0] = Math.min(...numbers).toString();
-			//Reduce Trust if a choice had to be made
-			if (data.workingDates.length !== newData.length)
-				data.trust = data.trust - 2;
-			//Increase trust if only one number is found
-			if (data.workingDates.length === 1) data.trust++;
-		}
-		data.workingDates = newData.filter((x) => x);
-	}
 	Logger.trace("Finished removing anomalies: ");
 	Logger.trace(data.workingDates);
 	return data;
