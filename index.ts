@@ -41,10 +41,6 @@ async function start() {
 
 async function LoadWebsites(): Promise<Website[]> {
 	const data = await import("./websites.json");
-	//Open up website file (Json)
-	//parse Json to create object that can be passed to
-	//create dictionary of weight, website and
-	//Instantiate Query selectors
 	return data.default.map((website) => ({
 		url: website.url,
 		group: website.group,

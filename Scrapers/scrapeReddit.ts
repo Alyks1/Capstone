@@ -19,7 +19,7 @@ export async function ScrapeReddit(page: Page, pages: number) {
 
 	for (let i = 0; i < pages; i++) {
 		await page.evaluate(() => {
-			//10 Posts are retrieved if amount == 1
+			//~10 Posts are retrieved if amount == 1
 			window.scrollTo({ top: window.innerHeight });
 		});
 		await Utility.sleep(100);
@@ -42,7 +42,7 @@ export async function ScrapeReddit(page: Page, pages: number) {
 				(i: HTMLImageElement) => i.src,
 			);
 		} catch (e) {
-			console.log("skipping..");
+			Logger.trace("skipping..");
 			continue;
 		}
 

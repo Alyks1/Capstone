@@ -2,7 +2,7 @@ export interface WorkingData {
 	dates?: string[];
 	workingDates?: string[];
 	yearLabels?: string[];
-	yearWords?: string[];
+	yearMagnitudes?: string[];
 
 	/**
 	 * Trust:
