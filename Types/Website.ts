@@ -15,4 +15,5 @@ export interface WebsiteGroupInfo {
 	divIdentifier: string;
 	textIdentifier: string;
 	imgIdentifier: string;
+	nextIdentifier: string;
 }

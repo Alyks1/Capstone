@@ -1,8 +1,8 @@
-import { Post } from "../Types/Post";
+import { Post } from "./Types/Post";
 import { Page } from "puppeteer";
-import { Utility } from "../Utility/utility";
-import { Logger } from "../Utility/logging";
-import { WebsiteGroupInfo } from "../Types/Website";
+import { Utility } from "./Utility/utility";
+import { Logger } from "./Utility/logging";
+import { WebsiteGroupInfo } from "./Types/Website";
 
 export async function Scraper(
 	page: Page,
@@ -42,13 +42,22 @@ export async function Scraper(
 			if (!allPosts.has(text)) posts.push({ text: text, imgSrc: imgSrc });
 			allPosts.add(text);
 		}
-		await page.evaluate(() => {
-			window.scrollTo({ top: window.innerHeight });
-		});
 		Logger.info(allPosts.size);
-		await Utility.sleep(100);
-		await page.waitForNetworkIdle();
+		await moveToNextPage(page, groupInfo.nextIdentifier);
 	}
 
 	return posts;
+}
+
+async function moveToNextPage(page: Page, nextBtnClass: string) {
+	if (nextBtnClass !== "") {
+		const nextBtn = await page.$(nextBtnClass);
+		const href: string = await nextBtn.$eval("a", (elem) => elem.href);
+		page.goto(href);
+	}
+	await page.evaluate(() => {
+		window.scrollTo({ top: window.innerHeight });
+	});
+	await Utility.sleep(100);
+	await page.waitForNetworkIdle();
 }

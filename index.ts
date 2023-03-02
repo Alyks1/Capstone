@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import { Website, WebsiteGroupInfo } from "./Types/Website";
-import { Scraper } from "./Scrapers/scrapeReddit";
+import { Scraper } from "./Scraper";
 import { Post } from "./Types/Post";
 import { CreateDataSetFromPost } from "./createData";
 import { Logger } from "./Utility/logging";

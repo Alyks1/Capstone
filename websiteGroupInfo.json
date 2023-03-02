@@ -3,12 +3,14 @@
         "rootDiv": ".sitetable",
         "divIdentifier": ".thing",
         "textIdentifier": "a.title",
-        "imgIdentifier": ".thumbnail > img"
+        "imgIdentifier": ".thumbnail > img",
+        "nextIdentifier": ".next-button"
     },
     "Reddit": {
         "rootDiv": ".rpBJOHq2PR60pnwJlUyP0",
         "divIdentifier": "._1poyrkZ7g36PawDueRza-J",
         "textIdentifier": "._eYtD2XCVieq6emjKBH3m",
-        "imgIdentifier": ".ImageBox-image"
+        "imgIdentifier": ".ImageBox-image",
+        "nextIdentifier": ""
     }
 }
