@@ -9,8 +9,6 @@ export async function Scraper(
 	pages: number,
 	groupInfo: WebsiteGroupInfo,
 ) {
-	if (pages === 0) return [];
-
 	//First get the root
 	const rootDivClass = groupInfo.rootDiv;
 

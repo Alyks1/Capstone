@@ -84,6 +84,7 @@ function extractDates(text: string) {
 		.replace(/(\bBCE\b)/gi, "BC") //Replace BCE with BC
 		.replace(/(\bCE\b)/gi, "AD"); //Replace CE with AD
 
+	//TODO: Maybe change this to semantic analysis
 	const regexp =
 		/(([0-9]+[stndrh]{2})+[– -](\bmillenium\b|\bcentury\b|\byears ago\b|\byear old\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
 
