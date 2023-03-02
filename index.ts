@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
-import { Website, WebsiteGroupInfo } from "./Types/Website";
+import { Website } from "./Types/Website";
+import { WebsiteGroupInfo } from "./Types/WebsiteGroupInfo";
 import { Scraper } from "./Scraper";
 import { Post } from "./Types/Post";
 import { CreateDataSetFromPost } from "./createData";
