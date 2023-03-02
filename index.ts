@@ -35,7 +35,7 @@ async function start() {
 
 		const websiteGroupInfo = websiteGroupInfos[website.group];
 		if (!websiteGroupInfo) {
-			Logger.debug(`skipped ${website.url}. GroupInfo undefined`);
+			Logger.warn(`skipped ${website.url}. GroupInfo undefined`);
 			continue;
 		}
 

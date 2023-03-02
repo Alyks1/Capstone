@@ -49,6 +49,7 @@ export async function Scraper(
 
 async function moveToNextPage(page: Page, nextBtnClass: string) {
 	Logger.trace(`Next button: ${nextBtnClass}`);
+	//If a button is needed to change page, use it
 	if (nextBtnClass !== "") {
 		const nextBtn = await page.$(nextBtnClass);
 		const href: string = await nextBtn.$eval("a", (elem) => elem.href);
@@ -56,6 +57,7 @@ async function moveToNextPage(page: Page, nextBtnClass: string) {
 		await page.goto(href);
 		return;
 	}
+	//Otherwise, scroll down and rescrape
 	await page.evaluate(() => {
 		window.scrollTo({ top: window.innerHeight });
 	});
