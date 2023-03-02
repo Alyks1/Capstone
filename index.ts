@@ -12,7 +12,7 @@ async function start() {
 	Logger.SetLoglevel();
 
 	const browser = await puppeteer.launch({
-		headless: true,
+		headless: false,
 	});
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();
@@ -26,11 +26,11 @@ async function start() {
 	for (let website of websites) {
 		await page.goto(website.url);
 
-		var posts: Post[] = [];
+		const posts: Post[] = [];
 
 		switch (website.group) {
 			case "Reddit": {
-				posts = await ScrapeReddit(page, website.nrOfPages);
+				posts.push(...(await ScrapeReddit(page, website.nrOfPages)));
 				break;
 			}
 		}
