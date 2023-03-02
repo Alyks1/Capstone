@@ -1,17 +1,18 @@
 import { Post } from "../Types/Post";
-import { ElementHandle, Page } from "puppeteer";
+import { Page } from "puppeteer";
 import { Utility } from "../Utility/utility";
 import { Logger } from "../Utility/logging";
+import { WebsiteGroupInfo } from "../Types/Website";
 
-const SOME_MAGNITUDE = 3;
-
-export async function ScrapeReddit(page: Page, pages: number) {
-	Logger.info(`Scraping ${pages} Reddit pages`);
-
+export async function Scraper(
+	page: Page,
+	pages: number,
+	groupInfo: WebsiteGroupInfo,
+) {
 	if (pages === 0) return [];
 
 	//First get the root
-	const rootDivClass = ".rpBJOHq2PR60pnwJlUyP0";
+	const rootDivClass = groupInfo.rootDiv;
 
 	await page.waitForSelector(rootDivClass);
 	const root = (await page.$$(rootDivClass))[0];
@@ -21,16 +22,16 @@ export async function ScrapeReddit(page: Page, pages: number) {
 	const allPosts: Set<string> = new Set<string>();
 
 	for (let i = 0; i < pages; i++) {
-		const postElements = await root.$$("._1poyrkZ7g36PawDueRza-J");
+		const postElements = await root.$$(groupInfo.divIdentifier);
 		for (let postElement of postElements) {
 			const text = await postElement.$eval(
-				"._eYtD2XCVieq6emjKBH3m",
+				groupInfo.textIdentifier,
 				(t) => t.textContent,
 			);
 			let imgSrc = "";
 			try {
 				imgSrc = await postElement.$eval(
-					".ImageBox-image",
+					groupInfo.imgIdentifier,
 					(i: HTMLImageElement) => i.src,
 				);
 			} catch (e) {
