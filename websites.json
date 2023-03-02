@@ -3,12 +3,12 @@
         "url": "https://www.reddit.com/r/ArtefactPorn/",
         "group": "Reddit",
         "weight": 0.8,
-        "nrOfPages": 1
+        "nrOfPages": 3
     },
     {
         "url": "https://www.reddit.com/r/AncientCivilizations/",
         "group": "Reddit",
         "weight": 0.3,
-        "nrOfPages": 0
+        "nrOfPages": 2
     }
 ]

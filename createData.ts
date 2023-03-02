@@ -11,6 +11,7 @@ const AD_TIME_INTERVAL = 276; //Qing Dynasty
 const AD_TIME_INTERVAL_CENURIES = 3;
 const START_TRUST = 2;
 const MAX_YEAR_ALLOWED = 1940;
+const YEAR_NOW = 2023;
 
 /**
  * Creates the dataset from an array of posts
@@ -85,7 +86,7 @@ function extractDates(text: string) {
 
 	//TODO: Add "year old" or "years ago" logic
 	const regexp =
-		/(([0-9]+[stndrh]{2})+[– -](\bmillenium\b|\bcentury\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
+		/(([0-9]+[stndrh]{2})+[– -](\bmillenium\b|\bcentury\b|\byears ago\b|\byear old\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
 
 	Logger.debug(sanatizedText);
 
@@ -112,6 +113,8 @@ function evaluateDates(data: WorkingData) {
 	data.yearMagnitudes = data.workingDates.map((d) => {
 		if (d.includes("century")) return "00";
 		if (d.includes("millenium")) return "000";
+		if (d.includes("years ago")) return "ya";
+		if (d.includes("year old")) return "ya";
 		return "";
 	});
 
@@ -143,7 +146,9 @@ function convertYearWords(data: WorkingData) {
 			const bc = data.yearLabels[i];
 			const number = data.workingDates[i].match(startsWithNumberRegex)[0];
 			temp[i] = number;
-			data.workingDates[i] = `${number}${data.yearMagnitudes[i]}${bc}`;
+			if (data.yearMagnitudes[i] === "ya")
+				data.workingDates[i] = calculateYearsAgo(number);
+			else data.workingDates[i] = `${number}${data.yearMagnitudes[i]}${bc}`;
 		} else {
 			//If the number has no 'century' text, add one if the numbers are AD_TIME_INTERVAL_CENURIES apart
 			//eg '3rd to 4th century' or [ '3', '4th century' ] only being [ '3', '400' ]. Now [ '300', '400' ]
@@ -159,6 +164,12 @@ function convertYearWords(data: WorkingData) {
 	Logger.trace("finished converting year words: ");
 	Logger.trace(data.workingDates);
 	return data;
+}
+
+function calculateYearsAgo(age: string) {
+	Logger.info(`Calculating years ago with age: ${age}`);
+	const AgeNr = +age;
+	return (YEAR_NOW - AgeNr).toString();
 }
 
 /**
