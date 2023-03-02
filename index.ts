@@ -13,7 +13,7 @@ async function start() {
 	Logger.SetLoglevel();
 
 	const browser = await puppeteer.launch({
-		headless: false,
+		headless: true,
 	});
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();

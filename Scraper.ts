@@ -9,19 +9,18 @@ export async function Scraper(
 	pages: number,
 	groupInfo: WebsiteGroupInfo,
 ) {
-	//First get the root
-	const rootDivClass = groupInfo.rootDiv;
-
-	await page.waitForSelector(rootDivClass);
-	const root = (await page.$$(rootDivClass))[0];
-	//Then get all the posts branching off of the root
-
 	const posts: Post[] = [];
-	//TODO: Add Set for all Posts to not process duplicate posts
 	const allPosts: Set<string> = new Set<string>();
+	//TODO: Add Set for all Posts to not process duplicate posts
 
 	for (let i = 0; i < pages; i++) {
+		Logger.trace(`${i} of ${pages} pages`);
+		//First get root
+		await page.waitForSelector(groupInfo.rootDiv);
+		const root = (await page.$$(groupInfo.rootDiv))[0];
+		//Get elements branching off the root
 		const postElements = await root.$$(groupInfo.divIdentifier);
+		//Go through each element and find the correct classes to scrape
 		for (let postElement of postElements) {
 			const text = await postElement.$eval(
 				groupInfo.textIdentifier,
@@ -38,13 +37,13 @@ export async function Scraper(
 				continue;
 			}
 
+			//If the post has not been scraped, push it
 			if (!allPosts.has(text)) posts.push({ text: text, imgSrc: imgSrc });
 			allPosts.add(text);
 		}
-		Logger.info(allPosts.size);
+		Logger.debug(allPosts.size);
 		await moveToNextPage(page, groupInfo.nextIdentifier);
 	}
-
 	return posts;
 }
 
@@ -53,7 +52,9 @@ async function moveToNextPage(page: Page, nextBtnClass: string) {
 	if (nextBtnClass !== "") {
 		const nextBtn = await page.$(nextBtnClass);
 		const href: string = await nextBtn.$eval("a", (elem) => elem.href);
-		page.goto(href);
+		Logger.debug(`href: ${href}`);
+		await page.goto(href);
+		return;
 	}
 	await page.evaluate(() => {
 		window.scrollTo({ top: window.innerHeight });

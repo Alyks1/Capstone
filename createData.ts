@@ -24,6 +24,7 @@ export async function CreateDataSetFromPost(
 	page: Page,
 	website: Website,
 ) {
+	Logger.trace(`Creating data from ${posts.length} posts`);
 	//Goto each imageSrc and screenshot/pdf it
 	//Use text as name
 	//There must be a better way to do this but here we are
