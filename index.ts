@@ -8,7 +8,7 @@ import { Logger } from "./Utility/logging";
 import { PuppeteerBlocker } from "@cliqz/adblocker-puppeteer";
 import fetch from "cross-fetch";
 import * as Adblock from "./Utility/adBlock/adblock";
-import { generateDataFromPost } from "./generateData";
+import { generateDataFromPost } from "./GenerateData/generateData";
 
 async function start() {
 	Logger.SetLoglevel();
