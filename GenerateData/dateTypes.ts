@@ -13,7 +13,7 @@ export function AD(data: WorkingData): WorkingData {
 }
 
 export function isCenturies(str: string) {
-	return str.includes("centuries") || str.includes(" c ");
+	return str.includes("century") || str.includes(" c ");
 }
 export function centuries(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to century`);

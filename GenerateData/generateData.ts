@@ -57,7 +57,6 @@ function createDate(text: string[]) {
 }
 
 function LookAhead(text: string[], i: number, data: WorkingData) {
-	data.pos++;
 	if (text.length > i + data.pos) {
 		const temp = data;
 		data = switchTypes(data, text, i);
@@ -71,9 +70,12 @@ function LookAhead(text: string[], i: number, data: WorkingData) {
 }
 
 function treeStump(data: WorkingData, text: string[], i: number) {
+	data.pos++;
 	if (isRange(data.date)) {
 		Logger.trace(`After isRange: ${data.date}`);
-		data = averageRange(data, text);
+		let txt = "";
+		if (text.length > i + data.pos) txt = text[i + data.pos];
+		data = averageRange(data, txt);
 	}
 	if (Utility.isNumber(data.date)) {
 		Logger.trace(`After isNumber: ${data.date}`);
@@ -109,15 +111,26 @@ function isRange(str: string) {
 	const hasNumbers = newStr.match(/[0-9]+/);
 	return hasHyphen && hasNumbers;
 }
-function averageRange(data: WorkingData, text: string[]): WorkingData {
-	Logger.trace(`Averaging range: ${data.date}`);
+function averageRange(data: WorkingData, nextWord: string): WorkingData {
+	Logger.trace(`Averaging range: ${data.date} potentially with ${nextWord}`);
+	data.date = data.date.replace(/\//, "-");
 	const matchNrs = /[0-9]+/g;
-	const bothNrs = data.date.split("-");
-	Logger.trace(bothNrs);
-	const numbers = bothNrs.map((x) => {
+	//before split, check if text is a nr
+	//if it is, use that number for calc
+	//otherwise split the existing string.
+	//This needs to be done to avoid accidentaly splitting negative numbers
+	let bothNrs: string[] = [];
+	if (Utility.isNumber(nextWord)) {
+		bothNrs.push(data.date);
+		bothNrs.push(nextWord);
+	} else bothNrs = data.date.split("-");
+	Logger.trace(`Both nrs = ${bothNrs}`);
+	const numbers: WorkingData[] = bothNrs.map((x) => {
+		if (Utility.isNumber(x))
+			return { date: x, trust: data.trust, pos: data.pos };
 		const match = (x.match(matchNrs) ?? [""])[0];
 		if (isBC(x)) return BC({ date: match, trust: data.trust, pos: data.pos });
-		return { date: match, trust: data.trust };
+		return { date: match, trust: data.trust, pos: data.pos };
 	});
 	const total = numbers.reduce(
 		(acc: number, x: WorkingData) => +x.date + acc,
