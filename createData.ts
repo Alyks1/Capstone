@@ -24,6 +24,7 @@ export async function CreateDataSetFromPost(
 	page: Page,
 	website: Website,
 ) {
+	Logger.trace(`Creating data from ${posts.length} posts`);
 	//Goto each imageSrc and screenshot/pdf it
 	//Use text as name
 	//There must be a better way to do this but here we are
@@ -41,6 +42,11 @@ export async function CreateDataSetFromPost(
 
 		//Use Website weight and post trust to weigh the outcome
 		data.trust = calculateTotalTrust(data.trust, website.weight);
+
+		if (data.date === "Infinity") {
+			data.date = "NaN";
+			Logger.warn(`"${post.text}" produced infinity`);
+		}
 
 		Logger.info(`(Date: ${data.date.padEnd(5, " ")}, Trust: ${data.trust})`);
 
@@ -79,14 +85,15 @@ function extractDates(text: string) {
 	Logger.trace("Extracting dates");
 
 	const sanatizedText = text
+		.toLowerCase()
 		.replace(/[.,]/g, "") //Remove . and ,
 		.replace(/([\(\[])([0-9])*([x× ])*[0-9]*([\)\]])/g, "") //Remove img resolution eg (1080x960)
 		.replace(/(\bBCE\b)/gi, "BC") //Replace BCE with BC
 		.replace(/(\bCE\b)/gi, "AD"); //Replace CE with AD
 
-	//TODO: Add "year old" or "years ago" logic
+	//TODO: Maybe change this to semantic analysis
 	const regexp =
-		/(([0-9]+[stndrh]{2})+[– -](\bmillenium\b|\bcentury\b|\byears ago\b|\byear old\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
+		/(([0-9]+[stndrh]*)+[– -](\bmillennium\b|\bcentury\b|\byears ago\b|\byear old\b)[ ABCD]*)|(([0-9]+)([ 0-9])*([ABCD]{2})?)/gi;
 
 	Logger.debug(sanatizedText);
 
@@ -112,7 +119,7 @@ function evaluateDates(data: WorkingData) {
 	//Saves a boolean array to see where centuries need to be converted
 	data.yearMagnitudes = data.workingDates.map((d) => {
 		if (d.includes("century")) return "00";
-		if (d.includes("millenium")) return "000";
+		if (d.includes("millennium")) return "000";
 		if (d.includes("years ago")) return "ya";
 		if (d.includes("year old")) return "ya";
 		return "";
@@ -142,6 +149,7 @@ function convertYearWords(data: WorkingData) {
 	const temp: string[] = [];
 	const startsWithNumberRegex = /[0-9]+/g;
 	for (let i = 0; i < data.workingDates.length; i++) {
+		Logger.trace(data.yearMagnitudes);
 		if (data.yearMagnitudes[i] !== "") {
 			const bc = data.yearLabels[i];
 			const number = data.workingDates[i].match(startsWithNumberRegex)[0];

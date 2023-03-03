@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 import { Website } from "./Types/Website";
-import { ScrapeReddit } from "./Scrapers/scrapeReddit";
+import { WebsiteGroupInfo } from "./Types/WebsiteGroupInfo";
+import { Scraper } from "./Scraper";
 import { Post } from "./Types/Post";
 import { CreateDataSetFromPost } from "./createData";
 import { Logger } from "./Utility/logging";
@@ -16,6 +17,7 @@ async function start() {
 	});
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();
+	const websiteGroupInfos = await LoadWebsiteGroupInfo();
 
 	const adblockList = await Adblock.getLists();
 
@@ -24,16 +26,22 @@ async function start() {
 	Adblock.logging(blocker);
 
 	for (let website of websites) {
+		if (website.nrOfPages === 0) {
+			Logger.trace(`Skipping website ${website.url}`);
+			continue;
+		}
+
 		await page.goto(website.url);
 
-		var posts: Post[] = [];
-
-		switch (website.group) {
-			case "Reddit": {
-				posts = await ScrapeReddit(page, website.nrOfPages);
-				break;
-			}
+		const websiteGroupInfo = websiteGroupInfos[website.group];
+		if (!websiteGroupInfo) {
+			Logger.warn(`skipped ${website.url}. GroupInfo undefined`);
+			continue;
 		}
+
+		const posts: Post[] = [];
+		Logger.info(`Scraping ${website.nrOfPages} ${website.group} pages`);
+		posts.push(...(await Scraper(page, website.nrOfPages, websiteGroupInfo)));
 		await CreateDataSetFromPost(posts, page, website);
 	}
 	await browser.close();
@@ -47,6 +55,12 @@ async function LoadWebsites(): Promise<Website[]> {
 		weight: website.weight,
 		nrOfPages: website.nrOfPages,
 	}));
+}
+
+async function LoadWebsiteGroupInfo(): Promise<
+	Record<string, WebsiteGroupInfo>
+> {
+	return (await import("./websiteGroupInfo.json")).default;
 }
 
 start();

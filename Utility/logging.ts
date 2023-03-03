@@ -6,13 +6,15 @@ enum Loglevel {
 	Trace,
 	Debug,
 	Info,
+	Warn,
 }
 
 const loglevels: Record<string, Loglevel> = {
+	network: Loglevel.Network,
 	trace: Loglevel.Trace,
 	debug: Loglevel.Debug,
 	info: Loglevel.Info,
-	network: Loglevel.Network,
+	warn: Loglevel.Warn,
 };
 
 export class Logger {
@@ -30,6 +32,12 @@ export class Logger {
 		if (loglevels.hasOwnProperty(values.loglevel)) {
 			this.loglevel = loglevels[values.loglevel];
 		}
+	}
+	static warn(string) {
+		if (this.loglevel < 6)
+			console.log(
+				`${Utility.makeBold("WARN:")} \x1b[4\x1b[31m${string}\x1b[0m`,
+			);
 	}
 
 	static info(string) {
