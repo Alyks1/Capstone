@@ -8,6 +8,7 @@ import {
 	centuries,
 	isBC,
 	isCenturies,
+	isConnectingWord,
 	isMillennium,
 	isYearOld,
 	millennium,
@@ -19,6 +20,7 @@ const YEAR_NOW = 2023;
 export interface WorkingData {
 	date: string;
 	trust: number;
+	pos: number;
 }
 
 export async function generateDataFromPost(
@@ -42,6 +44,7 @@ function createDate(text: string[]) {
 		data[i] = {
 			date: text[i],
 			trust: 0,
+			pos: 0,
 		};
 		if (!data[i].date) continue;
 		if (isRange(data[i].date)) {
@@ -51,29 +54,25 @@ function createDate(text: string[]) {
 		if (Utility.isNumber(data[i].date)) {
 			Logger.trace(`After isNumber: ${data[i].date}`);
 			data[i].trust++;
-			if (text.length > i + 1) {
-				const temp = data[i];
-				data[i] = lookAhead(text, i, 1, data);
-				if (temp.date === data[i].date) continue;
-				if (text.length > i + 2) {
-					data[i] = lookAhead(text, i, 2, data);
-				}
-			}
+			LookAhead(text, i, data);
 		}
 	}
 	data = filterData(data);
 	Logger.info(data.map((x) => `(${x.date} : ${x.trust})`));
 }
 
-function lookAhead(
-	text: string[],
-	i: number,
-	place: number,
-	data: WorkingData[],
-) {
-	const nextWord = text[i + place];
-	Logger.trace(`${place}. word: ${nextWord}`);
-	return switchTypes(nextWord, data[i]);
+function LookAhead(text: string[], i: number, data: WorkingData[]) {
+	data[i].pos++;
+	if (text.length > i + data[i].pos) {
+		const temp = data[i];
+		data[i] = switchTypes(data, text, i);
+		data[i].pos++;
+		if (temp.date === data[i].date) return data;
+		if (text.length > i + data[i].pos) {
+			data[i] = switchTypes(data, text, i);
+		}
+	}
+	return data;
 }
 
 function filterData(data: WorkingData[]) {
@@ -87,35 +86,42 @@ function filterData(data: WorkingData[]) {
 }
 
 function isRange(str: string) {
-	const hasHyphen = str.includes("-");
-	const hasSlash = str.includes("/");
-	const hasNumbers = str.match(/[0-9]+/);
-	return (hasHyphen && hasNumbers) || (hasSlash && hasNumbers);
+	const newStr = str.replace(/\//, "-");
+	const hasHyphen = newStr.includes("-");
+	const hasNumbers = newStr.match(/[0-9]+/);
+	return hasHyphen && hasNumbers;
 }
 function averageRange(data: WorkingData): WorkingData {
 	Logger.trace(`Averaging range: ${data.date}`);
 	const matchNrs = /[0-9]+/g;
 	const bothNrs = data.date.split("-");
+	Logger.trace(bothNrs);
 	const numbers = bothNrs.map((x) => {
 		const match = (x.match(matchNrs) ?? [""])[0];
-		const result: WorkingData = { date: match, trust: data.trust };
-		if (isBC(x)) return BC(result);
-		result;
+		// const result: WorkingData = { date: match, trust: data.trust };
+		if (isBC(x)) return BC({ date: match, trust: data.trust, pos: data.pos });
+		return { date: match, trust: data.trust };
 	});
 	const total = numbers.reduce(
 		(acc: number, x: WorkingData) => +x.date + acc,
 		0,
 	);
-	return { date: (total / numbers.length).toString(), trust: 0 };
+	return { date: (total / numbers.length).toString(), trust: 0, pos: data.pos };
 }
 
-function switchTypes(type: string, input: WorkingData): WorkingData {
-	Logger.trace(`switching Type ${type} for ${input.date}`);
-	if (isBC(type)) return BC(input);
-	if (type.includes("ad")) return input;
-	if (isCenturies(type)) return centuries(input);
-	if (isMillennium(type)) return millennium(input);
-	if (isYearOld(type)) return yearOld(input, YEAR_NOW);
-	//TODO: Implement 'to' as range
-	return input;
+function switchTypes(
+	data: WorkingData[],
+	text: string[],
+	i: number,
+): WorkingData {
+	const currentData = data[i];
+	const type = text[i + currentData.pos];
+	Logger.trace(`switching Type ${type} for ${currentData.date}`);
+	if (isBC(type)) return BC(currentData);
+	if (type.includes("ad")) return currentData;
+	if (isCenturies(type)) return centuries(currentData);
+	if (isMillennium(type)) return millennium(currentData);
+	if (isYearOld(type)) return yearOld(currentData, YEAR_NOW);
+	if (isConnectingWord(type)) return LookAhead(text, i, data)[i];
+	return currentData;
 }
