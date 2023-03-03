@@ -4,6 +4,7 @@ import { Website } from "../Types/Website";
 import { Logger } from "../Utility/logging";
 import { Utility } from "../Utility/utility";
 import {
+	AD,
 	BC,
 	centuries,
 	isBC,
@@ -12,6 +13,7 @@ import {
 	isMillennium,
 	isYearOld,
 	millennium,
+	noMatch,
 	yearOld,
 } from "./dateTypes";
 
@@ -30,15 +32,17 @@ export async function generateDataFromPost(
 ) {
 	Logger.trace(`Creating data from ${posts.length} posts`);
 	for (let post of posts) {
+		Logger.debug(post.text);
 		const text = Utility.sanatizeText(post.text);
-		Logger.debug(text);
 		const textArr = text.split(" ");
-		createDate(textArr);
+		let data = createDate(textArr);
+		data = filterData(data);
+		data = calcTrust(data);
+		Logger.info(data.map((x) => `(${x.date} : ${x.trust})`));
 	}
 }
 
 function createDate(text: string[]) {
-	Logger.trace(`Text: ${text}`);
 	let data: WorkingData[] = [];
 	for (let i = 0; i < text.length; i++) {
 		data[i] = {
@@ -57,8 +61,7 @@ function createDate(text: string[]) {
 			LookAhead(text, i, data);
 		}
 	}
-	data = filterData(data);
-	Logger.info(data.map((x) => `(${x.date} : ${x.trust})`));
+	return data;
 }
 
 function LookAhead(text: string[], i: number, data: WorkingData[]) {
@@ -67,7 +70,7 @@ function LookAhead(text: string[], i: number, data: WorkingData[]) {
 		const temp = data[i];
 		data[i] = switchTypes(data, text, i);
 		data[i].pos++;
-		if (temp.date === data[i].date) return data;
+		if (temp.date === data[i].date && data[i].pos < 3) return data;
 		if (text.length > i + data[i].pos) {
 			data[i] = switchTypes(data, text, i);
 		}
@@ -75,6 +78,18 @@ function LookAhead(text: string[], i: number, data: WorkingData[]) {
 	return data;
 }
 
+function calcTrust(data: WorkingData[]) {
+	data.forEach((x) => {
+		//If the date is not between 0 and 100
+		if (+x.date < 0 || +x.date > 101) x.trust++;
+		Logger.debug(`Date: ${x.date} : Trust: ${x.trust}`);
+		//If many different numbers, more precision
+		if (new Set([...x.date]).size === x.date.length) x.trust++;
+		Logger.debug(`Date: ${x.date} : Trust: ${x.trust}`);
+	});
+	if (data.length === 1) data[0].trust + 2;
+	return data;
+}
 function filterData(data: WorkingData[]) {
 	//If trust is less than 1, remove
 	data = data.filter((x) => x.trust >= 1);
@@ -98,7 +113,6 @@ function averageRange(data: WorkingData): WorkingData {
 	Logger.trace(bothNrs);
 	const numbers = bothNrs.map((x) => {
 		const match = (x.match(matchNrs) ?? [""])[0];
-		// const result: WorkingData = { date: match, trust: data.trust };
 		if (isBC(x)) return BC({ date: match, trust: data.trust, pos: data.pos });
 		return { date: match, trust: data.trust };
 	});
@@ -106,7 +120,11 @@ function averageRange(data: WorkingData): WorkingData {
 		(acc: number, x: WorkingData) => +x.date + acc,
 		0,
 	);
-	return { date: (total / numbers.length).toString(), trust: 0, pos: data.pos };
+	return {
+		date: (total / numbers.length).toString(),
+		trust: data.trust++,
+		pos: data.pos,
+	};
 }
 
 function switchTypes(
@@ -118,10 +136,10 @@ function switchTypes(
 	const type = text[i + currentData.pos];
 	Logger.trace(`switching Type ${type} for ${currentData.date}`);
 	if (isBC(type)) return BC(currentData);
-	if (type.includes("ad")) return currentData;
+	if (type.includes("ad")) return AD(currentData);
 	if (isCenturies(type)) return centuries(currentData);
 	if (isMillennium(type)) return millennium(currentData);
 	if (isYearOld(type)) return yearOld(currentData, YEAR_NOW);
 	if (isConnectingWord(type)) return LookAhead(text, i, data)[i];
-	return currentData;
+	return noMatch(currentData);
 }

@@ -62,4 +62,10 @@ export class Logger {
 			console.log(`${Utility.makeBold("BLOCK:")} \x1b[31m${string}\x1b[0m`);
 		}
 	}
+
+	static specific(str: string, locator: string, text: string) {
+		if (text.startsWith(locator)) {
+			console.log(`${Utility.makeBold("SPECIFIC:")} \x1b[32m${str}\x1b[0m`);
+		}
+	}
 }
