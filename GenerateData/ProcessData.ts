@@ -13,8 +13,6 @@ export function calcTrust(data: WorkingData[]) {
 export function filterData(data: WorkingData[]) {
 	//If trust is less than 1, remove
 	data = data.filter((x) => x.trust >= 1);
-	//If data is 1 char wide, remove
-	data = data.filter((x) => x.date.length > 1);
 	//If data is above 1940, remove
 	data = data.filter((x) => +x.date < 1940);
 	return data;

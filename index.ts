@@ -8,12 +8,13 @@ import { PuppeteerBlocker } from "@cliqz/adblocker-puppeteer";
 import fetch from "cross-fetch";
 import * as Adblock from "./Utility/adBlock/adblock";
 import { getDateFromPost } from "./GenerateData/generateData";
+import { downloadImages } from "./downloadImages";
 
 async function start() {
 	Logger.SetLoglevel();
 
 	const browser = await puppeteer.launch({
-		headless: true,
+		headless: false,
 	});
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();
@@ -43,6 +44,7 @@ async function start() {
 		Logger.info(`Scraping ${website.nrOfPages} ${website.group} pages`);
 		posts.push(...(await Scraper(page, website.nrOfPages, websiteGroupInfo)));
 		const processedPosts = getDateFromPost(posts);
+		await downloadImages(page, processedPosts);
 	}
 	await browser.close();
 }

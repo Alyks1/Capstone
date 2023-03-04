@@ -17,7 +17,7 @@ export function isCenturies(str: string) {
 }
 export function centuries(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to century`);
-	const nr = +data.date * 100;
+	const nr = (+data.date - 1) * 100;
 	return { date: `${nr}`, trust: data.trust + 2, pos: data.pos };
 }
 

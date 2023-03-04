@@ -75,7 +75,7 @@ function treeStump(data: WorkingData, text: string[]) {
 		if (text.length > data.pos) txt = text[data.pos];
 		data = averageRange(data, txt);
 	}
-	if (Utility.isNumber(data.date)) {
+	if (Utility.isNumber(data.date) && data.date !== "") {
 		Logger.trace(`After isNumber: ${data.date}`);
 		data.trust++;
 		data = LookAhead(data, text);
