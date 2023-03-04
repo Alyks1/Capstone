@@ -9,9 +9,9 @@ export async function Scraper(
 	page: Page,
 	pages: number,
 	groupInfo: WebsiteGroupInfo,
+	allPosts: Set<string>,
 ) {
 	const posts: Post[] = [];
-	const allPosts: Set<string> = new Set<string>();
 
 	for (let i = 0; i < pages; i++) {
 		Logger.trace(`${i} of ${pages} pages`);
@@ -38,13 +38,13 @@ export async function Scraper(
 			}
 
 			//If the post has not been scraped, push it
-			const blancData: WorkingData = {
+			const blankData: WorkingData = {
 				date: "",
 				trust: 0,
 				pos: 0,
 			};
 			if (!allPosts.has(text))
-				posts.push({ text: text, imgSrc: imgSrc, data: blancData });
+				posts.push({ text: text, imgSrc: imgSrc, data: blankData });
 			allPosts.add(text);
 		}
 		Logger.debug(allPosts.size);

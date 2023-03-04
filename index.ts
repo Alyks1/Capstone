@@ -27,6 +27,8 @@ async function start() {
 	await blocker.enableBlockingInPage(page);
 	Adblock.logging(blocker);
 
+	//Set of all texts across websites to remove duplicates
+	const allPosts: Set<string> = new Set<string>();
 	for (let website of websites) {
 		if (website.nrOfPages === 0) {
 			Logger.trace(`Skipping website ${website.url}`);
@@ -41,9 +43,16 @@ async function start() {
 			continue;
 		}
 
+		Logger.info(`Scraping ${website.nrOfPages} pages from ${website.url}`);
+		const newPosts = await Scraper(
+			page,
+			website.nrOfPages,
+			websiteGroupInfo,
+			allPosts,
+		);
+
 		const posts: Post[] = [];
-		Logger.info(`Scraping ${website.nrOfPages} ${website.group} pages`);
-		posts.push(...(await Scraper(page, website.nrOfPages, websiteGroupInfo)));
+		posts.push(...newPosts);
 		const processedPosts = getDateFromPost(posts);
 		const weightedPosts = addWebsiteWeight(processedPosts, website.weight);
 		await downloadImages(page, weightedPosts);
