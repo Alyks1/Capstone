@@ -1,6 +1,4 @@
-import { Page } from "puppeteer";
 import { Post } from "../Types/Post";
-import { Website } from "../Types/Website";
 import { WorkingData } from "../Types/WorkingData";
 import { Logger } from "../Utility/logging";
 import { Utility } from "../Utility/utility";

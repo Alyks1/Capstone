@@ -1,4 +1,6 @@
+import { Post } from "../Types/Post";
 import { WorkingData } from "../Types/WorkingData";
+import { Logger } from "../Utility/logging";
 
 export function calcTrust(data: WorkingData[]) {
 	data.forEach((x) => {
@@ -23,4 +25,14 @@ export function chooseMostTrusted(data: WorkingData[]) {
 		if (x.trust > result.trust) result = x;
 	});
 	return result;
+}
+
+export function addWebsiteWeight(posts: Post[], websiteWeight: number): Post[] {
+	posts.forEach((x) => {
+		x.data.trust = Math.round(x.data.trust * websiteWeight);
+	});
+	Logger.info(
+		posts.map((x) => `\n(${x.data.date.padEnd(7, " ")} : ${x.data.trust})`),
+	);
+	return posts;
 }

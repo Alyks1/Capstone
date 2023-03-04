@@ -9,12 +9,13 @@ import fetch from "cross-fetch";
 import * as Adblock from "./Utility/adBlock/adblock";
 import { getDateFromPost } from "./GenerateData/generateData";
 import { downloadImages } from "./downloadImages";
+import { addWebsiteWeight } from "./GenerateData/ProcessData";
 
 async function start() {
 	Logger.SetLoglevel();
 
 	const browser = await puppeteer.launch({
-		headless: false,
+		headless: true,
 	});
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();
@@ -44,7 +45,8 @@ async function start() {
 		Logger.info(`Scraping ${website.nrOfPages} ${website.group} pages`);
 		posts.push(...(await Scraper(page, website.nrOfPages, websiteGroupInfo)));
 		const processedPosts = getDateFromPost(posts);
-		await downloadImages(page, processedPosts);
+		const weightedPosts = addWebsiteWeight(processedPosts, website.weight);
+		await downloadImages(page, weightedPosts);
 	}
 	await browser.close();
 }

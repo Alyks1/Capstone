@@ -6,13 +6,15 @@ import { Logger } from "./Utility/logging";
 import fs from "fs";
 
 export async function downloadImages(page: Page, posts: Post[]) {
-	Logger.trace("Downloading images");
-	//TODO: Fix this
+	Logger.info(`Downloading images from ${posts.length}`);
 	for (const post of posts) {
-		const id = uuidv4().toString();
-		const fileName = `${post.data.date}_${id}`;
 		const response = await page.goto(post.imgSrc);
 		const imageBuffer = await response.buffer();
-		await fs.promises.writeFile(`./Images/${fileName}.jpg`, imageBuffer);
+		const date = post.data.date;
+		for (let i = 0; i < post.data.trust; i++) {
+			const id = uuidv4().toString();
+			const fileName = `${date}_${id}`;
+			await fs.promises.writeFile(`./Images/${fileName}.jpg`, imageBuffer);
+		}
 	}
 }
