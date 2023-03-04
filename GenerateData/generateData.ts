@@ -1,8 +1,10 @@
 import { Page } from "puppeteer";
 import { Post } from "../Types/Post";
 import { Website } from "../Types/Website";
+import { WorkingData } from "../Types/WorkingData";
 import { Logger } from "../Utility/logging";
 import { Utility } from "../Utility/utility";
+import { averageRange, isRange } from "./calculateRange";
 import {
 	AD,
 	BC,
@@ -16,14 +18,9 @@ import {
 	noMatch,
 	yearOld,
 } from "./dateTypes";
+import { calcTrust, chooseMostTrusted, filterData } from "./ProcessData";
 
 const YEAR_NOW = 2023;
-
-export interface WorkingData {
-	date: string;
-	trust: number;
-	pos: number;
-}
 
 export async function generateDataFromPost(
 	posts: Post[],
@@ -45,6 +42,11 @@ export async function generateDataFromPost(
 	}
 }
 
+/**
+ * Iterates through every word and puts it to the top of the tree
+ * @param text Array containing every word
+ * @returns
+ */
 function createDate(text: string[]) {
 	let data: WorkingData[] = [];
 	for (let i = 0; i < text.length; i++) {
@@ -58,7 +60,41 @@ function createDate(text: string[]) {
 	return data;
 }
 
-function LookAhead(text: string[], i: number, data: WorkingData) {
+/**
+ * Checks if the data is a range, if so averages it.
+ * Then checks if the data is a number, if so, look ahead to the next word
+ * to match the date types.
+ *
+ * Root of the Process.
+ * @param data Data being worked with
+ * @param text Array of all text words
+ * @param i Current index of the text array
+ * @returns
+ */
+function treeStump(data: WorkingData, text: string[], i: number) {
+	data.pos++;
+	if (isRange(data.date)) {
+		Logger.trace(`After isRange: ${data.date}`);
+		let txt = "";
+		if (text.length > i + data.pos) txt = text[i + data.pos];
+		data = averageRange(data, txt);
+	}
+	if (Utility.isNumber(data.date)) {
+		Logger.trace(`After isNumber: ${data.date}`);
+		data.trust++;
+		data = LookAhead(data, i, text);
+	}
+	return data;
+}
+
+/**
+ * Looks at the next word to match with the date types. If there is a match, look at the next position and do again.
+ * @param text Array of all text words
+ * @param i Current index in the array
+ * @param data Current data being worked on
+ * @returns WorkingData that
+ */
+function LookAhead(data: WorkingData, i: number, text: string[]) {
 	if (text.length > i + data.pos) {
 		const temp = data;
 		data = switchTypes(data, text, i);
@@ -71,85 +107,13 @@ function LookAhead(text: string[], i: number, data: WorkingData) {
 	return data;
 }
 
-function treeStump(data: WorkingData, text: string[], i: number) {
-	data.pos++;
-	if (isRange(data.date)) {
-		Logger.trace(`After isRange: ${data.date}`);
-		let txt = "";
-		if (text.length > i + data.pos) txt = text[i + data.pos];
-		data = averageRange(data, txt);
-	}
-	if (Utility.isNumber(data.date)) {
-		Logger.trace(`After isNumber: ${data.date}`);
-		data.trust++;
-		data = LookAhead(text, i, data);
-	}
-	return data;
-}
-
-function calcTrust(data: WorkingData[]) {
-	data.forEach((x) => {
-		//If the date is not between 0 and 100
-		if (+x.date < 0 || +x.date > 101) x.trust++;
-		//If many different numbers, more precision
-		if (new Set([...x.date]).size === x.date.length) x.trust++;
-	});
-	if (data.length === 1) data[0].trust + 2;
-	return data;
-}
-function filterData(data: WorkingData[]) {
-	//If trust is less than 1, remove
-	data = data.filter((x) => x.trust >= 1);
-	//If data is 1 char wide, remove
-	data = data.filter((x) => x.date.length > 1);
-	//If data is above 1940, remove
-	data = data.filter((x) => +x.date < 1940);
-	return data;
-}
-function chooseMostTrusted(data: WorkingData[]) {
-	let result: WorkingData = data[0];
-	data.forEach((x) => {
-		if (x.trust > result.trust) result = x;
-	});
-	return result;
-}
-
-function isRange(str: string) {
-	const hasHyphen = str.includes("-");
-	const hasNumbers = str.match(/[0-9]+/);
-	return hasHyphen && hasNumbers;
-}
-function averageRange(data: WorkingData, nextWord: string): WorkingData {
-	Logger.trace(`Averaging range: ${data.date} potentially with ${nextWord}`);
-	const matchNrs = /[0-9]+/g;
-	//before split, check if text is a nr
-	//if it is, use that number for calc
-	//otherwise split the existing string.
-	//This needs to be done to avoid accidentaly splitting negative numbers
-	let bothNrs: string[] = [];
-	if (Utility.isNumber(nextWord)) {
-		bothNrs.push(data.date);
-		bothNrs.push(nextWord);
-	} else bothNrs = data.date.split("-");
-	Logger.trace(`Both nrs = ${bothNrs}`);
-	const numbers: WorkingData[] = bothNrs.map((x) => {
-		if (Utility.isNumber(x))
-			return { date: x, trust: data.trust, pos: data.pos };
-		const match = (x.match(matchNrs) ?? [""])[0];
-		if (isBC(x)) return BC({ date: match, trust: data.trust, pos: data.pos });
-		return { date: match, trust: data.trust, pos: data.pos };
-	});
-	const total = numbers.reduce(
-		(acc: number, x: WorkingData) => +x.date + acc,
-		0,
-	);
-	return {
-		date: (total / numbers.length).toString(),
-		trust: data.trust++,
-		pos: data.pos,
-	};
-}
-
+/**
+ * Matches a word with date types to decide which action to take
+ * @param data Current data being worked on
+ * @param text Array of all text words
+ * @param i Current index in the array
+ * @returns
+ */
 function switchTypes(
 	data: WorkingData,
 	text: string[],

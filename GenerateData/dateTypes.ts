@@ -1,5 +1,5 @@
 import { Logger } from "../Utility/logging";
-import { WorkingData } from "./generateData";
+import { WorkingData } from "../Types/WorkingData";
 
 export function isBC(str: string) {
 	return str.includes("bc");
