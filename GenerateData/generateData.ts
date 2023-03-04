@@ -36,6 +36,7 @@ export function getDateFromPost(posts: Post[]) {
 		post.data = chooseMostTrusted(data);
 		Logger.info(`(${post.data.date} : ${post.data.trust})`);
 	}
+	posts = posts.filter((x) => x.data.trust > 0);
 	return posts;
 }
 
