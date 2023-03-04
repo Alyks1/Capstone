@@ -13,8 +13,7 @@ export function AD(data: WorkingData): WorkingData {
 }
 
 export function isCenturies(str: string) {
-	//TODO: Fix stand alone C
-	return str.includes("century") || str.includes(" c ");
+	return str === "century" || str === "c";
 }
 export function centuries(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to century`);
@@ -23,7 +22,7 @@ export function centuries(data: WorkingData): WorkingData {
 }
 
 export function isMillennium(str: string) {
-	return str.includes("millennium") || str.includes("millenia");
+	return str === "millennium" || str === "millenia";
 }
 export function millennium(data: WorkingData): WorkingData {
 	const nr = +data.date * 1000;

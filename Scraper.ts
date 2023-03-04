@@ -11,7 +11,6 @@ export async function Scraper(
 ) {
 	const posts: Post[] = [];
 	const allPosts: Set<string> = new Set<string>();
-	//TODO: Add Set for all Posts to not process duplicate posts
 
 	for (let i = 0; i < pages; i++) {
 		Logger.trace(`${i} of ${pages} pages`);
