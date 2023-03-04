@@ -20,6 +20,12 @@ import { calcTrust, chooseMostTrusted, filterData } from "./ProcessData";
 
 const YEAR_NOW = 2023;
 
+/**
+ * Returns a list of posts with updated Data field containing a post date chosen based on the most trusted
+ * date provided from the post text.
+ * @param posts
+ * @returns
+ */
 export function getDateFromPost(posts: Post[]) {
 	Logger.trace(`Creating data from ${posts.length} posts`);
 	for (let post of posts) {
