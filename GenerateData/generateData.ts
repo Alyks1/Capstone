@@ -22,11 +22,7 @@ import { calcTrust, chooseMostTrusted, filterData } from "./ProcessData";
 
 const YEAR_NOW = 2023;
 
-export async function generateDataFromPost(
-	posts: Post[],
-	page: Page,
-	website: Website,
-) {
+export function getDateFromPost(posts: Post[]) {
 	Logger.trace(`Creating data from ${posts.length} posts`);
 	for (let post of posts) {
 		Logger.debug(post.text);
@@ -37,9 +33,10 @@ export async function generateDataFromPost(
 		data = filterData(data);
 		if (data.length < 1) continue;
 		data = calcTrust(data);
-		const FinalData = chooseMostTrusted(data);
-		Logger.info(`(${FinalData.date} : ${FinalData.trust})`);
+		post.data = chooseMostTrusted(data);
+		Logger.info(`(${post.data.date} : ${post.data.trust})`);
 	}
+	return posts;
 }
 
 /**

@@ -3,6 +3,7 @@ import { Page } from "puppeteer";
 import { Utility } from "./Utility/utility";
 import { Logger } from "./Utility/logging";
 import { WebsiteGroupInfo } from "./Types/WebsiteGroupInfo";
+import { WorkingData } from "./Types/WorkingData";
 
 export async function Scraper(
 	page: Page,
@@ -37,7 +38,13 @@ export async function Scraper(
 			}
 
 			//If the post has not been scraped, push it
-			if (!allPosts.has(text)) posts.push({ text: text, imgSrc: imgSrc });
+			const blancData: WorkingData = {
+				date: "",
+				trust: 0,
+				pos: 0,
+			};
+			if (!allPosts.has(text))
+				posts.push({ text: text, imgSrc: imgSrc, data: blancData });
 			allPosts.add(text);
 		}
 		Logger.debug(allPosts.size);
