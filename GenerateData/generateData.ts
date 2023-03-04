@@ -53,9 +53,9 @@ function createDate(text: string[]) {
 		data[i] = {
 			date: text[i],
 			trust: 0,
-			pos: 0,
+			pos: i,
 		};
-		data[i] = treeStump(data[i], text, i);
+		data[i] = treeStump(data[i], text);
 	}
 	return data;
 }
@@ -68,40 +68,38 @@ function createDate(text: string[]) {
  * Root of the Process.
  * @param data Data being worked with
  * @param text Array of all text words
- * @param i Current index of the text array
  * @returns
  */
-function treeStump(data: WorkingData, text: string[], i: number) {
+function treeStump(data: WorkingData, text: string[]) {
 	data.pos++;
 	if (isRange(data.date)) {
 		Logger.trace(`After isRange: ${data.date}`);
 		let txt = "";
-		if (text.length > i + data.pos) txt = text[i + data.pos];
+		if (text.length > data.pos) txt = text[data.pos];
 		data = averageRange(data, txt);
 	}
 	if (Utility.isNumber(data.date)) {
 		Logger.trace(`After isNumber: ${data.date}`);
 		data.trust++;
-		data = LookAhead(data, i, text);
+		data = LookAhead(data, text);
 	}
 	return data;
 }
 
 /**
  * Looks at the next word to match with the date types. If there is a match, look at the next position and do again.
- * @param text Array of all text words
- * @param i Current index in the array
  * @param data Current data being worked on
+ * @param text Array of all text words
  * @returns WorkingData that
  */
-function LookAhead(data: WorkingData, i: number, text: string[]) {
-	if (text.length > i + data.pos) {
+function LookAhead(data: WorkingData, text: string[]) {
+	if (text.length > data.pos) {
 		const temp = data;
-		data = switchTypes(data, text, i);
+		data = switchTypes(data, text);
 		data.pos++;
 		if (temp.date === data.date && data.pos < 3) return data;
-		if (text.length > i + data.pos) {
-			data = switchTypes(data, text, i);
+		if (text.length > data.pos) {
+			data = switchTypes(data, text);
 		}
 	}
 	return data;
@@ -111,21 +109,16 @@ function LookAhead(data: WorkingData, i: number, text: string[]) {
  * Matches a word with date types to decide which action to take
  * @param data Current data being worked on
  * @param text Array of all text words
- * @param i Current index in the array
  * @returns
  */
-function switchTypes(
-	data: WorkingData,
-	text: string[],
-	i: number,
-): WorkingData {
-	const type = text[i + data.pos];
+function switchTypes(data: WorkingData, text: string[]): WorkingData {
+	const type = text[data.pos];
 	Logger.trace(`switching Type ${type} for ${data.date}`);
 	if (isBC(type)) return BC(data);
 	if (type.includes("ad")) return AD(data);
 	if (isCenturies(type)) return centuries(data);
 	if (isMillennium(type)) return millennium(data);
 	if (isYearOld(type)) return yearOld(data, YEAR_NOW);
-	if (isConnectingWord(type)) return treeStump(data, text, i);
+	if (isConnectingWord(type)) return treeStump(data, text);
 	return noMatch(data);
 }
