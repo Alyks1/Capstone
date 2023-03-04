@@ -38,8 +38,10 @@ export async function generateDataFromPost(
 		let data = createDate(textArr);
 
 		data = filterData(data);
+		if (data.length < 1) continue;
 		data = calcTrust(data);
-		Logger.info(data.map((x) => `(${x.date} : ${x.trust})`));
+		const FinalData = chooseMostTrusted(data);
+		Logger.info(`(${FinalData.date} : ${FinalData.trust})`);
 	}
 }
 
@@ -104,16 +106,21 @@ function filterData(data: WorkingData[]) {
 	data = data.filter((x) => +x.date < 1940);
 	return data;
 }
+function chooseMostTrusted(data: WorkingData[]) {
+	let result: WorkingData = data[0];
+	data.forEach((x) => {
+		if (x.trust > result.trust) result = x;
+	});
+	return result;
+}
 
 function isRange(str: string) {
-	const newStr = str.replace(/\//, "-");
-	const hasHyphen = newStr.includes("-");
-	const hasNumbers = newStr.match(/[0-9]+/);
+	const hasHyphen = str.includes("-");
+	const hasNumbers = str.match(/[0-9]+/);
 	return hasHyphen && hasNumbers;
 }
 function averageRange(data: WorkingData, nextWord: string): WorkingData {
 	Logger.trace(`Averaging range: ${data.date} potentially with ${nextWord}`);
-	data.date = data.date.replace(/\//, "-");
 	const matchNrs = /[0-9]+/g;
 	//before split, check if text is a nr
 	//if it is, use that number for calc

@@ -13,6 +13,7 @@ export function AD(data: WorkingData): WorkingData {
 }
 
 export function isCenturies(str: string) {
+	//TODO: Fix stand alone C
 	return str.includes("century") || str.includes(" c ");
 }
 export function centuries(data: WorkingData): WorkingData {
