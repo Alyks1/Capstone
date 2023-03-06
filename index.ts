@@ -11,9 +11,10 @@ import { getDateFromPost } from "./GenerateData/generateData";
 import { downloadImages } from "./downloadImages";
 import { addWebsiteWeight } from "./GenerateData/ProcessData";
 
-async function start() {
+export async function start() {
 	Logger.SetLoglevel();
-
+	//TODO: Add Unit Test
+	//TODO: Add logic to stop trying to scrape before timeout
 	const browser = await puppeteer.launch({
 		headless: true,
 	});
@@ -63,6 +64,7 @@ async function start() {
 async function LoadWebsites(): Promise<Website[]> {
 	const data = await import("./websites.json");
 	return data.default.map((website) => ({
+		id: website.id,
 		url: website.url,
 		group: website.group,
 		weight: website.weight,
@@ -75,5 +77,3 @@ async function LoadWebsiteGroupInfo(): Promise<
 > {
 	return (await import("./websiteGroupInfo.json")).default;
 }
-
-start();

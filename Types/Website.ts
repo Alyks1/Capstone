@@ -1,4 +1,5 @@
 export interface Website {
+	id: number;
 	url: string;
 	group: string;
 	/**
