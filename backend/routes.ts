@@ -1,5 +1,5 @@
 import express from "express";
-import { start } from "..";
+import { start } from "./core";
 export class RoutesConfig {
 	app: express.Application;
 

@@ -62,7 +62,7 @@ export async function start() {
 }
 
 async function LoadWebsites(): Promise<Website[]> {
-	const data = await import("./websites.json");
+	const data = await import("../../websites.json");
 	return data.default.map((website) => ({
 		id: website.id,
 		url: website.url,
@@ -75,5 +75,5 @@ async function LoadWebsites(): Promise<Website[]> {
 async function LoadWebsiteGroupInfo(): Promise<
 	Record<string, WebsiteGroupInfo>
 > {
-	return (await import("./websiteGroupInfo.json")).default;
+	return (await import("../../websiteGroupInfo.json")).default;
 }

@@ -1,7 +1,7 @@
 import express from "express";
 import * as http from "http";
-import { Logger } from "./Utility/logging";
-import { RoutesConfig } from "./web/routes";
+import { Logger } from "./core/Utility/logging";
+import { RoutesConfig } from "./routes";
 
 function startServer() {
 	Logger.trace("Starting Server");
