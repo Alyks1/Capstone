@@ -12,7 +12,6 @@ import { downloadImages } from "./downloadImages";
 import { addWebsiteWeight } from "./GenerateData/ProcessData";
 
 export async function start() {
-	Logger.SetLoglevel();
 	//TODO: Add Unit Test
 	//TODO: Add logic to stop trying to scrape before timeout
 	const browser = await puppeteer.launch({

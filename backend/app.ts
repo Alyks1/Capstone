@@ -1,25 +1,34 @@
-import express from "express";
-import * as http from "http";
 import { Logger } from "./core/Utility/logging";
-import { RoutesConfig } from "./routes";
+import { Server } from "socket.io";
+import { start as startScraper } from "./core/index";
+import express from "express";
 
 function startServer() {
 	Logger.trace("Starting Server");
-	const app: express.Application = express();
-	const server: http.Server = http.createServer(app);
+	const app = express();
 	const port = 3000;
-	const route: RoutesConfig = new RoutesConfig(app);
+	const http = require("http");
+	const server = http.createServer(app);
+	const io = new Server(server);
 
-	app.get("/", (req: express.Request, res: express.Response) => {
-		res.status(200).send(`Server running at http://localhost:${port}`);
-	});
+	app.use(express.static("../frontend"));
 
 	server.listen(port, () => {
-		Logger.trace("Server is listening");
+		console.log(`listening on http://localhost:${port}`);
+	});
+
+	io.on("connection", (socket) => {
+		socket.emit("Test");
+
+		socket.on("start", (...args) => {
+			startScraper();
+		});
 	});
 }
 
 function start() {
+	Logger.SetLoglevel();
+
 	startServer();
 }
 
