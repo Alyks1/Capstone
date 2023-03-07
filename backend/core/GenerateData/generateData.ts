@@ -15,7 +15,7 @@ import {
 	millennium,
 	noMatch,
 	yearOld,
-} from "./dateTypes";
+} from "./tokens";
 import { calcTrust, chooseMostTrusted, filterData } from "./ProcessData";
 
 const YEAR_NOW = 2023;

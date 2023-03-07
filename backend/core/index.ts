@@ -8,7 +8,7 @@ import { PuppeteerBlocker } from "@cliqz/adblocker-puppeteer";
 import fetch from "cross-fetch";
 import * as Adblock from "./Utility/adBlock/adblock";
 import { getDateFromPost } from "./GenerateData/generateData";
-import { downloadImages } from "./downloadImages";
+import { createDataset } from "./createDataset";
 import { addWebsiteWeight } from "./GenerateData/ProcessData";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
@@ -65,7 +65,7 @@ export async function startScraper(
 		const processedPosts = getDateFromPost(posts);
 		const weightedPosts = addWebsiteWeight(processedPosts, website.weight);
 		socket.emit("log", "Downloading images");
-		await downloadImages(page, weightedPosts);
+		await createDataset(page, weightedPosts);
 	}
 	socket.emit("log", "Scraper Finished");
 	await browser.close();

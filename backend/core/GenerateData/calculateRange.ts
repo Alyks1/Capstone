@@ -1,6 +1,6 @@
 import { Logger } from "../Utility/logging";
 import { Utility } from "../Utility/utility";
-import { BC, isBC } from "./dateTypes";
+import { BC, isBC } from "./tokens";
 import { WorkingData } from "../Types/WorkingData";
 
 export function isRange(str: string) {
