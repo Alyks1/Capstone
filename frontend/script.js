@@ -6,3 +6,7 @@ startScraperButton.addEventListener("click", () => {
 	console.log("Starting Scraper");
 	socket.emit("start");
 });
+
+socket.on("log", (msg) => {
+	console.log(msg);
+});

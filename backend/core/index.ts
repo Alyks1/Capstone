@@ -10,8 +10,13 @@ import * as Adblock from "./Utility/adBlock/adblock";
 import { getDateFromPost } from "./GenerateData/generateData";
 import { downloadImages } from "./downloadImages";
 import { addWebsiteWeight } from "./GenerateData/ProcessData";
+import { Socket } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
-export async function start() {
+export async function startScraper(
+	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
+) {
+	socket.emit("log", "Scraper Started");
 	//TODO: Add Unit Test
 	//TODO: Add logic to stop trying to scrape before timeout
 	const browser = await puppeteer.launch({
@@ -44,6 +49,10 @@ export async function start() {
 		}
 
 		Logger.info(`Scraping ${website.nrOfPages} pages from ${website.url}`);
+		socket.emit(
+			"log",
+			`Scraping ${website.nrOfPages} pages from ${website.url}`,
+		);
 		const newPosts = await Scraper(
 			page,
 			website.nrOfPages,
@@ -55,8 +64,10 @@ export async function start() {
 		posts.push(...newPosts);
 		const processedPosts = getDateFromPost(posts);
 		const weightedPosts = addWebsiteWeight(processedPosts, website.weight);
+		socket.emit("log", "Downloading images");
 		await downloadImages(page, weightedPosts);
 	}
+	socket.emit("log", "Scraper Finished");
 	await browser.close();
 }
 

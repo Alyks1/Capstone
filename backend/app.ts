@@ -1,6 +1,6 @@
 import { Logger } from "./core/Utility/logging";
 import { Server } from "socket.io";
-import { start as startScraper } from "./core/index";
+import { startScraper } from "./core/index";
 import express from "express";
 
 function startServer() {
@@ -18,10 +18,8 @@ function startServer() {
 	});
 
 	io.on("connection", (socket) => {
-		socket.emit("Test");
-
-		socket.on("start", (...args) => {
-			startScraper();
+		socket.on("start", () => {
+			startScraper(socket);
 		});
 	});
 }
