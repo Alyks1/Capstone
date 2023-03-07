@@ -1,7 +1,7 @@
+import { join } from "path";
+import { Logger } from "./Utility/logging";
 import { Page } from "puppeteer";
 import { Post } from "./Types/Post";
-import { v4 as uuidv4 } from "uuid";
-import { Logger } from "./Utility/logging";
 import fs from "fs";
 
 export async function downloadImages(page: Page, posts: Post[]) {
@@ -10,10 +10,7 @@ export async function downloadImages(page: Page, posts: Post[]) {
 		const response = await page.goto(post.imgSrc);
 		const imageBuffer = await response.buffer();
 		const date = post.data.date;
-		for (let i = 0; i < post.data.trust; i++) {
-			const id = uuidv4().toString();
-			const fileName = `${date}_${id}`;
-			await fs.promises.writeFile(`./Images/${fileName}.jpg`, imageBuffer);
-		}
+		const fileName = join(__dirname, `Images/${date}.jpg`);
+		await fs.promises.writeFile(fileName, imageBuffer);
 	}
 }

@@ -10,10 +10,15 @@ import * as Adblock from "./Utility/adBlock/adblock";
 import { getDateFromPost } from "./GenerateData/generateData";
 import { downloadImages } from "./downloadImages";
 import { addWebsiteWeight } from "./GenerateData/ProcessData";
+import { Socket } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
-async function start() {
-	Logger.SetLoglevel();
-
+export async function startScraper(
+	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
+) {
+	socket.emit("log", "Scraper Started");
+	//TODO: Add Unit Test
+	//TODO: Add logic to stop trying to scrape before timeout
 	const browser = await puppeteer.launch({
 		headless: true,
 	});
@@ -44,6 +49,10 @@ async function start() {
 		}
 
 		Logger.info(`Scraping ${website.nrOfPages} pages from ${website.url}`);
+		socket.emit(
+			"log",
+			`Scraping ${website.nrOfPages} pages from ${website.url}`,
+		);
 		const newPosts = await Scraper(
 			page,
 			website.nrOfPages,
@@ -55,14 +64,17 @@ async function start() {
 		posts.push(...newPosts);
 		const processedPosts = getDateFromPost(posts);
 		const weightedPosts = addWebsiteWeight(processedPosts, website.weight);
+		socket.emit("log", "Downloading images");
 		await downloadImages(page, weightedPosts);
 	}
+	socket.emit("log", "Scraper Finished");
 	await browser.close();
 }
 
 async function LoadWebsites(): Promise<Website[]> {
-	const data = await import("./websites.json");
+	const data = await import("../../websites.json");
 	return data.default.map((website) => ({
+		id: website.id,
 		url: website.url,
 		group: website.group,
 		weight: website.weight,
@@ -73,7 +85,5 @@ async function LoadWebsites(): Promise<Website[]> {
 async function LoadWebsiteGroupInfo(): Promise<
 	Record<string, WebsiteGroupInfo>
 > {
-	return (await import("./websiteGroupInfo.json")).default;
+	return (await import("../../websiteGroupInfo.json")).default;
 }
-
-start();
