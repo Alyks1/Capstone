@@ -5,7 +5,6 @@ import { Scraper } from "./Scraper";
 import { Post } from "./Types/Post";
 import { Logger } from "./Utility/logging";
 import { PuppeteerBlocker } from "@cliqz/adblocker-puppeteer";
-import fetch from "cross-fetch";
 import * as Adblock from "./Utility/adBlock/adblock";
 import { getDateFromPost } from "./GenerateData/generateData";
 import { createDataset } from "./createDataset";

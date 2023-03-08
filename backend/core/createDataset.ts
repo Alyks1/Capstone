@@ -18,6 +18,7 @@ interface CSVType {
 	id: string;
 }
 
+//TODO: Fix Tar path name
 export async function createDataset(page: Page, posts: Post[]) {
 	Logger.info(`Downloading images from ${posts.length} posts`);
 	const csv: CSVType[] = [];
