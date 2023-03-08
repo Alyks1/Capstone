@@ -1,16 +1,18 @@
+import { createGzip } from "zlib";
 import { join } from "path";
 import { Logger } from "./Utility/logging";
 import { Page } from "puppeteer";
 import { Post } from "./Types/Post";
-import { v4 as uuidv4 } from "uuid";
 import { stringify } from "csv";
+import { v4 as uuidv4 } from "uuid";
 import * as tar from "tar";
-import { createGzip } from "zlib";
 import fs from "fs";
 import writeFile from "write-file-atomic";
+import os from "os";
 
-const DATASET_PATH = "../../output/dataset";
-const RESULT_PATH = "../../output/result.tar.gz";
+const DATASET_PATH = "/output/dataset";
+const RESULT_PATH = "/output/result.tar.gz";
+const HOME_DIR = `${os.homedir()}/Desktop`;
 
 interface CSVType {
 	date: string;
@@ -18,11 +20,10 @@ interface CSVType {
 	id: string;
 }
 
-//TODO: Fix Tar path name
+//TODO: Clean result folder before creating new dataset
 export async function createDataset(page: Page, posts: Post[]) {
 	Logger.info(`Downloading images from ${posts.length} posts`);
 	const csv: CSVType[] = [];
-	const files: string[] = [];
 
 	for (const post of posts) {
 		const response = await page.goto(post.imgSrc);
@@ -35,15 +36,21 @@ export async function createDataset(page: Page, posts: Post[]) {
 			trust: trust,
 			id: id,
 		});
-		const fileName = join(__dirname, `${DATASET_PATH}/${id}.jpg`);
-		files.push(fileName);
-		await writeFile(fileName, imageBuffer);
+		const fileName = `${id}.jpg`;
+		const filePath = join(`${HOME_DIR}/`, `${DATASET_PATH}/`, `${fileName}`);
+		await writeFile(filePath, imageBuffer);
 	}
-	files.push(await createCSV(csv));
-	const tarStream = tar.create({ gzip: true }, files);
+	await createCSV(csv);
+	const files: string[] = await fs.promises.readdir(
+		`${HOME_DIR}/output/dataset/`,
+	);
 
-	Logger.info("Trying to create results stream");
-	const resultsPath = join(__dirname, RESULT_PATH);
+	const tarStream = tar.create(
+		{ gzip: true, cwd: `${HOME_DIR}/output/dataset` },
+		files,
+	);
+
+	const resultsPath = join(`${HOME_DIR}/`, RESULT_PATH);
 	const fstream = fs.createWriteStream(resultsPath);
 	const gzip = createGzip();
 	tarStream.pipe(gzip).pipe(fstream);
@@ -56,7 +63,7 @@ export async function createDataset(page: Page, posts: Post[]) {
 async function createCSV(csv: CSVType[]) {
 	Logger.info("Trying to create CSV");
 	const output = stringify([...csv]);
-	const fileName = join(__dirname, `${DATASET_PATH}/datasetInfo.csv`);
-	await fs.promises.writeFile(fileName, output);
-	return fileName;
+	const fileName = "datasetInfo.csv";
+	const filePath = join(`${HOME_DIR}/`, `${DATASET_PATH}`, `/${fileName}`);
+	await fs.promises.writeFile(filePath, output);
 }
