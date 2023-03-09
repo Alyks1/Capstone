@@ -11,6 +11,7 @@ import { createDataset } from "./createDataset";
 import { addWebsiteWeight } from "./GenerateData/ProcessData";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import * as fs from "fs";
 
 export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
@@ -35,7 +36,8 @@ export async function startScraper(
 
 	Logger.trace("Loading websites");
 	//Set of all texts across websites to remove duplicates
-	const allPosts: Set<string> = new Set<string>();
+	const alreadyScrapedPosts: Set<string> = new Set<string>();
+	const allPosts: Post[] = [];
 	for (let website of websites) {
 		if (website.nrOfPages === 0) {
 			Logger.trace(`Skipping website ${website.url}`);
@@ -59,17 +61,19 @@ export async function startScraper(
 			page,
 			website.nrOfPages,
 			websiteGroupInfo,
-			allPosts,
+			alreadyScrapedPosts,
 		);
 
-		const posts: Post[] = [];
-		posts.push(...newPosts);
-		const processedPosts = getDateFromPost(posts);
+		const processedPosts = getDateFromPost(newPosts);
 		const weightedPosts = addWebsiteWeight(processedPosts, website.weight);
 		socket.emit("log", "Downloading images");
-		await createDataset(page, weightedPosts);
+		allPosts.push(...weightedPosts);
 	}
+	await createDataset(page, allPosts);
+
 	socket.emit("log", "Scraper Finished");
+
+	socket.emit("sendDataset", "public/dataset.tar.gz");
 	await browser.close();
 }
 

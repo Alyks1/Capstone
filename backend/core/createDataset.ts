@@ -9,9 +9,8 @@ import * as tar from "tar";
 import fs from "fs";
 import writeFile from "write-file-atomic";
 
-const DATASET_PATH = "/output/dataset";
-const RESULT_PATH = "/output/result.tar.gz";
-const HOME_DIR = "../";
+const DATASET_PATH = "../output/dataset";
+const RESULT_PATH = "../frontend/dataset.tar.gz";
 
 interface CSVType {
 	date: string;
@@ -37,33 +36,29 @@ export async function createDataset(page: Page, posts: Post[]) {
 			id: id,
 		});
 		const fileName = `${id}.jpg`;
-		const filePath = join(`${HOME_DIR}/`, `${DATASET_PATH}/`, `${fileName}`);
+		const filePath = join(`${DATASET_PATH}/`, `${fileName}`);
 		await writeFile(filePath, imageBuffer);
 	}
 	await createCSV(csv);
-	const files: string[] = await fs.promises.readdir(
-		`${HOME_DIR}/output/dataset/`,
-	);
+	const files: string[] = await fs.promises.readdir(`${DATASET_PATH}`);
 
-	const tarStream = tar.create(
-		{ gzip: true, cwd: `${HOME_DIR}/output/dataset` },
-		files,
-	);
-
-	const resultsPath = join(`${HOME_DIR}/`, RESULT_PATH);
-	const fstream = fs.createWriteStream(resultsPath);
+	const tarStream = tar.create({ gzip: true, cwd: DATASET_PATH }, files);
+	const fstream = fs.createWriteStream(RESULT_PATH);
 	const gzip = createGzip();
+
 	tarStream.pipe(gzip).pipe(fstream);
 
-	fstream.on("finish", () => {
-		Logger.info("Finished compressing");
-	});
+	await new Promise((fulfill) => fstream.on("finish", fulfill));
+
+	Logger.info("Finished creating dataset");
+	const dataset = await fs.promises.readFile(RESULT_PATH);
+	writeFile(RESULT_PATH, dataset);
 }
 
 async function createCSV(csv: CSVType[]) {
 	Logger.info("Trying to create CSV");
 	const output = stringify([...csv]);
 	const fileName = "datasetInfo.csv";
-	const filePath = join(`${HOME_DIR}/`, `${DATASET_PATH}`, `/${fileName}`);
+	const filePath = join(DATASET_PATH, `/${fileName}`);
 	await fs.promises.writeFile(filePath, output);
 }

@@ -11,7 +11,7 @@ function startServer() {
 	const server = http.createServer(app);
 	const io = new Server(server);
 
-	app.use(express.static("../frontend"));
+	app.use(express.static("../frontend/"));
 
 	server.listen(port, () => {
 		console.log(`listening on http://localhost:${port}`);
