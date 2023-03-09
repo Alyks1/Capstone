@@ -5,10 +5,9 @@ import { Scraper } from "./Scraper";
 import { Post } from "./Types/Post";
 import { Logger } from "./Utility/logging";
 import { PuppeteerBlocker } from "@cliqz/adblocker-puppeteer";
-import fetch from "cross-fetch";
 import * as Adblock from "./Utility/adBlock/adblock";
 import { getDateFromPost } from "./GenerateData/generateData";
-import { downloadImages } from "./downloadImages";
+import { createDataset } from "./createDataset";
 import { addWebsiteWeight } from "./GenerateData/ProcessData";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
@@ -19,6 +18,7 @@ export async function startScraper(
 	socket.emit("log", "Scraper Started");
 	//TODO: Add Unit Test
 	//TODO: Add logic to stop trying to scrape before timeout
+	//TODO: Add Museum Website to scraper
 	const browser = await puppeteer.launch({
 		headless: true,
 	});
@@ -65,7 +65,7 @@ export async function startScraper(
 		const processedPosts = getDateFromPost(posts);
 		const weightedPosts = addWebsiteWeight(processedPosts, website.weight);
 		socket.emit("log", "Downloading images");
-		await downloadImages(page, weightedPosts);
+		await createDataset(page, weightedPosts);
 	}
 	socket.emit("log", "Scraper Finished");
 	await browser.close();

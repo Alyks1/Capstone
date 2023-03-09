@@ -33,6 +33,7 @@ export class Logger {
 			this.loglevel = loglevels[values.loglevel];
 		}
 	}
+
 	static warn(string) {
 		if (this.loglevel < 6)
 			console.log(
