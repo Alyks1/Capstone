@@ -18,12 +18,18 @@ interface CSVType {
 	id: string;
 }
 
-//TODO: Make data download on web
-//TODO: Clean result folder before creating new dataset
+/**
+ * creates a dataset from the given posts
+ * @param page
+ * @param posts
+ */
 export async function createDataset(page: Page, posts: Post[]) {
 	Logger.info(`Downloading images from ${posts.length} posts`);
-	const csv: CSVType[] = [];
 
+	Logger.trace("Removing Files from previous dataset");
+	clearDir();
+
+	const csv: CSVType[] = [];
 	for (const post of posts) {
 		const response = await page.goto(post.imgSrc);
 		const imageBuffer = await response.buffer();
@@ -36,11 +42,11 @@ export async function createDataset(page: Page, posts: Post[]) {
 			id: id,
 		});
 		const fileName = `${id}.jpg`;
-		const filePath = join(`${DATASET_PATH}/`, `${fileName}`);
+		const filePath = join(`${DATASET_PATH}/`, fileName);
 		await writeFile(filePath, imageBuffer);
 	}
 	await createCSV(csv);
-	const files: string[] = await fs.promises.readdir(`${DATASET_PATH}`);
+	const files: string[] = await fs.promises.readdir(DATASET_PATH);
 
 	const tarStream = tar.create({ gzip: true, cwd: DATASET_PATH }, files);
 	const fstream = fs.createWriteStream(RESULT_PATH);
@@ -54,11 +60,29 @@ export async function createDataset(page: Page, posts: Post[]) {
 	const dataset = await fs.promises.readFile(RESULT_PATH);
 	writeFile(RESULT_PATH, dataset);
 }
-
+/**
+ * creates a csv file with the id, date and trust of each post
+ * @param csv
+ */
 async function createCSV(csv: CSVType[]) {
 	Logger.info("Trying to create CSV");
 	const output = stringify([...csv]);
 	const fileName = "datasetInfo.csv";
 	const filePath = join(DATASET_PATH, `/${fileName}`);
 	await fs.promises.writeFile(filePath, output);
+}
+
+/**
+ * Removes all files from the dataset folder
+ */
+async function clearDir() {
+	fs.readdir(DATASET_PATH, (err, files) => {
+		if (err) throw err;
+
+		for (const file of files) {
+			fs.unlink(join(`${DATASET_PATH}`, file), (err) => {
+				if (err) throw err;
+			});
+		}
+	});
 }
