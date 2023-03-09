@@ -28,10 +28,12 @@ export async function startScraper(
 
 	const adblockList = await Adblock.getLists();
 
+	Logger.trace("Loading adblocker");
 	const blocker = await PuppeteerBlocker.fromLists(fetch, adblockList);
 	await blocker.enableBlockingInPage(page);
 	Adblock.logging(blocker);
 
+	Logger.trace("Loading websites");
 	//Set of all texts across websites to remove duplicates
 	const allPosts: Set<string> = new Set<string>();
 	for (let website of websites) {

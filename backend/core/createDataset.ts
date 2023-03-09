@@ -8,11 +8,10 @@ import { v4 as uuidv4 } from "uuid";
 import * as tar from "tar";
 import fs from "fs";
 import writeFile from "write-file-atomic";
-import os from "os";
 
 const DATASET_PATH = "/output/dataset";
 const RESULT_PATH = "/output/result.tar.gz";
-const HOME_DIR = `${os.homedir()}/Desktop`;
+const HOME_DIR = "../";
 
 interface CSVType {
 	date: string;
@@ -20,6 +19,7 @@ interface CSVType {
 	id: string;
 }
 
+//TODO: Make data download on web
 //TODO: Clean result folder before creating new dataset
 export async function createDataset(page: Page, posts: Post[]) {
 	Logger.info(`Downloading images from ${posts.length} posts`);
