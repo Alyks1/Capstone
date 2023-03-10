@@ -22,4 +22,5 @@ socket.on("log", (msg) => {
 socket.on("sendDatasetUrl", (url) => {
 	console.log(`Dataset url: ${url}`);
 	DatasetDownloadLink.style.visibility = "visible";
+	DatasetDownloadLink.href = url;
 });
