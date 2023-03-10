@@ -2,6 +2,6 @@ button {
     text-align: center;
 }
 
-#datasetDownload {
+#datasetDownloadDiv {
     visibility: hidden;
 }
