@@ -5,3 +5,7 @@ button {
 #datasetDownloadDiv {
     visibility: hidden;
 }
+
+#progressDiv {
+    visibility: hidden;
+}

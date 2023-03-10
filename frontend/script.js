@@ -8,21 +8,32 @@ import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 //TODO: Add View all scraped data button (where was data scraped, how accurate, total accuracy?)?
 
 const startScraperButton = document.getElementById("start-button");
-const DatasetDownloadDiv = document.getElementById("datasetDownloadDiv");
-const DatasetDownloadLink = document.getElementById("datasetDownloadLink");
+const datasetDownloadDiv = document.getElementById("datasetDownloadDiv");
+const datasetDownloadLink = document.getElementById("datasetDownloadLink");
+const progressBarDiv = document.getElementById("progressDiv");
+const progressBar = document.getElementById("progressBar");
 
 const socket = io("http://localhost:3000");
 startScraperButton.addEventListener("click", () => {
+	progressBarDiv.style.visibility = "visible";
+	progressBar.value = 0;
 	console.log("Starting Scraper");
 	socket.emit("start");
 });
 
 socket.on("log", (msg) => {
 	console.log(msg);
+	const progressText = document.getElementById("progressText");
+	progressText.textContent = msg;
+	progressBar.value++;
 });
 
 socket.on("sendDatasetUrl", (url) => {
 	console.log(`Dataset url: ${url}`);
-	DatasetDownloadDiv.style.visibility = "visible";
-	DatasetDownloadLink.href = url;
+	progressBar.value++;
+	if (progressBar.value === progressBar.max) {
+		datasetDownloadDiv.style.visibility = "visible";
+		datasetDownloadLink.href = url;
+		progressBarDiv.style.visibility = "hidden";
+	}
 });
