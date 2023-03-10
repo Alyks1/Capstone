@@ -1,0 +1,7 @@
+button {
+    text-align: center;
+}
+
+#datasetDownload {
+    visibility: hidden;
+}

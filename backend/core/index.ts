@@ -73,7 +73,7 @@ export async function startScraper(
 
 	socket.emit("log", "Scraper Finished");
 
-	socket.emit("sendDataset", "public/dataset.tar.gz");
+	socket.emit("sendDatasetUrl", "public/dataset.tar.gz");
 	await browser.close();
 }
 
