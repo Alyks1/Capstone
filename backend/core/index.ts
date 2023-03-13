@@ -11,7 +11,6 @@ import { createDataset } from "./createDataset";
 import { addWebsiteWeight } from "./GenerateData/ProcessData";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import * as fs from "fs";
 
 export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,

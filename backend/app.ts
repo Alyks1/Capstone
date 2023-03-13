@@ -18,8 +18,9 @@ function startServer() {
 	});
 
 	io.on("connection", (socket) => {
-		socket.on("start", () => {
-			startScraper(socket);
+		socket.on("start", startScraper);
+		socket.on("addWebsite", (website) => {
+			console.log(website);
 		});
 	});
 }

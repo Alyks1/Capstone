@@ -12,6 +12,7 @@ const datasetDownloadDiv = document.getElementById("datasetDownloadDiv");
 const datasetDownloadLink = document.getElementById("datasetDownloadLink");
 const progressBarDiv = document.getElementById("progressDiv");
 const progressBar = document.getElementById("progressBar");
+const addWebsiteButton = document.getElementById("add-website");
 
 const socket = io("http://localhost:3000");
 startScraperButton.addEventListener("click", () => {
@@ -36,4 +37,8 @@ socket.on("sendDatasetUrl", (url) => {
 		datasetDownloadLink.href = url;
 		progressBarDiv.style.visibility = "hidden";
 	}
+});
+
+addWebsiteButton.addEventListener("click", () => {
+	window.location.href = "addWebsite.html";
 });
