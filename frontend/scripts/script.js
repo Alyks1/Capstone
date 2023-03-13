@@ -1,7 +1,6 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 
 //TODO: Add your own socket.io server url
-//TODO: Add 'Add new website to scraper' button
 //TODO: Add 'Remove website from scraper' button
 //TODO: Add Update NrOfPages of website button
 //TODO: Add View all websites to scrape button
@@ -13,14 +12,9 @@ const datasetDownloadLink = document.getElementById("datasetDownloadLink");
 const progressBarDiv = document.getElementById("progressDiv");
 const progressBar = document.getElementById("progressBar");
 const addWebsiteButton = document.getElementById("add-website");
+const updateWebsiteButton = document.getElementById("update-website");
 
 const socket = io("http://localhost:3000");
-startScraperButton.addEventListener("click", () => {
-	progressBarDiv.style.visibility = "visible";
-	progressBar.value = 0;
-	console.log("Starting Scraper");
-	socket.emit("start");
-});
 
 socket.on("log", (msg) => {
 	console.log(msg);
@@ -39,6 +33,17 @@ socket.on("sendDatasetUrl", (url) => {
 	}
 });
 
+startScraperButton.addEventListener("click", () => {
+	progressBarDiv.style.visibility = "visible";
+	progressBar.value = 0;
+	console.log("Starting Scraper");
+	socket.emit("start");
+});
+
 addWebsiteButton.addEventListener("click", () => {
 	window.location.href = "addWebsite.html";
+});
+
+updateWebsiteButton.addEventListener("click", () => {
+	window.location.href = "updateWebsite.html";
 });

@@ -5,7 +5,6 @@ import fs from "fs";
 export async function addWebsite(w) {
 	const website = w.website;
 	const websites = await LoadWebsites();
-	//TODO: Add logic to add website to website.json
 
 	Logger.info(JSON.stringify(website));
 
