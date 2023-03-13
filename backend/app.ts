@@ -2,6 +2,7 @@ import { Logger } from "./core/Utility/logging";
 import { Server } from "socket.io";
 import { startScraper } from "./core/index";
 import express from "express";
+import { addWebsite } from "./core/addWebsite";
 
 function startServer() {
 	Logger.trace("Starting Server");
@@ -20,7 +21,8 @@ function startServer() {
 	io.on("connection", (socket) => {
 		socket.on("start", startScraper);
 		socket.on("addWebsite", (website) => {
-			console.log(website);
+			const resp = addWebsite(website);
+			socket.emit("log", resp);
 		});
 	});
 }

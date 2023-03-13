@@ -1,6 +1,4 @@
 import puppeteer from "puppeteer";
-import { Website } from "./Types/Website";
-import { WebsiteGroupInfo } from "./Types/WebsiteGroupInfo";
 import { Scraper } from "./Scraper";
 import { Post } from "./Types/Post";
 import { Logger } from "./Utility/logging";
@@ -11,6 +9,7 @@ import { createDataset } from "./createDataset";
 import { addWebsiteWeight } from "./GenerateData/ProcessData";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import { LoadWebsiteGroupInfo, LoadWebsites } from "./Utility/json";
 
 export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
@@ -74,21 +73,4 @@ export async function startScraper(
 
 	socket.emit("sendDatasetUrl", "/dataset.tar.gz");
 	await browser.close();
-}
-
-async function LoadWebsites(): Promise<Website[]> {
-	const data = await import("../../websites.json");
-	return data.default.map((website) => ({
-		id: website.id,
-		url: website.url,
-		group: website.group,
-		weight: website.weight,
-		nrOfPages: website.nrOfPages,
-	}));
-}
-
-async function LoadWebsiteGroupInfo(): Promise<
-	Record<string, WebsiteGroupInfo>
-> {
-	return (await import("../../websiteGroupInfo.json")).default;
 }
