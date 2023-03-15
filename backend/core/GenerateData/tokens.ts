@@ -18,7 +18,7 @@ export function isCenturies(str: string) {
 export function centuries(data: WorkingData): WorkingData {
 	//TODO: Treat centuries and millenium as ranges ie 13th century is 1200-1300
 	Logger.trace(`converting ${data.date} to century`);
-	const nr = (+data.date - 1) * 100;
+	const nr = (+data.date * 100) - 50;
 	return { date: `${nr}`, trust: data.trust + 2, pos: data.pos };
 }
 

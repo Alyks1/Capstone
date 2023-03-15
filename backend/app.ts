@@ -1,8 +1,9 @@
 import { Logger } from "./core/Utility/logging";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { startScraper } from "./core/index";
 import express from "express";
 import { addWebsite } from "./core/addWebsite";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
 function startServer() {
 	Logger.trace("Starting Server");
@@ -19,7 +20,9 @@ function startServer() {
 	});
 
 	io.on("connection", (socket) => {
-		socket.on("start", startScraper);
+		socket.on("start", () => {
+			startScraper(socket);
+		});
 		socket.on("addWebsite", (website) => {
 			const resp = addWebsite(website);
 			socket.emit("log", resp);
