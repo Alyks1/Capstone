@@ -8,7 +8,7 @@ export async function LoadWebsites(): Promise<Website[]> {
 		url: website.url,
 		group: website.group,
 		weight: website.weight,
-		nrOfPages: website.nrOfPages,
+		nrOfPages: website.nrOfPages,	
 	}));
 }
 

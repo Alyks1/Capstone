@@ -9,8 +9,12 @@ submitButton.addEventListener("click", () => {
 	socket.emit("addWebsite", {
 		website: {
 			url: inputs.namedItem("websiteUrl").value,
-			weight: inputs.namedItem("weight").value,
-			nrOfPages: inputs.namedItem("nrOfPages").value,
+			weight: Number(inputs.namedItem("weight").value),
+			nrOfPages: Number(inputs.namedItem("nrOfPages").value),
 		},
 	});
+});
+
+socket.on("log", (msg) => {
+	console.log(msg);
 });

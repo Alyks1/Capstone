@@ -18,13 +18,15 @@ export async function addWebsite(w) {
 	}
 
 	const id = websites.length;
+	const weight: number = website.weight;
+	const nrOfPages: number = website.nrOfPages;
 	const group = getGroup(website.url);
 	const newWebsite: Website = {
 		id: id,
 		url: website.url,
 		group: group,
-		weight: website.weight,
-		nrOfPages: website.nrOfPages,
+		weight: weight,
+		nrOfPages: nrOfPages,
 	};
 	websites.push(newWebsite);
 
