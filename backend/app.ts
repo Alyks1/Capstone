@@ -28,13 +28,13 @@ function startServer() {
 			socket.emit("log", resp);
 		});
 		socket.on("getWebsites", async () => {
-			Logger.info("Sending websites to client")
+			Logger.trace("Sending websites to client")
 			const websites = await LoadWebsites();
-			Logger.info(websites.map((website) => website.url).join(", "));
+			Logger.debug(websites.map((website) => website.url).join(", "));
 			socket.emit("websites", websites);
 		})
 		socket.on("getSingularWebsite", async (id:number) => {
-			Logger.info(`Sending website with id ${id} to client`)
+			Logger.trace(`Sending website with id ${id} to client`)
 			const websites = await LoadWebsites();
 			const website = websites.find((website) => website.id === id);
 			if (website === undefined) {
@@ -43,7 +43,7 @@ function startServer() {
 			socket.emit("singularWebsite", website);
 		})
 		socket.on("updateWebsite", async (website) => {
-			Logger.info(`Updating website with id ${website.id}`);
+			Logger.trace(`Updating website with id ${website.id}`);
 			await updateWebsite(website);
 			socket.emit("log", "Website updated");
 			})

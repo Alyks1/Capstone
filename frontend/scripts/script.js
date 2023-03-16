@@ -48,3 +48,9 @@ addWebsiteButton.addEventListener("click", () => {
 displayWebsiteButton.addEventListener("click", () => {
 	window.location.href = "displayWebsiteList.html";
 });
+
+socket.on("NoPostsFound", () => {
+    console.log("No posts found");
+	progressBarDiv.style.visibility = "hidden";
+	progressBar.value = 0;
+})

@@ -24,10 +24,6 @@ interface CSVType {
  * @param posts
  */
 export async function createDataset(page: Page, posts: Post[]) {
-	if (posts.length === 0) {
-		Logger.warn("No posts found");
-		return;
-	}
 	Logger.info(`Downloading images from ${posts.length} posts`);
 
 	Logger.trace("Removing Files from previous dataset");

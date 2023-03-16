@@ -67,6 +67,12 @@ export async function startScraper(
 		socket.emit("log", "Downloading images");
 		allPosts.push(...weightedPosts);
 	}
+
+	if (allPosts.length === 0) {
+		Logger.warn("No posts found");
+		socket.emit("NoPostsFound");
+		return;
+	}
 	await createDataset(page, allPosts);
 
 	socket.emit("log", "Scraper Finished");
