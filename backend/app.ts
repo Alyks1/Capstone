@@ -3,7 +3,7 @@ import { Server, Socket } from "socket.io";
 import { startScraper } from "./core/index";
 import express from "express";
 import { addWebsite } from "./core/addWebsite";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import { LoadWebsites } from "./core/Utility/json";
 
 function startServer() {
 	Logger.trace("Starting Server");
@@ -27,6 +27,9 @@ function startServer() {
 			const resp = addWebsite(website);
 			socket.emit("log", resp);
 		});
+		socket.on("getWebsites", async () => {
+			socket.emit("websites", await LoadWebsites());
+		})
 	});
 }
 

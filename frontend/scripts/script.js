@@ -12,7 +12,7 @@ const datasetDownloadLink = document.getElementById("datasetDownloadLink");
 const progressBarDiv = document.getElementById("progressDiv");
 const progressBar = document.getElementById("progressBar");
 const addWebsiteButton = document.getElementById("add-website");
-const updateWebsiteButton = document.getElementById("update-website");
+const displayWebsiteButton = document.getElementById("display-websites");
 
 const socket = io("http://localhost:3000");
 
@@ -44,6 +44,6 @@ addWebsiteButton.addEventListener("click", () => {
 	window.location.href = "addWebsite.html";
 });
 
-updateWebsiteButton.addEventListener("click", () => {
-	window.location.href = "updateWebsite.html";
+displayWebsiteButton.addEventListener("click", () => {
+	window.location.href = "displayWebsiteList.html";
 });

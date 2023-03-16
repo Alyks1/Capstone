@@ -53,8 +53,11 @@ export function chooseMostTrusted(data: WorkingData[]) {
  * @returns
  */
 export function addWebsiteWeight(posts: Post[], websiteWeight: number): Post[] {
+	Logger.debug(
+		posts.map((x) => `\n(${x.data.date.padEnd(7, " ")} : ${x.data.trust})`),
+	);
 	posts.forEach((x) => {
-		x.data.trust = Math.round(x.data.trust * websiteWeight);
+		x.data.trust = Math.round(x.data.trust * websiteWeight +0.5);
 	});
 	Logger.info(
 		posts.map((x) => `\n(${x.data.date.padEnd(7, " ")} : ${x.data.trust})`),
