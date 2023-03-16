@@ -1,4 +1,5 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+import { cleanUrl, getSocketURL } from "./utility.js";
 
 //Display a list of all websites
 //When a website is clicked, redirect to updateWebsite.html
@@ -6,11 +7,12 @@ import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 //Add a button to remove a website
 //Add a button to update nrOfPages of a website
 const list = document.getElementById("list");
-const socket = io("http://localhost:3000");
+const socket = io(getSocketURL());
 
 document.onload = socket.emit("getWebsites");
 
 socket.on("websites", (websites) => {
+    console.log("received websites");
     websites.forEach((website, i) => {
         const url = cleanUrl(website.url);
         const li = document.createElement("li");
@@ -22,10 +24,5 @@ socket.on("websites", (websites) => {
         p.textContent = `NrOfPages: ${website.nrOfPages} - Weight: ${website.weight}`;
         li.appendChild(p);
         list.appendChild(li);
-        localStorage.setItem(i, JSON.stringify(website));
     });
 })
-
-function cleanUrl(url) {
-    return url.replace("https://", "").replace("http://", "").replace("www.", "");
-}

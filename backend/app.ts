@@ -28,7 +28,17 @@ function startServer() {
 			socket.emit("log", resp);
 		});
 		socket.on("getWebsites", async () => {
+			Logger.trace("Sending websites to client")
 			socket.emit("websites", await LoadWebsites());
+		})
+		socket.on("getSingularWebsite", async (id:number) => {
+			Logger.trace(`Sending website with id ${id} to client`)
+			const websites = await LoadWebsites();
+			const website = websites.find((website) => website.id === id);
+			if (website === undefined) {
+				Logger.warn(`Website with id ${id} not found`);
+			}
+			socket.emit("singularWebsite", website);
 		})
 	});
 }

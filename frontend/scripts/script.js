@@ -1,4 +1,5 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+import { getSocketURL } from "./utility.js";
 
 //TODO: Add your own socket.io server url
 //TODO: Add 'Remove website from scraper' button
@@ -14,7 +15,7 @@ const progressBar = document.getElementById("progressBar");
 const addWebsiteButton = document.getElementById("add-website");
 const displayWebsiteButton = document.getElementById("display-websites");
 
-const socket = io("http://localhost:3000");
+const socket = io(getSocketURL());
 
 socket.on("log", (msg) => {
 	console.log(msg);
