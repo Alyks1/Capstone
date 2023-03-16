@@ -2,7 +2,7 @@ import { Logger } from "./core/Utility/logging";
 import { Server, Socket } from "socket.io";
 import { startScraper } from "./core/index";
 import express from "express";
-import { addWebsite } from "./core/addWebsite";
+import { addWebsite, updateWebsite } from "./core/manageWebsite";
 import { LoadWebsites } from "./core/Utility/json";
 
 function startServer() {
@@ -28,11 +28,13 @@ function startServer() {
 			socket.emit("log", resp);
 		});
 		socket.on("getWebsites", async () => {
-			Logger.trace("Sending websites to client")
-			socket.emit("websites", await LoadWebsites());
+			Logger.info("Sending websites to client")
+			const websites = await LoadWebsites();
+			Logger.info(websites.map((website) => website.url).join(", "));
+			socket.emit("websites", websites);
 		})
 		socket.on("getSingularWebsite", async (id:number) => {
-			Logger.trace(`Sending website with id ${id} to client`)
+			Logger.info(`Sending website with id ${id} to client`)
 			const websites = await LoadWebsites();
 			const website = websites.find((website) => website.id === id);
 			if (website === undefined) {
@@ -40,6 +42,11 @@ function startServer() {
 			}
 			socket.emit("singularWebsite", website);
 		})
+		socket.on("updateWebsite", async (website) => {
+			Logger.info(`Updating website with id ${website.id}`);
+			await updateWebsite(website);
+			socket.emit("log", "Website updated");
+			})
 	});
 }
 

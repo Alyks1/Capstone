@@ -9,11 +9,12 @@ import { cleanUrl, getSocketURL } from "./utility.js";
 const list = document.getElementById("list");
 const socket = io(getSocketURL());
 
-document.onload = socket.emit("getWebsites");
+socket.emit("getWebsites");
 
 socket.on("websites", (websites) => {
-    console.log("received websites");
+    console.log(`received websites`);
     websites.forEach((website, i) => {
+        console.log(JSON.stringify(website));
         const url = cleanUrl(website.url);
         const li = document.createElement("li");
         const a = document.createElement("a");
