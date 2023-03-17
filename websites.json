@@ -11,7 +11,7 @@
     "url": "https://old.reddit.com/r/ArtefactPorn/",
     "group": "OldReddit",
     "weight": 0.8,
-    "nrOfPages": 1
+    "nrOfPages": 0
   },
   {
     "id": 2,
@@ -24,7 +24,7 @@
     "id": 3,
     "url": "https://old.reddit.com/r/AncientCivilizations/",
     "group": "OldReddit",
-    "weight": 0.3,
-    "nrOfPages": 0
+    "weight": 0.1,
+    "nrOfPages": 1
   }
 ]

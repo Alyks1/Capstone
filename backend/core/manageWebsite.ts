@@ -3,8 +3,7 @@ import { Website } from "./Types/Website";
 import { Logger } from "./Utility/logging";
 import fs from "fs";
 
-export async function addWebsite(w: { website: { url: string; weight: number; nrOfPages: number; }; }) {
-	const website = w.website;
+export async function addWebsite(website: { url: string; weight: number; nrOfPages: number; }) {
 	const websites = await LoadWebsites();
 
 	Logger.info(JSON.stringify(website));

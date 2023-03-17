@@ -8,13 +8,13 @@ const socket = io(getSocketURL());
 
 submitButton.addEventListener("click", () => {
 	console.log("Adding website");
-	socket.emit("addWebsite", {
-		website: {
+	socket.emit("addWebsite",
+		{
 			url: inputs.namedItem("websiteUrl").value,
 			weight: Number(inputs.namedItem("weight").value),
 			nrOfPages: Number(inputs.namedItem("nrOfPages").value),
-		},
-	});
+		}
+	);
 });
 
 socket.on("log", (msg) => {

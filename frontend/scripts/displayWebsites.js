@@ -24,7 +24,7 @@ function createList(websites) {
 
         const a = createA(url, i);
         const p = createP(website);
-        const button = createDeactivateButton();
+        const button = createDeactivateButton(i);
 
         li.appendChild(a);
         li.appendChild(p);
@@ -33,7 +33,7 @@ function createList(websites) {
     });
 }
 
-function createDeactivateButton() {
+function createDeactivateButton(i) {
     const button = document.createElement("button");
     button.textContent = "Deactivate";
     button.addEventListener("click", () => {
