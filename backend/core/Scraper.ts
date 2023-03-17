@@ -48,12 +48,15 @@ export async function Scraper(
 			allPosts.add(text);
 		}
 		Logger.debug(allPosts.size);
-		await moveToNextPage(page, groupInfo.nextIdentifier);
+		const wasSuccessfull = await moveToNextPageSuccessful(page, groupInfo.nextIdentifier);
+		if (!wasSuccessfull) {
+			break;
+		}
 	}
 	return posts;
 }
 
-async function moveToNextPage(page: Page, nextBtnClass: string) {
+async function moveToNextPageSuccessful(page: Page, nextBtnClass: string) {
 	Logger.trace(`Next button: ${nextBtnClass}`);
 	//If a button is needed to change page, use it
 	if (nextBtnClass !== "") {
@@ -61,16 +64,18 @@ async function moveToNextPage(page: Page, nextBtnClass: string) {
 		const href: string = await nextBtn.$eval("a", (elem) => elem.href);
 		Logger.debug(`href: ${href}`);
 		await page.goto(href);
-		return;
+		return true;
 	}
 	//Otherwise, scroll down and rescrape
 	const h = await page.evaluate(() => window.innerHeight);
-	Logger.trace(`attempting to scroll to inner height: ${h}`);
+	//TODO: fix innerheight only being 600ish
 	await page.evaluate(() => {
-		window.scrollTo({ top: window.innerHeight * 7});
+		window.scrollTo({ top: window.innerHeight });
 	});
-	Logger.trace("waiting for network idle");
-	//TODO: Fix timeout issue here
-	await page.waitForNetworkIdle({idleTime: 100, timeout: 30000});
-	Logger.trace("network idle -> should start new job")
+	try {
+		await page.waitForNetworkIdle({idleTime: 100, timeout: 30000});
+	} catch (error) {
+		Logger.warn(`[Scraper.ts, 77] ${error}`);
+		return false;
+	}
 }
