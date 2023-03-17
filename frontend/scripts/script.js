@@ -3,8 +3,6 @@ import { getSocketURL } from "./utility.js";
 
 //TODO: Add your own socket.io server url
 //TODO: Add 'Remove website from scraper' button
-//TODO: Add Update NrOfPages of website button
-//TODO: Add View all websites to scrape button
 //TODO: Add View all scraped data button (where was data scraped, how accurate, total accuracy?)?
 
 const startScraperButton = document.getElementById("start-button");

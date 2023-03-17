@@ -7,6 +7,7 @@ import { cleanUrl, getSocketURL } from "./utility.js";
 //Add a button to remove a website
 //Add a button to update nrOfPages of a website
 const list = document.getElementById("list");
+const returnButton = document.getElementById("returnButton");
 const socket = io(getSocketURL());
 
 socket.emit("getWebsites");
@@ -27,3 +28,7 @@ socket.on("websites", (websites) => {
         list.appendChild(li);
     });
 })
+
+returnButton.addEventListener("click", () => {
+    window.location.href = "index.html";
+});

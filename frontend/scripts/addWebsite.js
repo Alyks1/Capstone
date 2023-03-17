@@ -3,6 +3,7 @@ import { getSocketURL } from "./utility.js";
 
 const inputs = document.getElementById("form").getElementsByTagName("input");
 const submitButton = document.getElementById("submit");
+const returnButton = document.getElementById("returnButton");
 const socket = io(getSocketURL());
 
 submitButton.addEventListener("click", () => {
@@ -18,4 +19,8 @@ submitButton.addEventListener("click", () => {
 
 socket.on("log", (msg) => {
 	console.log(msg);
+});
+
+returnButton.addEventListener("click", () => {
+	window.location.href = "index.html";
 });
