@@ -67,8 +67,7 @@ async function moveToNextPageSuccessful(page: Page, nextBtnClass: string) {
 		return true;
 	}
 	//Otherwise, scroll down and rescrape
-	const h = await page.evaluate(() => window.innerHeight);
-	//TODO: fix innerheight only being 600ish
+	//TODO: investigate if innerHeight is correct
 	await page.evaluate(() => {
 		window.scrollTo({ top: window.innerHeight });
 	});

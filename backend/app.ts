@@ -47,6 +47,17 @@ function startServer() {
 			await updateWebsite(website);
 			socket.emit("log", "Website updated");
 			})
+		socket.on("deactivateWebsite", async (id:number) => {
+			Logger.trace(`Deactivating website with id ${id}`);
+			const websites = await LoadWebsites();
+			const website = websites.find((website) => website.id === id);
+			if (website === undefined) {
+				Logger.warn(`Website with id ${id} not found`);
+			}
+			const newWebsite = {...website, nrOfPages: 0};
+			await updateWebsite(newWebsite);
+			socket.emit("log", "Website deactivated");
+		})
 	});
 }
 

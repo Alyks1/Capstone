@@ -1,11 +1,6 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import { cleanUrl, getSocketURL } from "./utility.js";
 
-//Display a list of all websites
-//When a website is clicked, redirect to updateWebsite.html
-//Add a button to add a new website
-//Add a button to remove a website
-//Add a button to update nrOfPages of a website
 const list = document.getElementById("list");
 const returnButton = document.getElementById("returnButton");
 const socket = io(getSocketURL());
@@ -19,12 +14,19 @@ socket.on("websites", (websites) => {
         const url = cleanUrl(website.url);
         const li = document.createElement("li");
         const a = document.createElement("a");
+        const button = document.createElement("button");
+        button.textContent = "Deactivate";
+        button.addEventListener("click", () => {
+            socket.emit("deactivateWebsite", i);
+            window.location.href = "displayWebsiteList.html";
+        });
         a.href = `updateWebsite.html?id=${i}`;
         a.textContent = url;
         li.appendChild(a);
         const p = document.createElement("p");
         p.textContent = `NrOfPages: ${website.nrOfPages} - Weight: ${website.weight}`;
         li.appendChild(p);
+        li.appendChild(button);
         list.appendChild(li);
     });
 })
@@ -32,3 +34,4 @@ socket.on("websites", (websites) => {
 returnButton.addEventListener("click", () => {
     window.location.href = "index.html";
 });
+
