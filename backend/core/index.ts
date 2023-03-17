@@ -19,7 +19,7 @@ export async function startScraper(
 	//TODO: Add logic to stop trying to scrape before timeout
 	//TODO: Add Museum Website to scraper
 	const browser = await puppeteer.launch({
-		headless: true,
+		headless: false,
 	});
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();

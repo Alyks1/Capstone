@@ -4,20 +4,20 @@
     "url": "https://www.reddit.com/r/ArtefactPorn/",
     "group": "Reddit",
     "weight": 0.8,
-    "nrOfPages": 1
+    "nrOfPages": 0
   },
   {
     "id": 1,
     "url": "https://www.reddit.com/r/AncientCivilizations/",
     "group": "Reddit",
     "weight": 0.3,
-    "nrOfPages": 0
+    "nrOfPages": 1
   },
   {
     "id": 2,
     "url": "https://old.reddit.com/r/ArtefactPorn/",
     "group": "OldReddit",
     "weight": 0.8,
-    "nrOfPages": 1
+    "nrOfPages": 0
   }
 ]
