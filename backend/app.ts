@@ -30,10 +30,9 @@ function startServer() {
 		socket.on("getWebsites", async () => {
 			Logger.trace("Sending websites to client")
 			const websites = await LoadWebsites();
-			Logger.debug(websites.map((website) => website.url).join(", "));
 			socket.emit("websites", websites);
 		})
-		socket.on("getSingularWebsite", async (id:number) => {
+		socket.on("getSingularWebsite", async (id: number) => {
 			Logger.trace(`Sending website with id ${id} to client`)
 			const websites = await LoadWebsites();
 			const website = websites.find((website) => website.id === id);
@@ -46,8 +45,8 @@ function startServer() {
 			Logger.trace(`Updating website with id ${website.id}`);
 			await updateWebsite(website);
 			socket.emit("log", "Website updated");
-			})
-		socket.on("deactivateWebsite", async (id:number) => {
+		})
+		socket.on("deactivateWebsite", async (id: number) => {
 			Logger.trace(`Deactivating website with id ${id}`);
 			const websites = await LoadWebsites();
 			const website = websites.find((website) => website.id === id);

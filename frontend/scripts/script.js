@@ -2,7 +2,6 @@ import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import { getSocketURL } from "./utility.js";
 
 //TODO: Add your own socket.io server url
-//TODO: Add 'Remove website from scraper' button
 //TODO: Add View all scraped data button (where was data scraped, how accurate, total accuracy?)?
 
 const socket = io(getSocketURL());
@@ -17,6 +16,9 @@ const datasetDownloadLink = document.getElementById("datasetDownloadLink");
 const progressBarDiv = document.getElementById("progressDiv");
 const progressBar = document.getElementById("progressBar");
 
+if (sessionStorage.getItem("datasetUrl")) {
+	showDownloadLink();
+}
 
 socket.on("log", (msg) => {
 	console.log(msg);
@@ -27,12 +29,12 @@ socket.on("log", (msg) => {
 
 socket.on("sendDatasetUrl", (url) => {
 	console.log(`Dataset url: ${url}`);
+	sessionStorage.setItem("datasetUrl", url);
 	progressBar.value++;
 	if (progressBar.value === progressBar.max) {
-		datasetDownloadDiv.style.visibility = "visible";
-		datasetDownloadLink.href = url;
 		resetProgressBar()
 	}
+	showDownloadLink();
 });
 
 startScraperButton.addEventListener("click", () => {
@@ -57,4 +59,9 @@ socket.on("NoPostsFound", () => {
 function resetProgressBar() {
 	progressBarDiv.style.visibility = "hidden";
 	progressBar.value = 0;
+}
+
+function showDownloadLink() {
+	datasetDownloadDiv.style.visibility = "visible";
+	datasetDownloadLink.href = sessionStorage.getItem("datasetUrl");
 }

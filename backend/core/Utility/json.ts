@@ -8,7 +8,7 @@ export async function LoadWebsiteGroupInfo(): Promise<
 	return (await import("../../../websiteGroupInfo.json")).default;
 }
 
-export async function LoadWebsites() {
+export async function LoadWebsites(): Promise<Website[]> {
 	const data = await fs.promises.readFile("../websites.json");
 	const jsonData = JSON.parse(data.toString());
 	return jsonData.map((website: Website) => ({
