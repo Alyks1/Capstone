@@ -21,6 +21,7 @@ export async function startScraper(
 	const browser = await puppeteer.launch({
 		headless: false,
 	});
+
 	const page = await browser.newPage();
 	const websites = await LoadWebsites();
 	const websiteGroupInfos = await LoadWebsiteGroupInfo();

@@ -57,7 +57,8 @@ export function addWebsiteWeight(posts: Post[], websiteWeight: number): Post[] {
 		posts.map((x) => `\n(${x.data.date.padEnd(7, " ")} : ${x.data.trust})`),
 	);
 	posts.forEach((x) => {
-		x.data.trust = Math.round(x.data.trust * websiteWeight +0.5);
+		x.data.trust = Math.round(x.data.trust * websiteWeight);
+		if (x.data.trust === 0) x.data.trust = 1;
 	});
 	Logger.info(
 		posts.map((x) => `\n(${x.data.date.padEnd(7, " ")} : ${x.data.trust})`),

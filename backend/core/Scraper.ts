@@ -64,9 +64,13 @@ async function moveToNextPage(page: Page, nextBtnClass: string) {
 		return;
 	}
 	//Otherwise, scroll down and rescrape
+	const h = await page.evaluate(() => window.innerHeight);
+	Logger.trace(`attempting to scroll to inner height: ${h}`);
 	await page.evaluate(() => {
-		window.scrollTo({ top: window.innerHeight });
+		window.scrollTo({ top: window.innerHeight * 7});
 	});
-	await Utility.sleep(100);
-	await page.waitForNetworkIdle();
+	Logger.trace("waiting for network idle");
+	//TODO: Fix timeout issue here
+	await page.waitForNetworkIdle({idleTime: 100, timeout: 30000});
+	Logger.trace("network idle -> should start new job")
 }
