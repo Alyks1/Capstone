@@ -16,7 +16,6 @@ export async function startScraper(
 ) {
 	socket.emit("log", "Scraper Started");
 	//TODO: Add Unit Test
-	//TODO: Add logic to stop trying to scrape before timeout
 	//TODO: Add Museum Website to scraper
 	const browser = await puppeteer.launch({
 		headless: true,

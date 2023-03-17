@@ -37,6 +37,11 @@ socket.on("sendDatasetUrl", (url) => {
 	showDownloadLink();
 });
 
+socket.on("NoPostsFound", () => {
+    console.log("No posts found");
+	resetProgressBar();
+})
+
 startScraperButton.addEventListener("click", () => {
 	console.log("Starting Scraper");
 	progressBarDiv.style.visibility = "visible";
@@ -50,11 +55,6 @@ addWebsiteButton.addEventListener("click", () => {
 displayWebsiteButton.addEventListener("click", () => {
 	window.location.href = "displayWebsiteList.html";
 });
-
-socket.on("NoPostsFound", () => {
-    console.log("No posts found");
-	resetProgressBar();
-})
 
 function resetProgressBar() {
 	progressBarDiv.style.visibility = "hidden";
