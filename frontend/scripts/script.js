@@ -5,15 +5,18 @@ import { getSocketURL } from "./utility.js";
 //TODO: Add 'Remove website from scraper' button
 //TODO: Add View all scraped data button (where was data scraped, how accurate, total accuracy?)?
 
+const socket = io(getSocketURL());
+
 const startScraperButton = document.getElementById("start-button");
-const datasetDownloadDiv = document.getElementById("datasetDownloadDiv");
-const datasetDownloadLink = document.getElementById("datasetDownloadLink");
-const progressBarDiv = document.getElementById("progressDiv");
-const progressBar = document.getElementById("progressBar");
 const addWebsiteButton = document.getElementById("add-website");
 const displayWebsiteButton = document.getElementById("display-websites");
 
-const socket = io(getSocketURL());
+const datasetDownloadDiv = document.getElementById("datasetDownloadDiv");
+const datasetDownloadLink = document.getElementById("datasetDownloadLink");
+
+const progressBarDiv = document.getElementById("progressDiv");
+const progressBar = document.getElementById("progressBar");
+
 
 socket.on("log", (msg) => {
 	console.log(msg);
@@ -28,14 +31,13 @@ socket.on("sendDatasetUrl", (url) => {
 	if (progressBar.value === progressBar.max) {
 		datasetDownloadDiv.style.visibility = "visible";
 		datasetDownloadLink.href = url;
-		progressBarDiv.style.visibility = "hidden";
+		resetProgressBar()
 	}
 });
 
 startScraperButton.addEventListener("click", () => {
-	progressBarDiv.style.visibility = "visible";
-	progressBar.value = 0;
 	console.log("Starting Scraper");
+	progressBarDiv.style.visibility = "visible";
 	socket.emit("start");
 });
 
@@ -49,6 +51,10 @@ displayWebsiteButton.addEventListener("click", () => {
 
 socket.on("NoPostsFound", () => {
     console.log("No posts found");
+	resetProgressBar();
+})
+
+function resetProgressBar() {
 	progressBarDiv.style.visibility = "hidden";
 	progressBar.value = 0;
-})
+}
