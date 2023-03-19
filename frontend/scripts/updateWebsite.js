@@ -7,6 +7,8 @@ const header = document.getElementById("website");
 const websiteInfo = document.getElementById("websiteInfo");
 const updateButton = document.getElementById("updateButton");
 
+//TODO: Fix being able to hack max values
+
 socket.emit("getSingularWebsite", getID());
 
 socket.on("singularWebsite", (website) => {
