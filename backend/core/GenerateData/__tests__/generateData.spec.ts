@@ -1,9 +1,6 @@
 import { Post } from "../../Types/Post";
 import {getDateFromPosts} from "../generateData";
 
-//	text: string;
-//	imgSrc: string;
-//	data: WorkingData;
 const testingPosts: Post[] = [ {
     text: "This is a test of 2020",
     imgSrc: "test",
@@ -61,11 +58,11 @@ const testingPostsResult: Post[] = [ {
 },{
     text: "Something from the 4th millennium BCE",
     imgSrc: "test",
-    data: { date: "-3500", trust: 4, pos: 0 },
+    data: { date: "-3500", trust: 5, pos: 0 },
 },{
     text: "Something that is 4000 years old",
     imgSrc: "test",
-    data: { date: "-1977", trust: 3, pos: 0 },
+    data: { date: "-1977", trust: 4, pos: 0 },
 }
 ];
 
