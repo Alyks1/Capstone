@@ -5,7 +5,7 @@ import { WorkingData } from "../Types/WorkingData";
 
 export function isRange(str: string) {
 	const hasHyphen = str.includes("-");
-	const hasNumbers = str.match(/[0-9]+/);
+	const hasNumbers = /[0-9]+/.test(str);
 	return hasHyphen && hasNumbers;
 }
 export function averageRange(data: WorkingData, nextWord: string): WorkingData {
@@ -15,7 +15,7 @@ export function averageRange(data: WorkingData, nextWord: string): WorkingData {
 	const total = numbers.reduce((acc: number, x: number) => +x + acc, 0);
 	return {
 		date: (total / numbers.length).toString(),
-		trust: data.trust++,
+		trust: data.trust,
 		pos: data.pos,
 	};
 }
@@ -29,7 +29,17 @@ function chooseRange(data: WorkingData, nextWord: string) {
 	if (Utility.isNumber(nextWord)) {
 		bothNrs.push(data.date);
 		bothNrs.push(nextWord);
-	} else bothNrs = data.date.split("-");
+	} else {
+		//check if data.date has multiple - in it
+		//if it does, split on the last one
+		//otherwise split on the first one
+		const hyphens = data.date.match(/-/g);
+		if (hyphens?.length > 1) {
+			const lastHyphen = data.date.lastIndexOf("-");
+			bothNrs.push(data.date.slice(0, lastHyphen));
+			bothNrs.push(data.date.slice(lastHyphen + 1));
+		} else bothNrs = data.date.split("-"); 
+	}
 	Logger.trace(`Both nrs = ${bothNrs}`);
 	return bothNrs;
 }
@@ -45,3 +55,6 @@ function convertToNumbers(arr: string[], data: WorkingData) {
 	});
 	return numbers;
 }
+
+export const chooseRangeTesting = { chooseRange };
+export const convertToNumbersTesting = { convertToNumbers };

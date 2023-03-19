@@ -25,7 +25,7 @@ export function isMillennium(str: string) {
 	return str === "millennium" || str === "millenia";
 }
 export function millennium(data: WorkingData): WorkingData {
-	const nr = (+data.date - 1) * 1000;
+	const nr = (+data.date * 1000) - 500;
 	return { date: `${nr}`, trust: data.trust++, pos: data.pos };
 }
 

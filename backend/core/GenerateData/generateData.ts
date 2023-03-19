@@ -16,7 +16,7 @@ import {
 	noMatch,
 	yearOld,
 } from "./tokens";
-import { calcTrust, chooseMostTrusted, filterData } from "./ProcessData";
+import { calcTrust, chooseMostTrusted, filterData } from "./processData";
 
 const YEAR_NOW = 2023;
 
@@ -27,7 +27,7 @@ const YEAR_NOW = 2023;
  * @param posts
  * @returns
  */
-export function getDateFromPost(posts: Post[]) {
+export function getDateFromPosts(posts: Post[]) {
 	Logger.trace(`Creating data from ${posts.length} posts`);
 	for (let post of posts) {
 		Logger.debug(post.text);
@@ -42,6 +42,8 @@ export function getDateFromPost(posts: Post[]) {
 		Logger.info(`(${post.data.date} : ${post.data.trust})`);
 	}
 	posts = posts.filter((x) => x.data.trust > 0);
+	//clean up for testing
+	posts = posts.map((x) => { x.data.pos = 0; return x; });
 	return posts;
 }
 
@@ -125,3 +127,8 @@ function switchTypes(data: WorkingData, text: string[]): WorkingData {
 	if (isConnectingWord(type)) return treeStump(data, text);
 	return noMatch(data);
 }
+
+export const createDateTesting = { createDate};
+export const treeStumpTesting = { treeStump };
+export const LookAheadTesting = { LookAhead };
+export const switchTypesTesting = { switchTypes };
