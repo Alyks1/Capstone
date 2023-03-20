@@ -1,9 +1,15 @@
-import { t } from "tar";
 import { Post } from "../Types/Post";
 import { WorkingData } from "../Types/WorkingData";
 import { Logger } from "../Utility/logging";
+import { Utility } from "../Utility/utility";
+import fs from "fs";
 
 //TODO: Allow user to make these changes
+var notBetween0and100 = true;
+var differentNr = false;
+var multipleOf10and5 = true;
+var between0and10 = true;
+var reduceTrust = true;
 /**
  * Adds or removes trust based on the number properties.
  *
@@ -15,15 +21,19 @@ import { Logger } from "../Utility/logging";
 export function calcTrust(data: WorkingData[]) {
 	data.forEach((x) => {
 		//If the date is not between 0 and 100
-		if (+x.date < 0 || +x.date > 101) x.trust++;
+		if (+x.date < 0 || +x.date > 101) 
+			x.trust = Utility.adjustTrust(x.trust, 1, notBetween0and100);
 		//If many different numbers, more precision
-		if (new Set([...x.date]).size === x.date.length) x.trust;
+		if (new Set([...x.date]).size === x.date.length) 
+			x.trust = Utility.adjustTrust(x.trust, 1, differentNr);
 		//if the date is not a multiple of 10 and 5, more precision
-		if (+x.date % 10 !== 0 && +x.date % 5 !== 0) x.trust++;
+		if (+x.date % 10 !== 0 && +x.date % 5 !== 0) 
+			x.trust = Utility.adjustTrust(x.trust, 1, multipleOf10and5);
 		//if the date is between 1 and 10, less likely to be a year
-		if (+x.date > 0 && +x.date < 11) x.trust--;
+		if (+x.date > 0 && +x.date < 11) 
+			x. trust = Utility.adjustTrust(x.trust, -1, between0and10);
 		//reduce trust by one to stop trust inflation
-		x.trust--;
+		x.trust = Utility.adjustTrust(x.trust, 1, reduceTrust);
 		return x;
 	});
 	if (data.length === 1) data[0].trust;
@@ -75,4 +85,23 @@ export function addWebsiteWeight(posts: Post[], websiteWeight: number): Post[] {
 		posts.map((x) => `\n(${x.data.date.padEnd(7, " ")} : ${x.data.trust})`),
 	);
 	return posts;
+}
+
+export async function changeCalcTrustActivations(activations: boolean[]) {
+	const data = await fs.promises.readFile("../../trustActivations.json");
+	const jsonData: Map<string, string> = JSON.parse(data.toString());
+	notBetween0and100 = activations[0];
+	jsonData["notBetween0and100"] = activations[0];
+	differentNr = jsonData["differentNr"] 
+	jsonData["differentNr"] = activations[1];
+	multipleOf10and5 = jsonData["multipleOf10and5"] 
+	jsonData["multipleOf10and5"] = activations[2];
+	between0and10 = jsonData["between0and10"]
+	jsonData["between0and10"] = activations[3];
+	reduceTrust = jsonData["reduceTrust"]
+	jsonData["reduceTrust"] = activations[4];
+	
+	const writeData = JSON.stringify(jsonData);
+	await fs.promises.writeFile("../../trustActivations.json", writeData);
+
 }

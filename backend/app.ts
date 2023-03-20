@@ -4,6 +4,7 @@ import { startScraper } from "./core/index";
 import express from "express";
 import { addWebsite, updateWebsite } from "./core/manageWebsite";
 import { LoadWebsites } from "./core/Utility/json";
+import { changeCalcTrustActivations } from "./core/GenerateData/processData";
 
 function startServer() {
 	Logger.trace("Starting Server");
@@ -57,6 +58,9 @@ function startServer() {
 			await updateWebsite(newWebsite);
 			socket.emit("log", "Website deactivated");
 		})
+		socket.on("manageTrustCalc", async (activations: boolean[]) => {
+			await changeCalcTrustActivations(activations);
+		});
 	});
 }
 
