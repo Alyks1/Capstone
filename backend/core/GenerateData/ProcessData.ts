@@ -92,13 +92,13 @@ export async function changeCalcTrustActivations(activations: boolean[]) {
 	const jsonData: Map<string, string> = JSON.parse(data.toString());
 	notBetween0and100 = activations[0];
 	jsonData["notBetween0and100"] = activations[0];
-	differentNr = jsonData["differentNr"] 
+	differentNr = activations[1];
 	jsonData["differentNr"] = activations[1];
-	multipleOf10and5 = jsonData["multipleOf10and5"] 
+	multipleOf10and5 = activations[2];
 	jsonData["multipleOf10and5"] = activations[2];
-	between0and10 = jsonData["between0and10"]
+	between0and10 = activations[3];
 	jsonData["between0and10"] = activations[3];
-	reduceTrust = jsonData["reduceTrust"]
+	reduceTrust = activations[4];
 	jsonData["reduceTrust"] = activations[4];
 	
 	const writeData = JSON.stringify(jsonData);
