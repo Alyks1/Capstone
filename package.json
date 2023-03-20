@@ -3,9 +3,9 @@
         "start": "cd backend && npm start"
     },
     "dependencies": {
-        "rome": "^11.0.0",
-        "@types/jest": "^29.5.0",
-        "ts-jest": "^29.0.5",
-        "jest": "^29.5.0"
+        "rome": "^11.0.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.0"
     }
 }
