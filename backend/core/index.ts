@@ -15,7 +15,7 @@ export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
 ) {
 	socket.emit("log", "Scraper Started");
-	//TODO: Add Unit Test
+	//TODO: Add integration tests
 	//TODO: Add Museum Website to scraper
 	const browser = await puppeteer.launch({
 		headless: true,
