@@ -1,7 +1,9 @@
+import { t } from "tar";
 import { Post } from "../Types/Post";
 import { WorkingData } from "../Types/WorkingData";
 import { Logger } from "../Utility/logging";
 
+//TODO: Allow user to make these changes
 /**
  * Adds or removes trust based on the number properties.
  *
@@ -15,12 +17,17 @@ export function calcTrust(data: WorkingData[]) {
 		//If the date is not between 0 and 100
 		if (+x.date < 0 || +x.date > 101) x.trust++;
 		//If many different numbers, more precision
-		if (new Set([...x.date]).size === x.date.length) x.trust++;
+		if (new Set([...x.date]).size === x.date.length) x.trust;
 		//if the date is not a multiple of 10 and 5, more precision
 		if (+x.date % 10 !== 0 && +x.date % 5 !== 0) x.trust++;
+		//if the date is between 1 and 10, less likely to be a year
+		if (+x.date > 0 && +x.date < 11) x.trust--;
+		//reduce trust by one to stop trust inflation
+		x.trust--;
 		return x;
 	});
-	if (data.length === 1) data[0].trust + 2;
+	if (data.length === 1) data[0].trust;
+
 	return data;
 }
 
@@ -31,7 +38,7 @@ export function calcTrust(data: WorkingData[]) {
  */
 export function filterData(data: WorkingData[]) {
 	//If trust is less than 1, remove
-	data = data.filter((x) => x.trust >= 1);
+	data = data.filter((x) => x.trust > 0);
 	//If data is above 1940, remove
 	data = data.filter((x) => +x.date < 1940);
 	return data;
@@ -43,6 +50,7 @@ export function filterData(data: WorkingData[]) {
  */
 export function chooseMostTrusted(data: WorkingData[]) {
 	let result: WorkingData = data[0];
+	Logger.debug(data.map((x) => `\n(${x.date.padEnd(7, " ")} : ${x.trust})`));
 	data.forEach((x) => {
 		if (x.trust > result.trust) result = x;
 	});
