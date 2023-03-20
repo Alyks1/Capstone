@@ -9,6 +9,9 @@ const updateButton = document.getElementById("updateButton");
 
 //TODO: Fix being able to hack max values
 
+const MaxNrOfPages = 10;
+const MaxWeight = 1;
+
 socket.emit("getSingularWebsite", getID());
 
 socket.on("singularWebsite", (website) => {
@@ -24,6 +27,9 @@ updateButton.addEventListener("click", () => {
     const id = getID();
     const newNrOfPages = document.getElementById("nrOfPages").value
     const weight = document.getElementById("weight").value
+
+    if (!updateIsOK(newNrOfPages, weight)) return
+
     socket.emit("updateWebsite", {
         id: id,
         nrOfPages: Number(newNrOfPages),
@@ -37,4 +43,20 @@ function getID() {
     const id = urlParams.get('id');
     console.log(id);  
     return Number(id);
+}
+
+function updateIsOK(nrOfPages, weight) {
+    if (nrOfPages > MaxNrOfPages) {
+        alert(`Max nr of pages is ${MaxNrOfPages}`);
+        return false;
+    }
+    if (weight > MaxWeight) {
+        alert(`Max weight is ${MaxWeight}`);
+        return false;
+    }
+    if (nrOfPages < 0 || weight < 0) {
+        alert("Minimum is 0");
+        return false; 
+    }
+    return true
 }

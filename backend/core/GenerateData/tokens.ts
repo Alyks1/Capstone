@@ -1,19 +1,28 @@
 import { Logger } from "../Utility/logging";
 import { WorkingData } from "../Types/WorkingData";
 
+//TODO: add tokens such as testing for 'kg', 'g', 'km' etc
+
 export function isBC(str: string) {
-	return str.includes("bc");
+	str = str.trim();
+	return str.includes("bc") && str.length === 2;
 }
 export function BC(data: WorkingData): WorkingData {
-	return { date: `-${data.date}`, trust: data.trust + 2, pos: data.pos };
+	Logger.trace(`converting ${data.date} to BC`);
+	return { date: `-${data.date}`, trust: data.trust, pos: data.pos };
+}
+export function isAD(str: string) {
+	str = str.trim();
+	return str.includes("ad") && str.length === 2;
 }
 export function AD(data: WorkingData): WorkingData {
+	Logger.trace(`converting ${data.date} to AD`);
 	data.trust++;
 	return data;
 }
 
 export function isCenturies(str: string) {
-	return str === "century" || str === "c";
+	return str === "century" || str === "c" || str === "centuries" || str === "cent";
 }
 export function centuries(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to century`);
@@ -24,13 +33,14 @@ export function centuries(data: WorkingData): WorkingData {
 	var halfCentury = -50;
 	if (data.date.startsWith("-")) halfCentury = 50;
 	const nr = (+data.date * 100) + halfCentury;
-	return { date: `${nr}`, trust: data.trust + 2, pos: data.pos };
+	return { date: `${nr}`, trust: ++data.trust, pos: data.pos };
 }
 
 export function isMillennium(str: string) {
 	return str === "millennium" || str === "millenia";
 }
 export function millennium(data: WorkingData): WorkingData {
+	Logger.trace(`converting ${data.date} to millennium`);
 	var halfMillennium = -500;
 	if (data.date.startsWith("-")) halfMillennium = 500;
 	const nr = (+data.date * 1000) + halfMillennium;
@@ -42,8 +52,13 @@ export function isYearOld(str: string) {
 	return str.includes("year") || str.includes("years");
 }
 export function yearOld(data: WorkingData, now: number): WorkingData {
+	Logger.trace(`converting ${data.date} to year old`);
+	const regex = /[0-9]+/;
+	const match = regex.exec(data.date);
+	if (!match) return data;
+	const number = Number(match[0]);
 	return {
-		date: (now - +data.date).toString(),
+		date: (now - number).toString(),
 		trust: ++data.trust,
 		pos: data.pos,
 	};

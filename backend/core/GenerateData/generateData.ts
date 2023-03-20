@@ -7,6 +7,7 @@ import {
 	AD,
 	BC,
 	centuries,
+	isAD,
 	isBC,
 	isCenturies,
 	isConnectingWord,
@@ -22,7 +23,8 @@ const YEAR_NOW = 2023;
 
 //TODO: Maybe use Semantic Analyis or Recursive Decent
 /**
- * Returns a list of posts with updated Data field containing a post date chosen based on the most trusted
+ * Returns a list of posts with updated Data field 
+ * containing a post date chosen based on the most trusted
  * date provided from the post text.
  * @param posts
  * @returns
@@ -41,6 +43,7 @@ export function getDateFromPosts(posts: Post[]) {
 		post.data = chooseMostTrusted(data);
 		Logger.info(`(${post.data.date} : ${post.data.trust})`);
 	}
+	//Remove empty data
 	posts = posts.filter((x) => x.data.trust > 0);
 	//clean up for testing
 	posts = posts.map((x) => { x.data.pos = 0; return x; });
@@ -83,6 +86,10 @@ function treeStump(data: WorkingData, text: string[]) {
 		if (text.length > data.pos) txt = text[data.pos];
 		data = averageRange(data, txt);
 	}
+	if (isYearOld(data.date)) {
+		Logger.trace(`After isYearOld: ${data.date}`);
+		data = yearOld(data, YEAR_NOW);
+	}
 	if (Utility.isNumber(data.date) && data.date !== "") {
 		Logger.trace(`After isNumber: ${data.date}`);
 		data.trust++;
@@ -92,7 +99,8 @@ function treeStump(data: WorkingData, text: string[]) {
 }
 
 /**
- * Looks at the next word to match with the date types. If there is a match, look at the next position and do again.
+ * Looks at the next word to match with the date types. 
+ * If there is a match, look at the next position and do again.
  * @param data Current data being worked on
  * @param text Array of all text words
  * @returns WorkingData that
@@ -120,7 +128,7 @@ function switchTypes(data: WorkingData, text: string[]): WorkingData {
 	const type = text[data.pos];
 	Logger.trace(`switching Type ${type} for ${data.date}`);
 	if (isBC(type)) return BC(data);
-	if (type.includes("ad")) return AD(data);
+	if (isAD(type)) return AD(data);
 	if (isCenturies(type)) return centuries(data);
 	if (isMillennium(type)) return millennium(data);
 	if (isYearOld(type)) return yearOld(data, YEAR_NOW);
