@@ -14,8 +14,8 @@ export class Utility {
 			.replace(/([\(\[])([0-9])*([x× ])+[0-9]*([\)\]])/g, "") //Remove img resolution eg (1080x960)
 			.replace(/([\(\[\)\]])/g, "")
 			.replace(/(\bBCE\b)/gi, "BC") //Replace BCE with BC
-			.replace(/(\bCE\b)/gi, "AD")
-			.replace(/(st|nd|rd|th)/gi, "") //Replace CE with AD
+			.replace(/(\bCE\b)/gi, "AD") //Replace CE with AD
+			.replace(/(st|nd|rd|th)/gi, "") 
 			.toLowerCase();
 	}
 

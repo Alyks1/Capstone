@@ -16,6 +16,9 @@ export function calcTrust(data: WorkingData[]) {
 		if (+x.date < 0 || +x.date > 101) x.trust++;
 		//If many different numbers, more precision
 		if (new Set([...x.date]).size === x.date.length) x.trust++;
+		//if the date is not a multiple of 10 and 5, more precision
+		if (+x.date % 10 !== 0 && +x.date % 5 !== 0) x.trust++;
+		return x;
 	});
 	if (data.length === 1) data[0].trust + 2;
 	return data;
