@@ -8,7 +8,7 @@ export function BC(data: WorkingData): WorkingData {
 	return { date: `-${data.date}`, trust: data.trust + 2, pos: data.pos };
 }
 export function AD(data: WorkingData): WorkingData {
-	data.trust = data.trust+1;
+	data.trust++;
 	return data;
 }
 
@@ -35,7 +35,7 @@ export function millennium(data: WorkingData): WorkingData {
 	if (data.date.startsWith("-")) halfMillennium = 500;
 	const nr = (+data.date * 1000) + halfMillennium;
 
-	return { date: `${nr}`, trust: data.trust+1, pos: data.pos };
+	return { date: `${nr}`, trust: ++data.trust, pos: data.pos };
 }
 
 export function isYearOld(str: string) {
@@ -44,7 +44,7 @@ export function isYearOld(str: string) {
 export function yearOld(data: WorkingData, now: number): WorkingData {
 	return {
 		date: (now - +data.date).toString(),
-		trust: data.trust+1,
+		trust: ++data.trust,
 		pos: data.pos,
 	};
 }

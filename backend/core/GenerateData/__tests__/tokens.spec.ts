@@ -1,4 +1,4 @@
-import { AD, BC, centuries, isBC, isCenturies, isMillennium, millennium } from "../tokens";
+import { AD, BC, centuries, isBC, isCenturies, isConnectingWord, isMillennium, isYearOld, millennium, yearOld } from "../tokens";
 
 describe("isBC", () => {
     it("should return true with '5bc'", () => {
@@ -63,5 +63,41 @@ describe("millennium", () => {
     });
     it("should return -2500 with '-3'", () => {
         expect(millennium({ date: "-3", trust: 0, pos: 0 })).toEqual({ date: "-2500", trust: 1, pos: 0 });
+    });
+});
+
+describe("isYearOld", () => {
+    it("should return true with 'year'", () => {
+        expect(isYearOld("year")).toBe(true);
+    });
+    it("should return true with 'years'", () => {
+        expect(isYearOld("years")).toBe(true);
+    });
+    it("should return false with '5'", () => {
+        expect(isYearOld("5")).toBe(false);
+    });
+});
+
+describe("yearOld", () => {
+    it("should return 1 with '2022'", () => {
+        expect(yearOld({ date: "2022", trust: 0, pos: 0 }, 2023)).toEqual({ date: "1", trust: 1, pos: 0 });
+    });
+    it("should return -7977 with '10000'", () => {
+        expect(yearOld({ date: "10000", trust: 0, pos: 0 }, 2023)).toEqual({ date: "-7977", trust: 1, pos: 0 });
+    });
+});
+
+describe("isConnectingWord", () => {
+    it("should return true with '-'", () => {
+        expect(isConnectingWord("-")).toBe(true);
+    });
+    it("should return true with 'to'", () => {
+        expect(isConnectingWord("to")).toBe(true);
+    });
+    it("should return false with '5'", () => {
+        expect(isConnectingWord("5")).toBe(false);
+    });
+    it("should return false with 'word'", () => {
+        expect(isConnectingWord("word")).toBe(false);
     });
 });
