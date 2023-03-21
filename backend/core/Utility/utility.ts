@@ -24,6 +24,7 @@ export class Utility {
 	}
 
 	static adjustTrust(trust: number, adjustment: number, active: boolean) {
+		if (!active) return trust;
 		return trust + adjustment;
 	}
 }

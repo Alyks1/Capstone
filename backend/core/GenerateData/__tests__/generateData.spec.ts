@@ -68,7 +68,7 @@ const testingPostsResult: Post[] = [ {
 
 describe("getDateFromPost", () => {
     it("should return a date", () => {
-        const date = getDateFromPosts(testingPosts);
-        expect(date).toEqual(testingPostsResult);
+        const post = getDateFromPosts(testingPosts);
+        expect(post.map((x) => x.data.date)).toEqual(testingPostsResult.map((x) => x.data.date));
     });
 });

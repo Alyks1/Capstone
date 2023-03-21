@@ -4,16 +4,14 @@ import { WorkingData } from "../Types/WorkingData";
 //TODO: add tokens such as testing for 'kg', 'g', 'km' etc
 
 export function isBC(str: string) {
-	str = str.trim();
-	return str.includes("bc") && str.length === 2;
+	return str.includes("bc");
 }
 export function BC(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to BC`);
 	return { date: `-${data.date}`, trust: data.trust, pos: data.pos };
 }
 export function isAD(str: string) {
-	str = str.trim();
-	return str.includes("ad") && str.length === 2;
+	return str.includes("ad")
 }
 export function AD(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to AD`);
