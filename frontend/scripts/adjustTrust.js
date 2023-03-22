@@ -11,14 +11,12 @@ socket.emit("getTrustCalc");
 socket.on("trustCalc", (json) => {
     const trustCalc = JSON.parse(json);
     console.log(trustCalc);
-    const inputs = form.elements;
-    console.log(parseToBool(trustCalc.notBetween0and100))
-    inputs.namedItem("notBetween0and100").checked = parseToBool(trustCalc.notBetween0and100);
-    inputs.namedItem("differentNr").checked = parseToBool(trustCalc.differentNr);
-    inputs.namedItem("multipleOf10and5").checked = parseToBool(trustCalc.multipleOf10and5);
-    inputs.namedItem("between0and10").checked = parseToBool(trustCalc.between0and10);
-
-    inputs.namedItem("reduceTrust").value = Number(trustCalc.reduceTrust);
+    //-1 because the last input is reduceTrust which is not a checkbox
+    for (let i = 0; i < form.elements.length - 1; i++) {
+        const input = form.elements[i];
+        input.checked = parseToBool(trustCalc[input.name]);
+    }
+    form.elements.namedItem("reduceTrust").value = Number(trustCalc.reduceTrust);
 });
 
 returnButton.addEventListener("click", () => {
@@ -27,21 +25,13 @@ returnButton.addEventListener("click", () => {
 
 submitButton.addEventListener("click", () => {
     console.log("Saving changes to trust calculation parameters");
-
-	const inputs = form.elements;
-	const notBetween0and100 = inputs.namedItem("notBetween0and100").checked.toString();
-	const differentNr = inputs.namedItem("differentNr").checked.toString();
-	const multipleOf10and5 = inputs.namedItem("multipleOf10and5").checked.toString();
-    const between0and10 = inputs.namedItem("between0and10").checked.toString();
-    const reduceTrust = inputs.namedItem("reduceTrust").value;
-
 	socket.emit("setTrustCalc",
 		{
-			notBetween0and100: notBetween0and100,
-            differentNr: differentNr,
-            multipleOf10and5: multipleOf10and5,
-            between0and10: between0and10,
-            reduceTrust: reduceTrust
+			notBetween0and100: getChecked("notBetween0and100", form.elements),
+            differentNr: getChecked("differentNr", form.elements),
+            multipleOf10and5: getChecked("multipleOf10and5", form.elements),
+            between0and10: getChecked("between0and10", form.elements),
+            reduceTrust: form.elements.namedItem("reduceTrust").value
 		}
 	);
 });
@@ -49,4 +39,8 @@ submitButton.addEventListener("click", () => {
 function parseToBool(checked) {
     if (checked === "true") return true;
     return false;
+}
+
+function getChecked(name, inputs) {
+    return inputs.namedItem(name).checked.toString();
 }

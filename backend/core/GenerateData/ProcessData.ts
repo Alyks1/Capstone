@@ -1,8 +1,6 @@
 import { Post } from "../Types/Post";
 import { WorkingData } from "../Types/WorkingData";
 import { Logger } from "../Utility/logging";
-import { Utility } from "../Utility/utility";
-import fs from "fs";
 
 /**
  * Filteres data by removing entries with less than 1 trust or dates above 1940
@@ -16,6 +14,7 @@ export function filterData(data: WorkingData[]) {
 	data = data.filter((x) => +x.date < 1940);
 	return data;
 }
+
 /**
  * Choses one entry from the Array with the highest trust
  * @param data WorkingData collection from where to choose the most trusted
