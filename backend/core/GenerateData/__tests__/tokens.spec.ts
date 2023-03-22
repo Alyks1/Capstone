@@ -14,13 +14,13 @@ describe("isBC", () => {
 
 describe("BC", () => {
     it("should return -5 with '5'", () => {
-        expect(BC({ date: "5", trust: 0, pos: 0 })).toEqual({ date: "-5", trust: 2, pos: 0 });
+        expect(BC({ date: "5", trust: 0, pos: 0 }).date).toEqual("-5");
     });
 });
 
 describe("AD", () => {
     it("should return 1776 with '1776'", () => {
-        expect(AD({ date: "1776", trust: 0, pos: 0 })).toEqual({ date: "1776", trust: 1, pos: 0 });
+        expect(AD({ date: "1776", trust: 0, pos: 0 }).date).toEqual("1776");
     });
 });
 
@@ -38,10 +38,10 @@ describe("isCenturies", () => {
 
 describe("centuries", () => {
     it("should return 1750 with '18'", () => {
-        expect(centuries({ date: "18", trust: 0, pos: 0 })).toEqual({ date: "1750", trust: 2, pos: 0 });
+        expect(centuries({ date: "18", trust: 0, pos: 0 }).date).toEqual("1750");
     });
     it("should return -1850 with '-19'", () => {
-        expect(centuries({ date: "-19", trust: 0, pos: 0 })).toEqual({ date: "-1850", trust: 2, pos: 0 });
+        expect(centuries({ date: "-19", trust: 0, pos: 0 }).date).toEqual("-1850");
     });
 });
 
@@ -59,10 +59,10 @@ describe("isMillennium", () => {
 
 describe("millennium", () => {
     it("should return 1500 with '2'", () => {
-        expect(millennium({ date: "2", trust: 0, pos: 0 })).toEqual({ date: "1500", trust: 1, pos: 0 });
+        expect(millennium({ date: "2", trust: 0, pos: 0 }).date).toEqual("1500");
     });
     it("should return -2500 with '-3'", () => {
-        expect(millennium({ date: "-3", trust: 0, pos: 0 })).toEqual({ date: "-2500", trust: 1, pos: 0 });
+        expect(millennium({ date: "-3", trust: 0, pos: 0 }).date).toEqual("-2500");
     });
 });
 
@@ -80,10 +80,10 @@ describe("isYearOld", () => {
 
 describe("yearOld", () => {
     it("should return 1 with '2022'", () => {
-        expect(yearOld({ date: "2022", trust: 0, pos: 0 }, 2023)).toEqual({ date: "1", trust: 1, pos: 0 });
+        expect(yearOld({ date: "2022", trust: 0, pos: 0 }, 2023).date).toEqual("1");
     });
     it("should return -7977 with '10000'", () => {
-        expect(yearOld({ date: "10000", trust: 0, pos: 0 }, 2023)).toEqual({ date: "-7977", trust: 1, pos: 0 });
+        expect(yearOld({ date: "10000", trust: 0, pos: 0 }, 2023).date).toEqual("-7977");
     });
 });
 

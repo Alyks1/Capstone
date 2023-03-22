@@ -7,8 +7,9 @@ import { getSocketURL } from "./utility.js";
 const socket = io(getSocketURL());
 
 const startScraperButton = document.getElementById("start-button");
-const addWebsiteButton = document.getElementById("add-website");
-const displayWebsiteButton = document.getElementById("display-websites");
+const addWebsiteButton = document.getElementById("addWebsite");
+const displayWebsiteButton = document.getElementById("displayWebsites");
+const updateTrustCalc = document.getElementById("updateTrustCalc");
 
 const datasetDownloadDiv = document.getElementById("datasetDownloadDiv");
 const datasetDownloadLink = document.getElementById("datasetDownloadLink");
@@ -54,6 +55,10 @@ addWebsiteButton.addEventListener("click", () => {
 
 displayWebsiteButton.addEventListener("click", () => {
 	window.location.href = "displayWebsiteList.html";
+});
+
+updateTrustCalc.addEventListener("click", () => {
+	window.location.href = "adjustTrust.html";
 });
 
 function resetProgressBar() {

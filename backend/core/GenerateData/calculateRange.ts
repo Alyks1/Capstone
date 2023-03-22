@@ -13,9 +13,9 @@ export function averageRange(data: WorkingData, nextWord: string): WorkingData {
 	Logger.trace(`Averaging range: ${data.date}, potentially with ${nextWord}`);
 	const bothNrs = chooseRange(data, nextWord);
 	const numbers = convertToNumbers(bothNrs, data);
-	const total = numbers.reduce((acc: number, x: number) => +x + acc, 0);
+	const total = numbers.reduce((acc: number, x: number) => x + acc, 0);
 	return {
-		date: Math.round(total / numbers.length).toString(),
+		date: (total / numbers.length).toString(),
 		trust: ++data.trust,
 		pos: data.pos,
 	};
@@ -41,7 +41,7 @@ function chooseRange(data: WorkingData, nextWord: string) {
 			bothNrs.push(data.date.slice(lastHyphen + 1));
 		} else bothNrs = data.date.split("-"); 
 	}
-	Logger.trace(`Both nrs = ${bothNrs}`);
+	Logger.info(`Both nrs = ${bothNrs}`);
 	return bothNrs;
 }
 

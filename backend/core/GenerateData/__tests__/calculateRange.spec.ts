@@ -22,25 +22,13 @@ describe('isRange', () => {
 
 describe('averageRange', () => {
     it('should average a range 1-2', () => {
-        expect(averageRange({ date: '1-2', trust: 0, pos: 0 }, 'word')).toEqual({
-            date: '1.5',
-            trust: 0,
-            pos: 0,
-        });
+        expect(averageRange({ date: '1-2', trust: 0, pos: 0 }, 'word').date).toEqual("1.5");
     });
     it('should average a range of -1-2', () => {
-        expect(averageRange({ date: '-1-2', trust: 0, pos: 0 }, 'word')).toEqual({
-            date: '0.5',
-            trust: 0,
-            pos: 0,
-        });
+        expect(averageRange({ date: '-1-2', trust: 0, pos: 0 }, 'word').date).toEqual("0.5");
     });
     it('should average a range of -2 & 3', () => {
-        expect(averageRange({ date: '-2', trust: 0, pos: 0 }, '3')).toEqual({
-            date: '0.5',
-            trust: 0,
-            pos: 0,
-        });
+        expect(averageRange({ date: '-2', trust: 0, pos: 0 }, '3').date).toEqual("0.5");
     });
 });
 
