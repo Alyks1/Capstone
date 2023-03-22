@@ -22,9 +22,4 @@ export class Utility {
 	static isNumber(str: string) {
 		return !isNaN(+str);
 	}
-
-	static adjustTrust(trust: number, adjustment: number, active: boolean) {
-		if (!active) return trust;
-		return trust + adjustment;
-	}
 }

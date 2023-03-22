@@ -1,7 +1,6 @@
 import fs from "fs";
 import { WorkingData } from "../Types/WorkingData";
 import { Logger } from "../Utility/logging";
-import { Utility } from "../Utility/utility";
 
 export interface TrustCalcOptions {
 	notBetween0and100: boolean;
@@ -33,19 +32,19 @@ export function calcTrust(data: WorkingData[]) {
 		Logger.trace(`Before: ${x.date} : ${x.trust}`);
 		//If the date is not between 0 and 100
 		if (+x.date < 0 || +x.date > 101) 
-			x.trust = Utility.adjustTrust(x.trust, 1, trustCalcOptions.notBetween0and100);
+			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.notBetween0and100);
 		//If many different numbers, more precision
 		if (new Set([...x.date]).size === x.date.length) 
-			x.trust = Utility.adjustTrust(x.trust, 1, trustCalcOptions.differentNr);
+			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.differentNr);
 		//if the date is not a multiple of 10 and 5, more precision
 		if (+x.date % 10 !== 0 && +x.date % 5 !== 0) 
-			x.trust = Utility.adjustTrust(x.trust, 1, trustCalcOptions.multipleOf10and5);
+			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.multipleOf10and5);
 		//if the date is between 1 and 10, less likely to be a year
 		if (+x.date > 0 && +x.date < 11) 
-			x. trust = Utility.adjustTrust(x.trust, 1, trustCalcOptions.between0and10);
+			x. trust = adjustTrust(x.trust, 1, trustCalcOptions.between0and10);
 		//reduce trust by one to stop trust inflation
 		Logger.debug(`Reduce trust: ${trustCalcOptions.reduceTrust}`);
-		x.trust = Utility.adjustTrust(x.trust,trustCalcOptions.reduceTrust * -1, true);
+		x.trust = adjustTrust(x.trust,trustCalcOptions.reduceTrust * -1, true);
 		return x;
 	});
 	if (data.length === 1) data[0].trust;
@@ -54,14 +53,13 @@ export function calcTrust(data: WorkingData[]) {
 }
 
 export async function setTrustCalcOptions(activations) {
-	const fileData = await fs.promises.readFile("./trustActivations.json");
-	const jsonData: TrustCalcOptions = JSON.parse(fileData.toString());
-	jsonData.notBetween0and100 = activations.notBetween0and100;
-	jsonData.differentNr = activations.differentNr;
-	jsonData.multipleOf10and5 = activations.multipleOf10and5;
-	jsonData.between0and10 = activations.between0and10;
-	jsonData.reduceTrust = activations.reduceTrust;
-	
+    const jsonData: TrustCalcOptions = {
+        notBetween0and100: activations.notBetween0and100,
+        differentNr: activations.differentNr,
+        multipleOf10and5: activations.multipleOf10and5,
+        between0and10: activations.between0and10,
+        reduceTrust: activations.reduceTrust,
+    };
 	const writeData = JSON.stringify(jsonData);
 	await fs.promises.writeFile("./trustActivations.json", writeData);
 }
@@ -76,4 +74,9 @@ export async function getTrustCalcOptions() {
 	trustCalcOptions.reduceTrust = Number(data.reduceTrust);
 
 	return JSON.stringify(data);
+}
+
+function adjustTrust(trust: number, adjustment: number, active: boolean) {
+    if (!active) return trust;
+    return trust + adjustment;
 }
