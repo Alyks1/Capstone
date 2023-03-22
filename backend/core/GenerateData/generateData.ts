@@ -17,7 +17,8 @@ import {
 	noMatch,
 	yearOld,
 } from "./tokens";
-import { calcTrust, chooseMostTrusted, filterData } from "./processData";
+import { chooseMostTrusted, filterData } from "./processData";
+import { calcTrust } from "./trustCalculations";
 
 const YEAR_NOW = 2023;
 

@@ -35,7 +35,7 @@ submitButton.addEventListener("click", () => {
     const between0and10 = inputs.namedItem("between0and10").checked.toString();
     const reduceTrust = inputs.namedItem("reduceTrust").value;
 
-	socket.emit("updateTrustCalc",
+	socket.emit("setTrustCalc",
 		{
 			notBetween0and100: notBetween0and100,
             differentNr: differentNr,

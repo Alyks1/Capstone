@@ -4,7 +4,7 @@ import { startScraper } from "./core/index";
 import express from "express";
 import { addWebsite, updateWebsite } from "./core/manageWebsite";
 import { LoadWebsites } from "./core/Utility/json";
-import { setTrustCalcOptions, getTrustCalcOptions, TrustCalcOptions } from "./core/GenerateData/processData";
+import { setTrustCalcOptions, getTrustCalcOptions, TrustCalcOptions } from "./core/GenerateData/trustCalculations";
 
 function startServer() {
 	Logger.trace("Starting Server");
@@ -63,7 +63,7 @@ function startServer() {
 			const data = await getTrustCalcOptions();
 			socket.emit("trustCalc", data);
 		});
-		socket.on("updateTrustCalc", async (activations: TrustCalcOptions) => {
+		socket.on("setTrustCalc", async (activations: TrustCalcOptions) => {
 			Logger.info(JSON.stringify(activations));
 
 			await setTrustCalcOptions(activations);
