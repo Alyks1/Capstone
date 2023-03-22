@@ -9,13 +9,16 @@ const socket = io(getSocketURL());
 const startScraperButton = document.getElementById("start-button");
 const addWebsiteButton = document.getElementById("addWebsite");
 const displayWebsiteButton = document.getElementById("displayWebsites");
-const updateTrustCalc = document.getElementById("updateTrustCalc");
+const updateTrustCalcButton = document.getElementById("updateTrustCalc");
+const displayDataButton = document.getElementById("displayData"); 
 
 const datasetDownloadDiv = document.getElementById("datasetDownloadDiv");
 const datasetDownloadLink = document.getElementById("datasetDownloadLink");
 
 const progressBarDiv = document.getElementById("progressDiv");
 const progressBar = document.getElementById("progressBar");
+
+displayDataButton.disabled = true;
 
 if (sessionStorage.getItem("datasetUrl")) {
 	showDownloadLink();
@@ -38,6 +41,10 @@ socket.on("sendDatasetUrl", (url) => {
 	showDownloadLink();
 });
 
+socket.on("sendDatasetInfo", (url) => {
+	sessionStorage.setItem("datasetInfo", url);
+});
+
 socket.on("NoPostsFound", () => {
     console.log("No posts found");
 	resetProgressBar();
@@ -46,6 +53,7 @@ socket.on("NoPostsFound", () => {
 startScraperButton.addEventListener("click", () => {
 	console.log("Starting Scraper");
 	progressBarDiv.style.visibility = "visible";
+	//TODO: Deactivate buttons
 	socket.emit("start");
 });
 
@@ -57,8 +65,12 @@ displayWebsiteButton.addEventListener("click", () => {
 	window.location.href = "displayWebsiteList.html";
 });
 
-updateTrustCalc.addEventListener("click", () => {
+updateTrustCalcButton.addEventListener("click", () => {
 	window.location.href = "adjustTrust.html";
+});
+
+displayDataButton.addEventListener("click", () => {
+	window.location.href = "displayData.html";
 });
 
 function resetProgressBar() {
@@ -69,4 +81,5 @@ function resetProgressBar() {
 function showDownloadLink() {
 	datasetDownloadDiv.style.visibility = "visible";
 	datasetDownloadLink.href = sessionStorage.getItem("datasetUrl");
+	displayDataButton.disabled = false;
 }

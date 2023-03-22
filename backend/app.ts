@@ -23,6 +23,7 @@ function startServer() {
 
 	io.on("connection", (socket) => {
 		socket.on("start", () => {
+			Logger.info("Starting scraper");
 			startScraper(socket);
 		});
 		socket.on("addWebsite", (website) => {

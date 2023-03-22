@@ -3,38 +3,38 @@ body {
 }
 
 text {
-    font-family: sans-serif;
+  font-family: sans-serif;
 }
   
 legend {
-    background-color: white;
-    padding: 5px 10px;
-    margin: 5px;
+  background-color: white;
+  padding: 5px 10px;
+  margin: 5px;
 }
   
 input {
-    margin: 5px;
-    align-items: center;
+  margin: 5px;
+  align-items: center;
 }
 
 label {
-    margin: 5px;
+  margin: 5px;
 }
 
 form {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    padding: 20px;
-    margin: 10px;
-    border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+  margin: 10px;
+  border: 1px solid #ccc;
 }
 
 ul {
-    list-style-type: none;
-    margin: 5px;
-    padding: 5px;
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
+  list-style-type: none;
+  margin: 5px;
+  padding: 5px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
 }
 
 button {
@@ -146,6 +146,14 @@ button:-webkit-details-marker {
   
 .download:hover {
     background-color: RoyalBlue;
+}
+
+.dataList {
+  border: #000000 1px solid;
+  margin: 15px;
+  padding: 15px;
+  display: block;
+  overflow: hidden;
 }
 
 #datasetDownloadDiv {

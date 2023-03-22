@@ -17,6 +17,7 @@ export async function startScraper(
 	socket.emit("log", "Scraper Started");
 	//TODO: Add integration tests
 	//TODO: Add Museum Website to scraper
+	//TODO: Move websites.json & websiteGroupInfo to database
 	const browser = await puppeteer.launch({
 		headless: true,
 	});
@@ -76,7 +77,7 @@ export async function startScraper(
 	await createDataset(page, allPosts);
 
 	socket.emit("log", "Scraper Finished");
-
-	socket.emit("sendDatasetUrl", "/dataset.tar.gz");
+	socket.emit("sendDatasetUrl", "/output/dataset.tar.gz");
+	socket.emit("sendDatasetInfo", "/output/dataset/datasetInfo.csv");
 	await browser.close();
 }
