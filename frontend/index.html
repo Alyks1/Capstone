@@ -8,21 +8,20 @@
 </head>
 
 <body>
-    <div>
-        <button type="button" id="start-button">Start Scraper</button>
-        <div id="datasetDownloadDiv">
-            <a download="dataset.tar.gz" id="datasetDownloadLink">Download</a>
-        </div>
-        <button type="button" id="addWebsite">Add Website</button>
-        <button type="button" id="displayWebsites">Display Websites</button>
-        <button type="button" id="updateTrustCalc">Update Trust Calculation Parameters</button>
-
+    <div class="menu">
+        <button type="button" id="start-button" class="startScraper">Start Scraper</button><br><br>
+        <button type="button" id="addWebsite">Add Website</button><br><br>
+        <button type="button" id="displayWebsites">Display Websites</button><br><br>
+        <button type="button" id="updateTrustCalc">Update Trust Calculation Parameters</button><br><br>
     </div>
     <div>
         <div id="progressDiv">
             <p id="progressText"></p>
             <progress id="progressBar" value="0" max="5"></progress>
         </div>
+    </div>
+    <div id="datasetDownloadDiv">
+        <a download="dataset.tar.gz" id="datasetDownloadLink" class="download">Download</a>
     </div>
     <script src="scripts/script.js" type="module" type="text/javascript"></script>
 </body>

@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer";
-import { Scraper } from "./Scraper";
+import { Scraper } from "./scraper";
 import { Post } from "./Types/Post";
 import { Logger } from "./Utility/logging";
 import { PuppeteerBlocker } from "@cliqz/adblocker-puppeteer";

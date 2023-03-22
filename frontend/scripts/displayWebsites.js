@@ -25,10 +25,12 @@ function createList(websites) {
         const a = createA(url, i);
         const p = createP(website);
         const button = createDeactivateButton(i);
+        const updateButton = createUpdateButton(i);
 
         li.appendChild(a);
         li.appendChild(p);
         li.appendChild(button);
+        li.appendChild(updateButton);
         list.appendChild(li);
     });
 }
@@ -39,6 +41,15 @@ function createDeactivateButton(i) {
     button.addEventListener("click", () => {
         socket.emit("deactivateWebsite", i);
         window.location.href = "displayWebsiteList.html";
+    });
+    return button
+}
+
+function createUpdateButton(i) {
+    const button = document.createElement("button");
+    button.textContent = "Update";
+    button.addEventListener("click", () => {
+        window.location.href = `updateWebsite.html?id=${i}`;
     });
     return button
 }

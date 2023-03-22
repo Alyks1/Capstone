@@ -14,6 +14,7 @@ socket.on("trustCalc", (json) => {
     //-2 because the last input is reduceTrust which is not a checkbox
     for (let i = 0; i < form.elements.length - 2; i++) {
         const input = form.elements[i];
+        console.log(input.name)
         input.checked = parseToBool(trustCalc[input.name]);
     }
     form.elements.namedItem("reduceTrust").value = Number(trustCalc.reduceTrust);

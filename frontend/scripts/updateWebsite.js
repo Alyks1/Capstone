@@ -6,6 +6,7 @@ const socket = io(getSocketURL());
 const header = document.getElementById("website");
 const websiteInfo = document.getElementById("websiteInfo");
 const updateButton = document.getElementById("updateButton");
+const backButton = document.getElementById("backButton");
 
 const MaxNrOfPages = 10;
 const MaxWeight = 1;
@@ -33,6 +34,10 @@ updateButton.addEventListener("click", () => {
         nrOfPages: Number(newNrOfPages),
         weight: Number(weight)
     });
+    window.location.href = "displayWebsiteList.html";
+});
+
+backButton.addEventListener("click", () => {
     window.location.href = "displayWebsiteList.html";
 });
 
