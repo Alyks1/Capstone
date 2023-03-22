@@ -11,8 +11,8 @@ socket.emit("getTrustCalc");
 socket.on("trustCalc", (json) => {
     const trustCalc = JSON.parse(json);
     console.log(trustCalc);
-    //-1 because the last input is reduceTrust which is not a checkbox
-    for (let i = 0; i < form.elements.length - 1; i++) {
+    //-2 because the last input is reduceTrust which is not a checkbox
+    for (let i = 0; i < form.elements.length - 2; i++) {
         const input = form.elements[i];
         input.checked = parseToBool(trustCalc[input.name]);
     }
@@ -38,7 +38,8 @@ submitButton.addEventListener("click", () => {
 
 function parseToBool(checked) {
     if (checked === "true") return true;
-    return false;
+    else if (checked === "false") return false;
+    else throw new Error(`Invalid value for boolean: ${checked}`);
 }
 
 function getChecked(name, inputs) {

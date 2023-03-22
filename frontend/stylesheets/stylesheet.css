@@ -9,3 +9,29 @@ button {
 #progressDiv {
     visibility: hidden;
 }
+
+.switch {
+    --inactive-bg: #cfd8dc;
+    --active-bg: #00e676;
+    --size: 2rem;
+    appearance: none;
+    width: calc(var(--size) * 2.2);
+    height: var(--size);
+    display: inline-block;
+    border-radius: calc(var(--size) / 2);
+    cursor: pointer;
+    background-color: var(--inactive-bg);
+    background-image: radial-gradient(
+        circle calc(var(--size) / 2.1),
+        #fff 100%,
+        #0000 0
+      ),
+      radial-gradient(circle calc(var(--size) / 1.5), #0003 0%, #0000 100%);
+    background-repeat: no-repeat;
+    background-position: calc(var(--size) / -1.75) 0;
+    transition: background 0.2s ease-out;
+  }
+  .switch:checked {
+    background-color: var(--active-bg);
+    background-position: calc(var(--size) / 1.75) 0;
+  }
