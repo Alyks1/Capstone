@@ -7,14 +7,14 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./websites.db"
 }
 
 model Website {
   id        Int  @id @default(autoincrement())
   url       String @unique
   group     String
-  weight    Int
+  weight    Float
   nrOfPages Int
 }
 

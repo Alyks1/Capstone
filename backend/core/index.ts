@@ -10,6 +10,7 @@ import { addWebsiteWeight } from "./GenerateData/processData";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { LoadWebsiteGroupInfo, LoadWebsites } from "./Utility/json";
+import { getActiveWebsites } from "./Database/database";
 
 export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
@@ -23,7 +24,7 @@ export async function startScraper(
 	});
 
 	const page = await browser.newPage();
-	const websites = await LoadWebsites();
+	const websites = await getActiveWebsites();
 	const websiteGroupInfos = await LoadWebsiteGroupInfo();
 
 	const adblockList = await Adblock.getLists();
