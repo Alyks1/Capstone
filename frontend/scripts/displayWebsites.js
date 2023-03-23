@@ -18,14 +18,15 @@ returnButton.addEventListener("click", () => {
 
 function createList(websites) {
     websites.forEach((website, i) => {
+        const id = i+1;
         const url = cleanUrl(website.url);
 
         const li = document.createElement("li");
 
-        const a = createA(url, i);
+        const a = createA(url, id);
         const p = createP(website);
-        const button = createDeactivateButton(i);
-        const updateButton = createUpdateButton(i);
+        const button = createDeactivateButton(id);
+        const updateButton = createUpdateButton(id);
 
         li.appendChild(a);
         li.appendChild(p);

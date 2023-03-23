@@ -2,7 +2,7 @@ import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import { getSocketURL } from "./utility.js";
 
 //TODO: Add your own socket.io server url
-//TODO: Add View all scraped data button (where was data scraped, how accurate, total accuracy?)?
+//TODO: Add option to select and deselect data
 
 const socket = io(getSocketURL());
 
