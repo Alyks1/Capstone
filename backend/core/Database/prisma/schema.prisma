@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./websites.db"
+}
+
+model Website {
+  id        Int  @id @default(autoincrement())
+  url       String @unique
+  group     String
+  weight    Float
+  nrOfPages Int
+}
+
+model WebsiteGroupInfo {
+  group           String @id
+  rootDiv         String
+  divIdentifier   String
+  textIdentifier  String     
+  imgIdentifier   String
+  nextIdentifier  String
+}

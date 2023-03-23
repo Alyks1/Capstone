@@ -1,11 +1,11 @@
 import { Logger } from "./core/Utility/logging";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { startScraper } from "./core/index";
 import express from "express";
-import { addWebsite, updateWebsite } from "./core/manageWebsite";
-import { LoadWebsites } from "./core/Utility/json";
 import { setTrustCalcOptions, getTrustCalcOptions, TrustCalcOptions } 
 from "./core/GenerateData/trustCalculations";
+import { addWebsite, deactivateWebsite, getWebsite, 
+	getWebsites, updateWebsite } from "./core/Database/dbWebsite";
 
 function startServer() {
 	Logger.trace("Starting Server");
@@ -26,22 +26,19 @@ function startServer() {
 			Logger.info("Starting scraper");
 			startScraper(socket);
 		});
-		socket.on("addWebsite", (website) => {
-			const data = addWebsite(website);
+		socket.on("addWebsite", async (website) => {
+			Logger.trace(`Adding website ${website.url}`);
+			const data = await addWebsite(website)
 			socket.emit("log", data);
 		});
 		socket.on("getWebsites", async () => {
 			Logger.trace("Sending websites to client")
-			const websites = await LoadWebsites();
+			const websites = await getWebsites();
 			socket.emit("websites", websites);
 		});
 		socket.on("getSingularWebsite", async (id: number) => {
 			Logger.trace(`Sending website with id ${id} to client`)
-			const websites = await LoadWebsites();
-			const website = websites.find((website) => website.id === id);
-			if (website === undefined) {
-				Logger.warn(`Website with id ${id} not found`);
-			}
+			const website = await getWebsite(id);
 			socket.emit("singularWebsite", website);
 		});
 		socket.on("updateWebsite", async (website) => {
@@ -51,13 +48,7 @@ function startServer() {
 		});
 		socket.on("deactivateWebsite", async (id: number) => {
 			Logger.trace(`Deactivating website with id ${id}`);
-			const websites = await LoadWebsites();
-			const website = websites.find((website) => website.id === id);
-			if (website === undefined) {
-				Logger.warn(`Website with id ${id} not found`);
-			}
-			const newWebsite = {...website, nrOfPages: 0};
-			await updateWebsite(newWebsite);
+			await deactivateWebsite(id);
 			socket.emit("log", "Website deactivated");
 		});
 		socket.on("getTrustCalc", async () => {

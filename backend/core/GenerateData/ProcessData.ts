@@ -36,8 +36,9 @@ export function chooseMostTrusted(data: WorkingData[]) {
  * @returns
  */
 export function addWebsiteWeight(posts: Post[], websiteWeight: number): Post[] {
+	const debugText = `\n Bevor adding Website weight`
 	Logger.debug(
-		posts.map((x) => `\n(${x.data.date.padEnd(7, " ")} : ${x.data.trust})`),
+		posts.map((x) => `${debugText}(${x.data.date.padEnd(7, " ")} : ${x.data.trust})}`),
 	);
 	posts.forEach((x) => {
 		x.data.trust = Math.round(x.data.trust * websiteWeight);

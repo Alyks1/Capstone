@@ -2,7 +2,7 @@ import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import { getSocketURL } from "./utility.js";
 
 //TODO: Add your own socket.io server url
-//TODO: Add View all scraped data button (where was data scraped, how accurate, total accuracy?)?
+//TODO: Add option to select and deselect data
 
 const socket = io(getSocketURL());
 
@@ -53,7 +53,11 @@ socket.on("NoPostsFound", () => {
 startScraperButton.addEventListener("click", () => {
 	console.log("Starting Scraper");
 	progressBarDiv.style.visibility = "visible";
-	//TODO: Deactivate buttons
+	startScraperButton.disabled = true;
+	addWebsiteButton.disabled = true;
+	displayWebsiteButton.disabled = true;
+	updateTrustCalcButton.disabled = true;
+	displayDataButton.disabled = true;
 	socket.emit("start");
 });
 
@@ -82,4 +86,8 @@ function showDownloadLink() {
 	datasetDownloadDiv.style.visibility = "visible";
 	datasetDownloadLink.href = sessionStorage.getItem("datasetUrl");
 	displayDataButton.disabled = false;
+	startScraperButton.disabled = false;
+	addWebsiteButton.disabled = false;
+	displayWebsiteButton.disabled = false;
+	updateTrustCalcButton.disabled = false;
 }
