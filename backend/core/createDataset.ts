@@ -18,6 +18,9 @@ interface CSVType {
 	id: string;
 	imgSrc: string;
 }
+
+//TODO: Refactor this to be able to get data from csv
+
 /**
  * creates a dataset from the given posts
  * @param page

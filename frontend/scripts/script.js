@@ -53,7 +53,11 @@ socket.on("NoPostsFound", () => {
 startScraperButton.addEventListener("click", () => {
 	console.log("Starting Scraper");
 	progressBarDiv.style.visibility = "visible";
-	//TODO: Deactivate buttons
+	startScraperButton.disabled = true;
+	addWebsiteButton.disabled = true;
+	displayWebsiteButton.disabled = true;
+	updateTrustCalcButton.disabled = true;
+	displayDataButton.disabled = true;
 	socket.emit("start");
 });
 
@@ -82,4 +86,8 @@ function showDownloadLink() {
 	datasetDownloadDiv.style.visibility = "visible";
 	datasetDownloadLink.href = sessionStorage.getItem("datasetUrl");
 	displayDataButton.disabled = false;
+	startScraperButton.disabled = false;
+	addWebsiteButton.disabled = false;
+	displayWebsiteButton.disabled = false;
+	updateTrustCalcButton.disabled = false;
 }
