@@ -5,7 +5,7 @@ import express from "express";
 import { setTrustCalcOptions, getTrustCalcOptions, TrustCalcOptions } 
 from "./core/GenerateData/trustCalculations";
 import { addWebsite, deactivateWebsite, getWebsite, 
-	getWebsites, updateWebsite } from "./core/Database/database";
+	getWebsites, updateWebsite } from "./core/Database/dbWebsite";
 
 function startServer() {
 	Logger.trace("Starting Server");

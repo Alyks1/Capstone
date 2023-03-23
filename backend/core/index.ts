@@ -9,7 +9,8 @@ import { createDataset } from "./createDataset";
 import { addWebsiteWeight } from "./GenerateData/processData";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { getActiveWebsites, getWebsiteGroupInfo } from "./Database/database";
+import { getActiveWebsites } from "./Database/dbWebsite";
+import { getWebsiteGroupInfo } from "./Database/dbWebsiteGroupInfo";
 
 export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
@@ -17,7 +18,6 @@ export async function startScraper(
 	socket.emit("log", "Scraper Started");
 	//TODO: Add integration tests
 	//TODO: Add Museum Website to scraper
-	//TODO: Move websites.json & websiteGroupInfo to database
 	const browser = await puppeteer.launch({
 		headless: true,
 	});
