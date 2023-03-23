@@ -9,8 +9,7 @@ import { createDataset } from "./createDataset";
 import { addWebsiteWeight } from "./GenerateData/processData";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { LoadWebsiteGroupInfo, LoadWebsites } from "./Utility/json";
-import { getActiveWebsites } from "./Database/database";
+import { getActiveWebsites, getWebsiteGroupInfo } from "./Database/database";
 
 export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
@@ -25,7 +24,7 @@ export async function startScraper(
 
 	const page = await browser.newPage();
 	const websites = await getActiveWebsites();
-	const websiteGroupInfos = await LoadWebsiteGroupInfo();
+	const WGIs = await getWebsiteGroupInfo();
 
 	const adblockList = await Adblock.getLists();
 
@@ -46,8 +45,8 @@ export async function startScraper(
 
 		await page.goto(website.url);
 
-		const websiteGroupInfo = websiteGroupInfos[website.group];
-		if (!websiteGroupInfo) {
+		const WGI = WGIs.find((WGI) => WGI.group === website.group);
+		if (!WGI) {
 			Logger.warn(`skipped ${website.url}. GroupInfo undefined`);
 			continue;
 		}
@@ -60,7 +59,7 @@ export async function startScraper(
 		const newPosts = await Scraper(
 			page,
 			website.nrOfPages,
-			websiteGroupInfo,
+			WGI,
 			alreadyScrapedPosts,
 		);
 
