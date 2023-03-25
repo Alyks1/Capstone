@@ -52,15 +52,20 @@ export async function createDataset(page: Page, posts: Post[]) {
  * @param csv
  */
 async function createCSV(csv: CSVType[], path: string) {
-	Logger.info("Creating CSV");
+	Logger.trace("Creating CSV");
 	const output = stringify([...csv]);
 	const fileName = "/datasetInfo.csv";
 	const filePath = join(path, fileName);
 	return await fs.promises.writeFile(filePath, output);
 }
 
+/**
+ * Creates a tar.gz file from the dataset folder
+ * @param path 
+ * @param resultPath 
+ */
 async function createTar(path: string, resultPath: string) {
-	Logger.info("Creating tar.gz file")
+	Logger.trace("Creating tar.gz file")
 	const files: string[] = await fs.promises.readdir(path);
 
 	const tarStream = tar.create({ gzip: true, cwd: path }, files);
@@ -74,8 +79,11 @@ async function createTar(path: string, resultPath: string) {
 	Logger.info("Finished creating dataset");
 }
 
+/**
+ * Takes the csv file and downloads the images from the imgSrc column
+*/
 async function createFilesFromCSV(page: Page, csvPath: string) {
-	Logger.info("Creating files from CSV");
+	Logger.trace("Creating files from CSV");
 	const path = join(csvPath, "/datasetInfo.csv");
 	const csv = await fs.promises.readFile(path, "utf-8");
 	const lines = csv.split("\n");
@@ -84,7 +92,6 @@ async function createFilesFromCSV(page: Page, csvPath: string) {
 		if (line === "" || line === undefined) continue;
 		const id = line.split(",")[0];
 		const imgSrc = line.split(",")[3];
-		Logger.info("Downloading image: " + imgSrc);
 		const response = await page.goto(imgSrc);
 		const imageBuffer = await response.buffer();
 		const fileName = `${id}.jpg`;
@@ -98,11 +105,11 @@ async function createFilesFromCSV(page: Page, csvPath: string) {
  * Removes all files from the dataset folder
  */
 async function clearDir() {
-	Logger.info("Removing Files from previous dataset");
+	Logger.debug("Removing Files from previous dataset");
 	const files = await fs.promises.readdir(DATASET_PATH);
 	for (const file of files) {
 		await fs.promises.unlink(join(`${DATASET_PATH}`, file))
-		Logger.info("Removed file: " + file);
+		Logger.trace("Removed file: " + file);
 	}
-	Logger.info("Finished removing files from previous dataset");
+	Logger.debug("Finished removing files from previous dataset");
 }
