@@ -61,6 +61,9 @@ function startServer() {
 			await setTrustCalcOptions(activations);
 			socket.emit("log", "Updated trustCalc");
 		});
+		socket.on("updateDataset", async (ids: number[]) => {
+			
+		});
 	});
 }
 
