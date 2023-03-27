@@ -6,6 +6,7 @@ import { setTrustCalcOptions, getTrustCalcOptions, TrustCalcOptions }
 from "./core/GenerateData/trustCalculations";
 import { addWebsite, deactivateWebsite, getWebsite, 
 	getWebsites, updateWebsite } from "./core/Database/dbWebsite";
+import { updateDataset } from "./core/createDataset";
 
 function startServer() {
 	Logger.trace("Starting Server");
@@ -52,17 +53,18 @@ function startServer() {
 			socket.emit("log", "Website deactivated");
 		});
 		socket.on("getTrustCalc", async () => {
-			Logger.info("Sending trustCalc to client");
+			Logger.trace("Sending trustCalc to client");
 			const data = await getTrustCalcOptions();
 			socket.emit("trustCalc", data);
 		});
 		socket.on("setTrustCalc", async (activations: TrustCalcOptions) => {
-			Logger.info(JSON.stringify(activations));
+			Logger.trace(JSON.stringify(activations));
 			await setTrustCalcOptions(activations);
 			socket.emit("log", "Updated trustCalc");
 		});
-		socket.on("updateDataset", async (ids: number[]) => {
-			
+		socket.on("updateDataset", async (ids: string[]) => {
+			Logger.trace("Updating dataset");
+			await updateDataset(ids);
 		});
 	});
 }

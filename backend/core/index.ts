@@ -18,9 +18,7 @@ export async function startScraper(
 	socket.emit("log", "Scraper Started");
 	//TODO: Add integration tests
 	//TODO: Add Museum Website to scraper
-	const browser = await puppeteer.launch({
-		headless: true,
-	});
+	const browser = await getBrowser(true);
 
 	const page = await browser.newPage();
 	const websites = await getActiveWebsites();
@@ -80,4 +78,15 @@ export async function startScraper(
 	socket.emit("sendDatasetUrl", "/output/dataset.tar.gz");
 	socket.emit("sendDatasetInfo", "/output/dataset/datasetInfo.csv");
 	await browser.close();
+}
+
+/**
+ * Creates a browser
+ * @param headless is a flag to choose if the browser should be visible
+ * @returns 
+ */
+export async function getBrowser(headless: boolean = true) {
+	return await puppeteer.launch({
+		headless: headless,
+	});
 }

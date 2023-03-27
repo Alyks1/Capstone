@@ -46,11 +46,9 @@ function createList(data) {
         const img = createImg(d.src);
         const p = createP(text);
         const deactivateButton = createDeactivateButton(d.id, li);
-        const activateButton = createActivateButton(d.id, li);
         li.appendChild(p);
         li.appendChild(img);
         li.appendChild(deactivateButton);
-        li.appendChild(activateButton);
         list.appendChild(li);
     }
 }
@@ -85,21 +83,6 @@ function createDeactivateButton(id, li) {
         button.disabled = true;
         document.getElementById(`${id}Activate`).disabled = false;
         li.style.opacity = 0.5;
-    });
-    return button;
-}
-
-function createActivateButton(id, li) {
-    const button = document.createElement("button");
-    button.textContent = "Activate";
-    button.id = `${id}Activate`;
-    button.disabled = true;
-    button.addEventListener("click", () => {
-        const i = deactivatedData.indexOf(id);
-        deactivatedData.splice(i, 1);
-        button.disabled = true;
-        document.getElementById(`${id}Deactivate`).disabled = false;
-        li.style.opacity = 1;
     });
     return button;
 }
