@@ -14,6 +14,8 @@ returnButton.addEventListener("click", () => {
 
 updateDataButton.addEventListener("click", () => {
     socket.emit("updateDataset", deactivatedData);
+    deactivatedData = [];
+    window.location.href = "displayData.html";
 });
 
 await getDataFromFile();
@@ -45,10 +47,12 @@ function createList(data) {
         const text = `Year: ${d.year}, Trust: ${d.trust}`;
         const img = createImg(d.src);
         const p = createP(text);
-        const deactivateButton = createDeactivateButton(d.id, li);
+        const deleteButton = createDeleteButton(d.id, li);
+        const activateButton = createActivateButton(d.id, li);
         li.appendChild(p);
         li.appendChild(img);
-        li.appendChild(deactivateButton);
+        li.appendChild(deleteButton);
+        li.appendChild(activateButton);
         list.appendChild(li);
     }
 }
@@ -74,15 +78,30 @@ async function createFile(path, name, type) {
     return new File([data], name, metadata);
 }
 
-function createDeactivateButton(id, li) {
+function createDeleteButton(id, li) {
     const button = document.createElement("button");
-    button.textContent = "Deactivate";
-    button.id = `${id}Deactivate`;
+    button.textContent = "Delete";
+    button.id = `${id}Delete`;
     button.addEventListener("click", () => {
         deactivatedData.push(id);
-        button.disabled = true;
-        document.getElementById(`${id}Activate`).disabled = false;
+        button.style.visibility = "hidden";
+        document.getElementById(`${id}Activate`).style.visibility = "visible";
         li.style.opacity = 0.5;
+    });
+    return button;
+}
+
+function createActivateButton(id, li) {
+    const button = document.createElement("button");
+    button.textContent = "Activate";
+    button.id = `${id}Activate`;
+    button.style.visibility = "hidden";
+    button.addEventListener("click", () => {
+        const i = deactivatedData.indexOf(id);
+        deactivatedData.splice(i, 1);
+        button.style.visibility = "hidden";
+        document.getElementById(`${id}Delete`).style.visibility = "visible";
+        li.style.opacity = 1;
     });
     return button;
 }
