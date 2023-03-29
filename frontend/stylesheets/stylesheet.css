@@ -156,6 +156,16 @@ button:-webkit-details-marker {
   overflow: hidden;
 }
 
+.fixedDiv {
+  padding: 5px;;
+  width: 100%;
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  left: 23px;
+  text-align: left;
+}
+
 #datasetDownloadDiv {
     visibility: hidden;
     margin: 10px;
