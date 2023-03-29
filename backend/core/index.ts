@@ -18,9 +18,7 @@ export async function startScraper(
 	socket.emit("log", "Scraper Started");
 	//TODO: Add integration tests
 	//TODO: Add Museum Website to scraper
-	const browser = await puppeteer.launch({
-		headless: true,
-	});
+	const browser = await getBrowser(true);
 
 	const page = await browser.newPage();
 	const websites = await getActiveWebsites();
@@ -43,7 +41,13 @@ export async function startScraper(
 			continue;
 		}
 
-		await page.goto(website.url);
+		try {
+			await page.goto(website.url);
+		}
+		catch (e) {
+			Logger.warn(`[Index.ts, 77] ${website.url}. ${e}`);
+			continue;
+		}
 
 		const WGI = WGIs.find((WGI) => WGI.group === website.group);
 		if (!WGI) {
@@ -71,13 +75,26 @@ export async function startScraper(
 
 	if (allPosts.length === 0) {
 		Logger.warn("No posts found");
-		socket.emit("NoPostsFound");
+		socket.emit("error");
+		socket.emit("log", "test")
 		return;
 	}
 	await createDataset(page, allPosts);
+	Logger.info("Finished creating dataset");
 
 	socket.emit("log", "Scraper Finished");
 	socket.emit("sendDatasetUrl", "/output/dataset.tar.gz");
-	socket.emit("sendDatasetInfo", "/output/dataset/datasetInfo.csv");
+	socket.emit("sendDatasetInfo", "/output/backup/backup.csv");
 	await browser.close();
+}
+
+/**
+ * Creates a browser
+ * @param headless is a flag to choose if the browser should be visible
+ * @returns 
+ */
+export async function getBrowser(headless: boolean = true) {
+	return await puppeteer.launch({
+		headless: headless,
+	});
 }

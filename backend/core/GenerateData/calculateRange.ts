@@ -41,7 +41,7 @@ function chooseRange(data: WorkingData, nextWord: string) {
 			bothNrs.push(data.date.slice(lastHyphen + 1));
 		} else bothNrs = data.date.split("-"); 
 	}
-	Logger.info(`Both nrs = ${bothNrs}`);
+	Logger.debug(`Both nrs = ${bothNrs}`);
 	return bothNrs;
 }
 

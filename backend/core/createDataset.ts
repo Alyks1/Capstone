@@ -8,9 +8,11 @@ import { v4 as uuidv4 } from "uuid";
 import * as tar from "tar";
 import fs from "fs";
 import writeFile from "write-file-atomic";
+import { getBrowser } from ".";
 
 const DATASET_PATH = "../frontend/output/dataset";
 const RESULT_PATH = "../frontend/output/dataset.tar.gz";
+const BACKUP_PATH = "../frontend/output/backup";
 
 interface CSVType {
 	date: string;
@@ -18,6 +20,9 @@ interface CSVType {
 	id: string;
 	imgSrc: string;
 }
+
+//Create two CSVs, one to act as a backup that wont change
+//and one that will change if some datapoints are disabled
 
 /**
  * creates a dataset from the given posts
@@ -42,19 +47,20 @@ export async function createDataset(page: Page, posts: Post[]) {
 			imgSrc: src,
 		});
 	}
-	await createCSV(csv, DATASET_PATH);
-	await createFilesFromCSV(page, DATASET_PATH);
-	await createTar(DATASET_PATH, RESULT_PATH);
+	await createCSV(csv, "/datasetInfo.csv", DATASET_PATH);
+	await createCSV(csv, "/backup.csv", BACKUP_PATH)
+	await createFilesFromCSV(page, "/datasetInfo.csv", DATASET_PATH);
+	await createFilesFromCSV(page, "/backup.csv", BACKUP_PATH);
+	await createTar();
 }
 
 /**
  * creates a csv file with the id, date and trust of each post
  * @param csv
  */
-async function createCSV(csv: CSVType[], path: string) {
+async function createCSV(csv: CSVType[], fileName: string, path: string) {
 	Logger.trace("Creating CSV");
 	const output = stringify([...csv]);
-	const fileName = "/datasetInfo.csv";
 	const filePath = join(path, fileName);
 	return await fs.promises.writeFile(filePath, output);
 }
@@ -64,41 +70,38 @@ async function createCSV(csv: CSVType[], path: string) {
  * @param path 
  * @param resultPath 
  */
-async function createTar(path: string, resultPath: string) {
+async function createTar() {
 	Logger.trace("Creating tar.gz file")
-	const files: string[] = await fs.promises.readdir(path);
+	const files: string[] = await fs.promises.readdir(DATASET_PATH);
 
-	const tarStream = tar.create({ gzip: true, cwd: path }, files);
-	const fstream = fs.createWriteStream(resultPath);
+	const tarStream = tar.create({ gzip: true, cwd: DATASET_PATH }, files);
+	const fstream = fs.createWriteStream(RESULT_PATH);
 	const gzip = createGzip();
 
 	tarStream.pipe(gzip).pipe(fstream);
 
 	await new Promise((fulfill) => fstream.on("finish", fulfill));
-
-	Logger.info("Finished creating dataset");
 }
 
 /**
  * Takes the csv file and downloads the images from the imgSrc column
 */
-async function createFilesFromCSV(page: Page, csvPath: string) {
+async function createFilesFromCSV(page: Page, fileName: string, filePath: string) {
 	Logger.trace("Creating files from CSV");
-	const path = join(csvPath, "/datasetInfo.csv");
+	const path = join(filePath, fileName);
 	const csv = await fs.promises.readFile(path, "utf-8");
 	const lines = csv.split("\n");
-	const posts: Post[] = [];
 	for (const line of lines) {
 		if (line === "" || line === undefined) continue;
 		const id = line.split(",")[0];
+		if (id === "") continue;
 		const imgSrc = line.split(",")[3];
 		const response = await page.goto(imgSrc);
 		const imageBuffer = await response.buffer();
-		const fileName = `${id}.jpg`;
-		const filePath = join(`${DATASET_PATH}/`, fileName);
-		await writeFile(filePath, imageBuffer);
+		const imgName = `${id}.jpg`;
+		const imgPath = join(`${filePath}/`, imgName);
+		await writeFile(imgPath, imageBuffer);
 	}
-	return posts;
 }
 
 /**
@@ -112,4 +115,35 @@ async function clearDir() {
 		Logger.trace("Removed file: " + file);
 	}
 	Logger.debug("Finished removing files from previous dataset");
+}
+
+export async function updateDataset(ignoreIDs: string[]) {
+	Logger.debug(ignoreIDs);
+	const browser = await getBrowser();
+	const page = await browser.newPage();
+
+	const path = join(BACKUP_PATH, "/backup.csv");
+	const csvLines = await fs.promises.readFile(path, "utf-8");
+	const lines = csvLines.split("\n");
+
+	await clearDir();
+
+	const csv: CSVType[] = [];
+	for (const line of lines) {
+		const linearr = line.split(",");
+		const id = linearr[0];
+		if (ignoreIDs?.includes(id) || id === "") continue;
+		const date = linearr[1];
+		const trust = linearr[2];
+		const src = linearr[3];
+		csv.push({
+			id: id,
+			date: date,
+			trust: Number(trust),
+			imgSrc: src,
+		});
+	}
+	await createCSV(csv, "/datasetInfo.csv", DATASET_PATH);
+	await createFilesFromCSV(page, "/datasetInfo.csv", DATASET_PATH);
+	await createTar();
 }

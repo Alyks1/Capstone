@@ -24,6 +24,7 @@ displayDataButton.disabled = true;
 
 if (sessionStorage.getItem("datasetUrl")) {
 	showDownloadLink();
+	displayDataButton.disabled = false;
 }
 
 socket.on("log", (msg) => {
@@ -31,6 +32,12 @@ socket.on("log", (msg) => {
 	const progressText = document.getElementById("progressText");
 	progressText.textContent = msg;
 	progressBar.value++;
+});
+
+socket.on("error", (msg) => {
+	console.log(msg);
+	resetProgressBar();
+	resetButtons();
 });
 
 socket.on("sendDatasetUrl", (url) => {
@@ -41,16 +48,12 @@ socket.on("sendDatasetUrl", (url) => {
 		resetProgressBar()
 	}
 	showDownloadLink();
+	resetButtons();
 });
 
 socket.on("sendDatasetInfo", (url) => {
 	sessionStorage.setItem("datasetInfo", url);
 });
-
-socket.on("NoPostsFound", () => {
-    console.log("No posts found");
-	resetProgressBar();
-})
 
 startScraperButton.addEventListener("click", () => {
 	console.log("Starting Scraper");
@@ -87,6 +90,9 @@ function resetProgressBar() {
 function showDownloadLink() {
 	datasetDownloadDiv.style.visibility = "visible";
 	datasetDownloadLink.href = sessionStorage.getItem("datasetUrl");
+}
+
+function resetButtons() {
 	displayDataButton.disabled = false;
 	startScraperButton.disabled = false;
 	addWebsiteButton.disabled = false;

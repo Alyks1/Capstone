@@ -16,7 +16,13 @@ export async function Scraper(
 	for (let i = 0; i < pages; i++) {
 		Logger.trace(`${i} of ${pages} pages`);
 		//First get root
-		await page.waitForSelector(groupInfo.rootDiv);
+		try {
+			await page.waitForSelector(groupInfo.rootDiv);
+		} catch (error) {
+			Logger.warn(`[Scraper.ts, 19] ${error}`);
+			break;
+		}
+		
 		const root = (await page.$$(groupInfo.rootDiv))[0];
 		//Get elements branching off the root
 		const postElements = await root.$$(groupInfo.divIdentifier);
