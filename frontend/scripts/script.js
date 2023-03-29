@@ -2,9 +2,6 @@ import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import { getSocketURL } from "./utility.js";
 
 //TODO: Add your own socket.io server url
-//TODO: Add option to select and deselect data. 
-//Maybe send back ids of deselected data and then filter out those ids in the backend
-//Maybe create csv of selected data which can be read as a whole
 
 const socket = io(getSocketURL());
 
