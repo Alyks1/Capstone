@@ -41,7 +41,13 @@ export async function startScraper(
 			continue;
 		}
 
-		await page.goto(website.url);
+		try {
+			await page.goto(website.url);
+		}
+		catch (e) {
+			Logger.warn(`[Index.ts, 77] ${website.url}. ${e}`);
+			continue;
+		}
 
 		const WGI = WGIs.find((WGI) => WGI.group === website.group);
 		if (!WGI) {
@@ -69,7 +75,8 @@ export async function startScraper(
 
 	if (allPosts.length === 0) {
 		Logger.warn("No posts found");
-		socket.emit("NoPostsFound");
+		socket.emit("error");
+		socket.emit("log", "test")
 		return;
 	}
 	await createDataset(page, allPosts);
