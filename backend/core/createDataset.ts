@@ -12,6 +12,7 @@ import { getBrowser } from ".";
 
 const DATASET_PATH = "../frontend/output/dataset";
 const RESULT_PATH = "../frontend/output/dataset.tar.gz";
+const BACKUP_PATH = "../frontend/output/backup";
 
 interface CSVType {
 	date: string;
@@ -19,6 +20,9 @@ interface CSVType {
 	id: string;
 	imgSrc: string;
 }
+
+//Create two CSVs, one to act as a backup that wont change
+//and one that will change if some datapoints are disabled
 
 /**
  * creates a dataset from the given posts
@@ -43,8 +47,10 @@ export async function createDataset(page: Page, posts: Post[]) {
 			imgSrc: src,
 		});
 	}
-	await createCSV(csv);
-	await createFilesFromCSV(page);
+	await createCSV(csv, "/datasetInfo.csv", DATASET_PATH);
+	await createCSV(csv, "/backup.csv", BACKUP_PATH)
+	await createFilesFromCSV(page, "/datasetInfo.csv", DATASET_PATH);
+	await createFilesFromCSV(page, "/backup.csv", BACKUP_PATH);
 	await createTar();
 }
 
@@ -52,11 +58,10 @@ export async function createDataset(page: Page, posts: Post[]) {
  * creates a csv file with the id, date and trust of each post
  * @param csv
  */
-async function createCSV(csv: CSVType[]) {
+async function createCSV(csv: CSVType[], fileName: string, path: string) {
 	Logger.trace("Creating CSV");
 	const output = stringify([...csv]);
-	const fileName = "/datasetInfo.csv";
-	const filePath = join(DATASET_PATH, fileName);
+	const filePath = join(path, fileName);
 	return await fs.promises.writeFile(filePath, output);
 }
 
@@ -83,9 +88,9 @@ async function createTar() {
 /**
  * Takes the csv file and downloads the images from the imgSrc column
 */
-async function createFilesFromCSV(page: Page) {
+async function createFilesFromCSV(page: Page, fileName: string, filePath: string) {
 	Logger.trace("Creating files from CSV");
-	const path = join(DATASET_PATH, "/datasetInfo.csv");
+	const path = join(filePath, fileName);
 	const csv = await fs.promises.readFile(path, "utf-8");
 	const lines = csv.split("\n");
 	for (const line of lines) {
@@ -95,9 +100,9 @@ async function createFilesFromCSV(page: Page) {
 		const imgSrc = line.split(",")[3];
 		const response = await page.goto(imgSrc);
 		const imageBuffer = await response.buffer();
-		const fileName = `${id}.jpg`;
-		const filePath = join(`${DATASET_PATH}/`, fileName);
-		await writeFile(filePath, imageBuffer);
+		const imgName = `${id}.jpg`;
+		const imgPath = join(`${filePath}/`, imgName);
+		await writeFile(imgPath, imageBuffer);
 	}
 }
 
@@ -140,7 +145,7 @@ export async function updateDataset(ignoreIDs: string[]) {
 			imgSrc: src,
 		});
 	}
-	await createCSV(csv)
-	await createFilesFromCSV(page);
+	await createCSV(csv, "/datasetInfo.csv", DATASET_PATH);
+	await createFilesFromCSV(page, "/datasetInfo.csv", DATASET_PATH);
 	await createTar();
 }

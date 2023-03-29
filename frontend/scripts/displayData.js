@@ -4,8 +4,8 @@ import { getSocketURL } from "./utility.js";
 const returnButton = document.getElementById("returnButton");
 const updateDataButton = document.getElementById("updateDatasetButton");
 const list = document.getElementById("list");
-const deactivatedData = [];
 const socket = io(getSocketURL());
+var deactivatedData = [];
 
 
 returnButton.addEventListener("click", () => {
