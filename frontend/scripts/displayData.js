@@ -5,7 +5,8 @@ const returnButton = document.getElementById("returnButton");
 const updateDataButton = document.getElementById("updateDatasetButton");
 const list = document.getElementById("list");
 const socket = io(getSocketURL());
-var deactivatedData = [];
+const deactivatedData = sessionStorage.getItem("deactivatedData") 
+    ? JSON.parse(sessionStorage.getItem("deactivatedData")) : [];
 
 
 returnButton.addEventListener("click", () => {
@@ -14,7 +15,7 @@ returnButton.addEventListener("click", () => {
 
 updateDataButton.addEventListener("click", () => {
     socket.emit("updateDataset", deactivatedData);
-    deactivatedData = [];
+    sessionStorage.setItem("deactivatedData", JSON.stringify(deactivatedData));
     window.location.href = "displayData.html";
 });
 
@@ -42,17 +43,25 @@ async function getDataFromFile() {
 
 function createList(data) {
     for (const d of data) {
+
         const li = document.createElement("li");
         li.className = "dataList";
         const text = `Year: ${d.year}, Trust: ${d.trust}`;
         const img = createImg(d.src);
         const p = createP(text);
-        const deleteButton = createDeleteButton(d.id, li);
+        const deactivateButton = createDeactivateButton(d.id, li);
         const activateButton = createActivateButton(d.id, li);
         li.appendChild(p);
         li.appendChild(img);
-        li.appendChild(deleteButton);
+        li.appendChild(deactivateButton);
         li.appendChild(activateButton);
+
+        if (deactivatedData.indexOf(d.id) !== -1) {
+            deactivateButton.style.visibility = "hidden";
+            activateButton.style.visibility = "visible";
+            li.style.opacity = 0.5;
+        }
+        
         list.appendChild(li);
     }
 }
@@ -78,10 +87,10 @@ async function createFile(path, name, type) {
     return new File([data], name, metadata);
 }
 
-function createDeleteButton(id, li) {
+function createDeactivateButton(id, li) {
     const button = document.createElement("button");
-    button.textContent = "Delete";
-    button.id = `${id}Delete`;
+    button.textContent = "Deactivate";
+    button.id = `${id}Deactivate`;
     button.addEventListener("click", () => {
         deactivatedData.push(id);
         button.style.visibility = "hidden";
@@ -100,7 +109,7 @@ function createActivateButton(id, li) {
         const i = deactivatedData.indexOf(id);
         deactivatedData.splice(i, 1);
         button.style.visibility = "hidden";
-        document.getElementById(`${id}Delete`).style.visibility = "visible";
+        document.getElementById(`${id}Deactivate`).style.visibility = "visible";
         li.style.opacity = 1;
     });
     return button;

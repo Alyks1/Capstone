@@ -81,8 +81,6 @@ async function createTar() {
 	tarStream.pipe(gzip).pipe(fstream);
 
 	await new Promise((fulfill) => fstream.on("finish", fulfill));
-
-	Logger.info("Finished creating dataset");
 }
 
 /**
@@ -120,11 +118,11 @@ async function clearDir() {
 }
 
 export async function updateDataset(ignoreIDs: string[]) {
-	Logger.info(ignoreIDs);
+	Logger.debug(ignoreIDs);
 	const browser = await getBrowser();
 	const page = await browser.newPage();
 
-	const path = join(DATASET_PATH, "/datasetInfo.csv");
+	const path = join(BACKUP_PATH, "/backup.csv");
 	const csvLines = await fs.promises.readFile(path, "utf-8");
 	const lines = csvLines.split("\n");
 

@@ -80,6 +80,7 @@ export async function startScraper(
 		return;
 	}
 	await createDataset(page, allPosts);
+	Logger.info("Finished creating dataset");
 
 	socket.emit("log", "Scraper Finished");
 	socket.emit("sendDatasetUrl", "/output/dataset.tar.gz");
