@@ -1,6 +1,5 @@
 import { Post } from "./Types/Post";
 import { Page } from "puppeteer";
-import { Utility } from "./Utility/utility";
 import { Logger } from "./Utility/logging";
 import { WebsiteGroupInfo } from "./Types/WebsiteGroupInfo";
 import { WorkingData } from "./Types/WorkingData";
