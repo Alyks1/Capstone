@@ -19,7 +19,7 @@ export async function startScraper(
 	//TODO: Add integration tests
 	//TODO: Make images same dimensions
 	//TODO: Generate data from german kunsthistorisches museum
-	const browser = await getBrowser(true);
+	const browser = await getBrowser(false);
 
 	const page = await browser.newPage();
 	const websites = await getActiveWebsites();

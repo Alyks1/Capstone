@@ -18,7 +18,7 @@ export async function Scraper(
 		try {
 			await page.waitForSelector(groupInfo.rootDiv);
 		} catch (error) {
-			Logger.warn(`[Scraper.ts, 19] ${error}`);
+			Logger.warn(`[Scraper.ts, 21] ${error}`);
 			break;
 		}
 		
@@ -53,16 +53,33 @@ export async function Scraper(
 			allPosts.add(text);
 		}
 		Logger.debug(allPosts.size);
-		const wasSuccessfull = await moveToNextPageSuccessful(page, groupInfo.nextIdentifier);
+		const wasSuccessfull = await moveToNextPageSuccessful(page, groupInfo, i);
 		if (!wasSuccessfull) {
+			Logger.warn(`[Scraper.ts, 58] Moving to next page unsuccessful`)
 			break;
 		}
 	}
 	return posts;
 }
 
-async function moveToNextPageSuccessful(page: Page, nextBtnClass: string) {
+async function moveToNextPageSuccessful(page: Page, groupInfo: WebsiteGroupInfo, index: number) {
+	const nextBtnClass = groupInfo.nextIdentifier;
+	const group = groupInfo.group;
+	Logger.debug("Moving to next page")
 	Logger.trace(`Next button: ${nextBtnClass}`);
+	if (group === "KHMuseum") {
+		//Go to "Collections" menu
+		const selector = "nav.nav-offcanvas.hide-for-large-up > ul > li.active > ul > li.active > ul > li"
+		const lis = await page.$$(selector);
+		//Select index + 1 of the lis
+		if (lis.length < index + 1) return false;
+		const nextElement = lis[index + 1];
+		const rawHref: string = await nextElement.$eval("a", (elem) => elem.href);
+		const href = `${rawHref}selected-masterpieces/`
+		Logger.debug(`href: ${href}`);
+		await page.goto(href, {timeout: 0});
+		return true;
+	}
 	//If a button is needed to change page, use it
 	if (nextBtnClass !== "") {
 		const nextBtn = await page.$(nextBtnClass);
@@ -79,7 +96,7 @@ async function moveToNextPageSuccessful(page: Page, nextBtnClass: string) {
 	try {
 		await page.waitForNetworkIdle({idleTime: 100, timeout: 30000});
 	} catch (error) {
-		Logger.warn(`[Scraper.ts, 77] ${error}`);
+		Logger.warn(`[Scraper.ts, 100] ${error}`);
 		return false;
 	}
 }

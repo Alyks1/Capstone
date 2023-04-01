@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 export async function getWebsiteGroupInfo(): Promise<WebsiteGroupInfo[]> {
     var result = await prisma.websiteGroupInfo.findMany();
     if (result.length === 0) {
-        createWebsiteGroupInfo();
+        await createWebsiteGroupInfo();
         result = await prisma.websiteGroupInfo.findMany();
     }
     return result;
@@ -41,11 +41,12 @@ export async function createWebsiteGroupInfo() {
     await prisma.websiteGroupInfo.create({
         data: {
             group: "KHMuseum",
-            rootDiv: ".large-9.large-push-3.columns.content",
+            rootDiv: "div.large-9.large-push-3.columns.content",
             divIdentifier: ".object-gallery-item",
             textIdentifier: "p",
             imgIdentifier: ".image > img",
             nextIdentifier: ""
         }
     });
+    
 }
