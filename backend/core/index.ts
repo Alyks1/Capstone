@@ -78,7 +78,7 @@ export async function startScraper(
 	if (allPosts.length === 0) {
 		Logger.warn("No posts found");
 		socket.emit("error", "No posts found");
-		//await browser.close();
+		await browser.close();
 		return;
 	}
 	await createDataset(page, allPosts);

@@ -56,7 +56,7 @@ export async function Scraper(
 		if (i === pages - 1) break;
 		const wasSuccessfull = await moveToNextPageSuccessful(page, groupInfo, i);
 		if (!wasSuccessfull) {
-			Logger.warn(`[Scraper.ts, 58] Moving to next page unsuccessful`)
+			Logger.warn(`[Scraper.ts, 59] Moving to next page unsuccessful`)
 			break;
 		}
 	}
@@ -96,7 +96,7 @@ async function moveToNextPageSuccessful(page: Page, groupInfo: WebsiteGroupInfo,
 	try {
 		await page.waitForNetworkIdle({idleTime: 100, timeout: 30000});
 	} catch (error) {
-		Logger.warn(`[Scraper.ts, 100] ${error}`);
+		Logger.warn(`[Scraper.ts, 99] ${error}`);
 		return false;
 	}
 }

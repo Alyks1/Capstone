@@ -7,7 +7,6 @@ from "./core/GenerateData/trustCalculations";
 import { addWebsite, deactivateWebsite, getWebsite, 
 	getWebsites, updateWebsite } from "./core/Database/dbWebsite";
 import { updateDataset } from "./core/createDataset";
-import { createWebsiteGroupInfo } from "./core/Database/dbWebsiteGroupInfo";
 
 function startServer() {
 	Logger.trace("Starting Server");
