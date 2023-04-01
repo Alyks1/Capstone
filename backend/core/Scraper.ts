@@ -53,6 +53,7 @@ export async function Scraper(
 			allPosts.add(text);
 		}
 		Logger.debug(allPosts.size);
+		if (i === pages - 1) break;
 		const wasSuccessfull = await moveToNextPageSuccessful(page, groupInfo, i);
 		if (!wasSuccessfull) {
 			Logger.warn(`[Scraper.ts, 58] Moving to next page unsuccessful`)
@@ -71,7 +72,6 @@ async function moveToNextPageSuccessful(page: Page, groupInfo: WebsiteGroupInfo,
 		//Go to "Collections" menu
 		const selector = "nav.nav-offcanvas.hide-for-large-up > ul > li.active > ul > li.active > ul > li"
 		const lis = await page.$$(selector);
-		//Select index + 1 of the lis
 		if (lis.length < index + 1) return false;
 		const nextElement = lis[index + 1];
 		const rawHref: string = await nextElement.$eval("a", (elem) => elem.href);
