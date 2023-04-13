@@ -18,7 +18,7 @@ export async function startScraper(
 	socket.emit("log", "Scraper Started");
 	//TODO: Add integration tests
 	//TODO: Make images same dimensions
-	const browser = await getBrowser(true);
+	const browser = await getBrowser(false);
 
 	const page = await browser.newPage();
 	const websites = await getActiveWebsites();
@@ -35,16 +35,15 @@ export async function startScraper(
 	//Set of all texts across websites to remove duplicates
 	const alreadyScrapedPosts: Set<string> = new Set<string>();
 	const allPosts: Post[] = [];
-	for (let website of websites) {
+	for (const website of websites) {
 		if (website.nrOfPages === 0) {
 			Logger.trace(`Skipping website ${website.url}`);
 			continue;
 		}
 
 		try {
-			await page.goto(website.url, {timeout: 0});
-		}
-		catch (e) {
+			await page.goto(website.url, { timeout: 0 });
+		} catch (e) {
 			Logger.warn(`[Index.ts, 77] ${website.url}. ${e}`);
 			continue;
 		}
@@ -93,7 +92,7 @@ export async function startScraper(
 /**
  * Creates a browser
  * @param headless is a flag to choose if the browser should be visible
- * @returns 
+ * @returns
  */
 export async function getBrowser(headless: boolean = true) {
 	return await puppeteer.launch({
