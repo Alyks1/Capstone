@@ -3,6 +3,7 @@ import { Page } from "puppeteer";
 import { Logger } from "./Utility/logging";
 import { WebsiteGroupInfo } from "./Types/WebsiteGroupInfo";
 import { WorkingData } from "./Types/WorkingData";
+import { Utility } from "./Utility/utility";
 
 export async function Scraper(
 	page: Page,
@@ -21,12 +22,12 @@ export async function Scraper(
 			Logger.warn(`[Scraper.ts, 21] ${error}`);
 			break;
 		}
-		
+
 		const root = (await page.$$(groupInfo.rootDiv))[0];
 		//Get elements branching off the root
 		const postElements = await root.$$(groupInfo.divIdentifier);
 		//Go through each element and find the correct classes to scrape
-		for (let postElement of postElements) {
+		for (const postElement of postElements) {
 			const text = await postElement.$eval(
 				groupInfo.textIdentifier,
 				(t) => t.textContent,
@@ -53,49 +54,81 @@ export async function Scraper(
 			allPosts.add(text);
 		}
 		Logger.debug(allPosts.size);
+		Logger.info(`Scraped Posts: ${posts.length}`);
 		if (i === pages - 1) break;
 		const wasSuccessfull = await moveToNextPageSuccessful(page, groupInfo, i);
 		if (!wasSuccessfull) {
-			Logger.warn(`[Scraper.ts, 59] Moving to next page unsuccessful`)
+			Logger.warn("[Scraper.ts, 59] Moving to next page unsuccessful");
 			break;
 		}
 	}
 	return posts;
 }
 
-async function moveToNextPageSuccessful(page: Page, groupInfo: WebsiteGroupInfo, index: number) {
-	const nextBtnClass = groupInfo.nextIdentifier;
-	const group = groupInfo.group;
-	Logger.debug("Moving to next page")
-	Logger.trace(`Next button: ${nextBtnClass}`);
-	if (group === "KHMuseum") {
-		//Go to "Collections" menu
-		const selector = "nav.nav-offcanvas.hide-for-large-up > ul > li.active > ul > li.active > ul > li"
-		const lis = await page.$$(selector);
-		if (lis.length < index + 1) return false;
-		const nextElement = lis[index + 1];
-		const rawHref: string = await nextElement.$eval("a", (elem) => elem.href);
-		const href = `${rawHref}selected-masterpieces/`
-		Logger.debug(`href: ${href}`);
-		await page.goto(href, {timeout: 0});
-		return true;
+async function moveToNextPageSuccessful(
+	page: Page,
+	groupInfo: WebsiteGroupInfo,
+	index: number,
+) {
+	Logger.debug("Moving to next page");
+	//Store NextIdentifier as a list  (comma separated values)
+	const rawNextBtnFlow = groupInfo.nextIdentifier.split(",");
+	const nextBtnFlow = rawNextBtnFlow.filter((e) => e !== "");
+	//Go through the list on chronological order to find the next page
+	if (nextBtnFlow.length > 0) {
+		//Get the root element ie the first element in the list
+		//const root = await page.$(nextBtnFlow.pop());
+		for (let element of nextBtnFlow) {
+			element = replaceNthWithIndex(element, index, true);
+			if (element.includes("{ID#"))
+				element = await getElementWithInteralID(element, page);
+
+			Logger.trace(`Clicking "${element} > a"`);
+			await page.click(`${element} > a`);
+			await Utility.sleep(1000);
+		}
+	} else {
+		//Otherwise, scroll down and rescrape
+		await page.evaluate(() => {
+			window.scrollTo({ top: window.innerHeight });
+		});
+		try {
+			await page.waitForNetworkIdle({ idleTime: 100, timeout: 30000 });
+		} catch (error) {
+			Logger.warn(`[Scraper.ts, 97] ${error}`);
+			return false;
+		}
 	}
-	//If a button is needed to change page, use it
-	if (nextBtnClass !== "") {
-		const nextBtn = await page.$(nextBtnClass);
-		const href: string = await nextBtn.$eval("a", (elem) => elem.href);
-		Logger.debug(`href: ${href}`);
-		await page.goto(href);
-		return true;
+	return true;
+}
+
+function replaceNthWithIndex(
+	element: string,
+	index: number,
+	ignoreFirstPage = false,
+) {
+	let firstPage = 0;
+	//Option to ignore the first page as it gets scraped immediately
+	if (ignoreFirstPage) firstPage = 1;
+	if (element.includes("{N}")) {
+		const i = index + 1 + firstPage;
+		element = element.replace("{N}", i.toString());
 	}
-	//Otherwise, scroll down and rescrape
-	await page.evaluate(() => {
-		window.scrollTo({ top: window.innerHeight });
-	});
-	try {
-		await page.waitForNetworkIdle({idleTime: 100, timeout: 30000});
-	} catch (error) {
-		Logger.warn(`[Scraper.ts, 99] ${error}`);
-		return false;
+	return element;
+}
+
+async function getElementWithInteralID(element: string, page: Page) {
+	const i = element.indexOf("{ID#");
+	const j = element.indexOf("}");
+	const id = element.substring(i + 4, j);
+	const cleanElement = element.replace(`{ID#${id}}`, "");
+	//element is li
+	const liElements = await page.$$(cleanElement);
+	for (const [i, liElement] of liElements.entries()) {
+		const liText = await liElement.$eval("a", (e) => e.innerHTML);
+		if (liText.includes(id)) {
+			return element.replace(`{ID#${id}}`, `:nth-child(${i + 1})`);
+		}
 	}
+	Logger.warn(`[Scraper.ts, 122] Could not find li with innerHTML ${id}`);
 }
