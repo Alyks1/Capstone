@@ -48,7 +48,7 @@ export async function createDataset(page: Page, posts: Post[]) {
 		});
 	}
 	await createCSV(csv, "/datasetInfo.csv", DATASET_PATH);
-	await createCSV(csv, "/backup.csv", BACKUP_PATH)
+	await createCSV(csv, "/backup.csv", BACKUP_PATH);
 	await createFilesFromCSV(page, "/datasetInfo.csv", DATASET_PATH);
 	await createFilesFromCSV(page, "/backup.csv", BACKUP_PATH);
 	await createTar();
@@ -67,11 +67,11 @@ async function createCSV(csv: CSVType[], fileName: string, path: string) {
 
 /**
  * Creates a tar.gz file from the dataset folder
- * @param path 
- * @param resultPath 
+ * @param path
+ * @param resultPath
  */
 async function createTar() {
-	Logger.trace("Creating tar.gz file")
+	Logger.trace("Creating tar.gz file");
 	const files: string[] = await fs.promises.readdir(DATASET_PATH);
 
 	const tarStream = tar.create({ gzip: true, cwd: DATASET_PATH }, files);
@@ -85,8 +85,12 @@ async function createTar() {
 
 /**
  * Takes the csv file and downloads the images from the imgSrc column
-*/
-async function createFilesFromCSV(page: Page, fileName: string, filePath: string) {
+ */
+async function createFilesFromCSV(
+	page: Page,
+	fileName: string,
+	filePath: string,
+) {
 	Logger.trace("Creating files from CSV");
 	const path = join(filePath, fileName);
 	const csv = await fs.promises.readFile(path, "utf-8");
@@ -111,8 +115,8 @@ async function clearDir() {
 	Logger.debug("Removing Files from previous dataset");
 	const files = await fs.promises.readdir(DATASET_PATH);
 	for (const file of files) {
-		await fs.promises.unlink(join(`${DATASET_PATH}`, file))
-		Logger.trace("Removed file: " + file);
+		await fs.promises.unlink(join(`${DATASET_PATH}`, file));
+		Logger.trace(`Removed file: ${file}`);
 	}
 	Logger.debug("Finished removing files from previous dataset");
 }
