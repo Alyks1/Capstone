@@ -22,6 +22,7 @@ submitButton.addEventListener("click", () => {
 			nrOfPages: Number(nrOfPages),
 		}
 	);
+	window.location.href = "index.html";
 });
 
 socket.on("log", (msg) => {

@@ -1,17 +1,19 @@
 import { Logger } from "../Utility/logging";
 import { WorkingData } from "../Types/WorkingData";
+import { Utility } from "../Utility/utility";
+import { averageRange } from "./calculateRange";
 
 //TODO: add tokens such as testing for 'kg', 'g', 'km' etc
 
 export function isBC(str: string) {
-	return str.includes("bc");
+	return str.includes("bc") || str === "v";
 }
 export function BC(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to BC`);
-	return { date: `-${data.date}`, trust: data.trust, pos: data.pos };
+	return { date: `-${data.date}`, trust: ++data.trust, pos: data.pos };
 }
 export function isAD(str: string) {
-	return str.includes("ad")
+	return str.includes("ad") || str === "n";
 }
 export function AD(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to AD`);
@@ -20,7 +22,8 @@ export function AD(data: WorkingData): WorkingData {
 }
 
 export function isCenturies(str: string) {
-	return str === "century" || str === "c" || str === "centuries" || str === "cent";
+	return str === "century" || str === "c" || str === "centuries" || str === "cent"
+	|| str === "jh";
 }
 export function centuries(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to century`);
@@ -64,6 +67,16 @@ export function yearOld(data: WorkingData, now: number): WorkingData {
 
 export function isConnectingWord(str: string) {
 	return str.includes("-") || str.includes("to");
+}
+
+export function connectingWord(data: WorkingData, text: string[]) {
+	Logger.trace(`Connecting Word: ${text[data.pos]} for ${data.date}`)
+	//If nothing works, try range
+	const nextWord = text[data.pos + 1];
+	const isBothNumbers = Utility.isNumber(nextWord) && Utility.isNumber(data.date)
+	if (isBothNumbers && isConnectingWord(text[data.pos]))
+		data = averageRange(data, nextWord)
+	return data;
 }
 
 export function noMatch(data: WorkingData): WorkingData {

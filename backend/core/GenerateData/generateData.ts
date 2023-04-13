@@ -7,6 +7,7 @@ import {
 	AD,
 	BC,
 	centuries,
+	connectingWord,
 	isAD,
 	isBC,
 	isCenturies,
@@ -81,6 +82,7 @@ function createDate(text: string[]) {
  */
 function treeStump(data: WorkingData, text: string[]) {
 	data.pos++;
+	Logger.trace(`treeStump: ${data.date}`);
 	if (isRange(data.date)) {
 		Logger.trace(`After isRange: ${data.date}`);
 		let txt = "";
@@ -133,7 +135,10 @@ function switchTypes(data: WorkingData, text: string[]): WorkingData {
 	if (isCenturies(type)) return centuries(data);
 	if (isMillennium(type)) return millennium(data);
 	if (isYearOld(type)) return yearOld(data, YEAR_NOW);
-	if (isConnectingWord(type)) return treeStump(data, text);
+	if (isConnectingWord(type)) {
+		const d = connectingWord(data, text);
+		return treeStump(d, text);
+	}
 	return noMatch(data);
 }
 

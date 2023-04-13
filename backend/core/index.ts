@@ -17,7 +17,7 @@ export async function startScraper(
 ) {
 	socket.emit("log", "Scraper Started");
 	//TODO: Add integration tests
-	//TODO: Add Museum Website to scraper
+	//TODO: Make images same dimensions
 	const browser = await getBrowser(true);
 
 	const page = await browser.newPage();
@@ -42,7 +42,7 @@ export async function startScraper(
 		}
 
 		try {
-			await page.goto(website.url);
+			await page.goto(website.url, {timeout: 0});
 		}
 		catch (e) {
 			Logger.warn(`[Index.ts, 77] ${website.url}. ${e}`);
@@ -52,6 +52,8 @@ export async function startScraper(
 		const WGI = WGIs.find((WGI) => WGI.group === website.group);
 		if (!WGI) {
 			Logger.warn(`skipped ${website.url}. GroupInfo undefined`);
+			Logger.debug(`Group: ${website.group} not found in WGIs`);
+			Logger.debug(`WGIs: ${WGIs.map((WGI) => WGI.group)}`);
 			continue;
 		}
 
@@ -75,8 +77,8 @@ export async function startScraper(
 
 	if (allPosts.length === 0) {
 		Logger.warn("No posts found");
-		socket.emit("error");
-		socket.emit("log", "test")
+		socket.emit("error", "No posts found");
+		await browser.close();
 		return;
 	}
 	await createDataset(page, allPosts);

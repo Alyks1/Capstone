@@ -80,6 +80,7 @@ export async function addWebsite(website: Website) {
 function getGroup(url: string) {
     if (url.includes("old.reddit")) return "OldReddit";
     else if (url.includes("reddit")) return "Reddit";
+    else if (url.includes("khm")) return "KHMuseum";
     Logger.warn("URL does not contain a valid group");
     return "";
 }

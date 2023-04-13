@@ -5,7 +5,12 @@ const prisma = new PrismaClient()
 
 /// Get all website group info
 export async function getWebsiteGroupInfo(): Promise<WebsiteGroupInfo[]> {
-    return await prisma.websiteGroupInfo.findMany();
+    var result = await prisma.websiteGroupInfo.findMany();
+    if (result.length === 0) {
+        await createWebsiteGroupInfo();
+        result = await prisma.websiteGroupInfo.findMany();
+    }
+    return result;
 }
 
 /**
@@ -33,4 +38,15 @@ export async function createWebsiteGroupInfo() {
             nextIdentifier: ""
         }
     });
+    await prisma.websiteGroupInfo.create({
+        data: {
+            group: "KHMuseum",
+            rootDiv: "div.large-9.large-push-3.columns.content",
+            divIdentifier: ".object-gallery-item",
+            textIdentifier: "p",
+            imgIdentifier: ".image > img",
+            nextIdentifier: ""
+        }
+    });
+    
 }
