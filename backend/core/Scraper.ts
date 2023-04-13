@@ -78,7 +78,7 @@ async function moveToNextPageSuccessful(
 		//Get the root element ie the first element in the list
 		//const root = await page.$(nextBtnFlow.pop());
 		for (let element of nextBtnFlow) {
-			element = evaluateElement(element, index);
+			element = replaceNthWithIndex(element, index, true);
 			if (element.includes("{ID#"))
 				element = await getElementWithInteralID(element, page);
 
@@ -101,9 +101,16 @@ async function moveToNextPageSuccessful(
 	return true;
 }
 
-function evaluateElement(element: string, index: number) {
+function replaceNthWithIndex(
+	element: string,
+	index: number,
+	ignoreFirstPage = false,
+) {
+	let firstPage = 0;
+	//Option to ignore the first page as it gets scraped immediately
+	if (ignoreFirstPage) firstPage = 1;
 	if (element.includes("{N}")) {
-		const i = index + 1;
+		const i = index + 1 + firstPage;
 		element = element.replace("{N}", i.toString());
 	}
 	return element;
