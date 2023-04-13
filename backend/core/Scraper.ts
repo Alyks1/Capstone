@@ -56,36 +56,28 @@ export async function Scraper(
 		if (i === pages - 1) break;
 		const wasSuccessfull = await moveToNextPageSuccessful(page, groupInfo, i);
 		if (!wasSuccessfull) {
-			Logger.warn(`[Scraper.ts, 59] Moving to next page unsuccessful`)
+			Logger.warn("[Scraper.ts, 59] Moving to next page unsuccessful")
 			break;
 		}
+		Logger.info("Moving to next page")
 	}
 	return posts;
 }
 
 async function moveToNextPageSuccessful(page: Page, groupInfo: WebsiteGroupInfo, index: number) {
-	const nextBtnClass = groupInfo.nextIdentifier;
-	const group = groupInfo.group;
 	Logger.debug("Moving to next page")
-	Logger.trace(`Next button: ${nextBtnClass}`);
-	if (group === "KHMuseum") {
-		//Go to "Collections" menu
-		const selector = "nav.nav-offcanvas.hide-for-large-up > ul > li.active > ul > li.active > ul > li"
-		const lis = await page.$$(selector);
-		if (lis.length < index + 1) return false;
-		const nextElement = lis[index + 1];
-		const rawHref: string = await nextElement.$eval("a", (elem) => elem.href);
-		const href = `${rawHref}selected-masterpieces/`
-		Logger.debug(`href: ${href}`);
-		await page.goto(href, {timeout: 0});
-		return true;
-	}
-	//If a button is needed to change page, use it
-	if (nextBtnClass !== "") {
-		const nextBtn = await page.$(nextBtnClass);
-		const href: string = await nextBtn.$eval("a", (elem) => elem.href);
-		Logger.debug(`href: ${href}`);
-		await page.goto(href);
+	//Store NextIdentifier as a list  (comma separated values)
+	const nextBtnFlow = groupInfo.nextIdentifier.split(",");
+	//Go through the list on chronological order to find the next page
+	if (nextBtnFlow.length > 0) {
+		//Get the root element ie the first element in the list
+		const root = await page.$(nextBtnFlow.pop());
+		for (var element in nextBtnFlow) {
+			element = evaluateElement(element, index);
+			element = await getElementWithInteralID(element, page);
+			await page.click(element);
+		}
+		Logger.info("Should be at next page")
 		return true;
 	}
 	//Otherwise, scroll down and rescrape
@@ -97,5 +89,31 @@ async function moveToNextPageSuccessful(page: Page, groupInfo: WebsiteGroupInfo,
 	} catch (error) {
 		Logger.warn(`[Scraper.ts, 99] ${error}`);
 		return false;
+	}
+}
+
+function evaluateElement(element: string, index: number) {
+	if (element.includes("{N}")) {
+		const i = index + 1;
+		element = element.replace("{N}", i.toString());
+	}
+	return element;
+}
+
+async function getElementWithInteralID(element: string, page: Page) {
+	if (element.includes("{ID#")) {
+		const i = element.indexOf("{ID#");
+		const j = element.indexOf("}");
+		const id = element.substring(i + 4, j);
+		element = element.replace("{ID#" + id + "}", "");
+		//element is li
+		const liElements = await page.$$(element);
+		for (let liElement of liElements) {
+			const liText = await liElement.$eval("a", (e) => e.innerHTML);
+			if (liText.includes(id)) {
+				return liElement;
+			}
+		}
+		
 	}
 }

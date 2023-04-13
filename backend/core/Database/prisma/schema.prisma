@@ -24,5 +24,6 @@ model WebsiteGroupInfo {
   divIdentifier   String
   textIdentifier  String     
   imgIdentifier   String
+  //nextIdentifier is a series of comma seperated values
   nextIdentifier  String
 }

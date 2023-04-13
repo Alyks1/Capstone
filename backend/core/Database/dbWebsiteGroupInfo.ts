@@ -45,7 +45,7 @@ export async function createWebsiteGroupInfo() {
             divIdentifier: ".object-gallery-item",
             textIdentifier: "p",
             imgIdentifier: ".image > img",
-            nextIdentifier: ""
+            nextIdentifier: "nav.nav-offcanvas.hide-for-large-up > ul > li.active > ul > li.active > ul > li:nth-child({N}),div.large-9.large-push-3.columns > ul > li{ID#Selected masterpieces}"
         }
     });
     
