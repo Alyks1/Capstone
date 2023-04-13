@@ -89,7 +89,6 @@ async function moveToNextPageSuccessful(page: Page, groupInfo: WebsiteGroupInfo,
 		return true;
 	}
 	//Otherwise, scroll down and rescrape
-	//TODO: investigate if innerHeight is correct
 	await page.evaluate(() => {
 		window.scrollTo({ top: window.innerHeight });
 	});
