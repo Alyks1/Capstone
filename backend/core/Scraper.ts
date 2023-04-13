@@ -72,7 +72,8 @@ async function moveToNextPageSuccessful(
 ) {
 	Logger.debug("Moving to next page");
 	//Store NextIdentifier as a list  (comma separated values)
-	const nextBtnFlow = groupInfo.nextIdentifier.split(",");
+	const rawNextBtnFlow = groupInfo.nextIdentifier.split(",");
+	const nextBtnFlow = rawNextBtnFlow.filter((e) => e !== "");
 	//Go through the list on chronological order to find the next page
 	if (nextBtnFlow.length > 0) {
 		//Get the root element ie the first element in the list
