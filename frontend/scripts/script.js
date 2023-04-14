@@ -2,6 +2,9 @@ import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import { getSocketURL } from "./utility.js";
 
 //TODO: Add your own socket.io server url
+//TODO: Change website workflow more like a wizard (installation)
+//TODO: Add more feedback to the user, like explaining how to use the dataset etc
+//TODO: Clean UI
 
 const socket = io(getSocketURL());
 
@@ -9,7 +12,7 @@ const startScraperButton = document.getElementById("start-button");
 const addWebsiteButton = document.getElementById("addWebsite");
 const displayWebsiteButton = document.getElementById("displayWebsites");
 const updateTrustCalcButton = document.getElementById("updateTrustCalc");
-const displayDataButton = document.getElementById("displayData"); 
+const displayDataButton = document.getElementById("displayData");
 
 const datasetDownloadDiv = document.getElementById("datasetDownloadDiv");
 const datasetDownloadLink = document.getElementById("datasetDownloadLink");
@@ -42,7 +45,7 @@ socket.on("sendDatasetUrl", (url) => {
 	sessionStorage.setItem("datasetUrl", url);
 	progressBar.value++;
 	if (progressBar.value === progressBar.max) {
-		resetProgressBar()
+		resetProgressBar();
 	}
 	showDownloadLink();
 	resetButtons();
