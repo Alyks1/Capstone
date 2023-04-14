@@ -127,6 +127,10 @@ button:-webkit-details-marker {
   overflow: hidden;
 }
 
+.menu button {
+  width: 300px;
+}
+
 .startScraper:hover {
   background-color: black;
   color: white;
