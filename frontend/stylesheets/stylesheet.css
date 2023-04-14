@@ -175,3 +175,7 @@ button:-webkit-details-marker {
   width: 50%;
   padding: 10px;
 }
+
+#backButton {
+  visibility: hidden;
+}

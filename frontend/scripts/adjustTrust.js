@@ -4,10 +4,16 @@ import { getSocketURL } from "./utility.js";
 const form = document.getElementById("form");
 const submitButton = document.getElementById("submitButton");
 const returnButton = document.getElementById("returnButton");
+const backButton = document.getElementById("backButton");
 const nextButton = document.getElementById("nextButton");
 const socket = io(getSocketURL());
 
 socket.emit("getTrustCalc");
+
+if (sessionStorage.getItem("wizard")) {
+	returnButton.style.visibility = "hidden";
+	backButton.style.visibility = "visible";
+}
 
 socket.on("trustCalc", (json) => {
 	const trustCalc = JSON.parse(json);
@@ -23,6 +29,10 @@ socket.on("trustCalc", (json) => {
 
 returnButton.addEventListener("click", () => {
 	window.location.href = "index.html";
+});
+
+backButton.addEventListener("click", () => {
+	window.location.href = "addWebsite.html";
 });
 
 nextButton.addEventListener("click", () => {

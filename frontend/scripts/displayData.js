@@ -10,6 +10,8 @@ const deactivatedData = sessionStorage.getItem("deactivatedData")
 	? JSON.parse(sessionStorage.getItem("deactivatedData"))
 	: [];
 
+returnButton.style.visibility = "visible";
+
 if (sessionStorage.getItem("datasetUrl")) {
 	downloadButton.href = sessionStorage.getItem("datasetUrl");
 }
@@ -91,6 +93,7 @@ async function createFile(path, name, type) {
 }
 
 function createDeactivateButton(id, li) {
+	//TODO: Change Download link when the dataset is outdated
 	const button = document.createElement("button");
 	button.textContent = "Deactivate";
 	button.id = `${id}Deactivate`;

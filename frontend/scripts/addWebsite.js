@@ -4,8 +4,14 @@ import { getSocketURL } from "./utility.js";
 const form = document.getElementById("form");
 const submitButton = document.getElementById("submit");
 const returnButton = document.getElementById("returnButton");
+const backButton = document.getElementById("backButton");
 const nextButton = document.getElementById("nextButton");
 const socket = io(getSocketURL());
+
+if (sessionStorage.getItem("wizard")) {
+	returnButton.style.visibility = "hidden";
+	backButton.style.visibility = "visible";
+}
 
 submitButton.addEventListener("click", () => {
 	console.log("Adding website");
@@ -21,7 +27,7 @@ submitButton.addEventListener("click", () => {
 		weight: Number(weight),
 		nrOfPages: Number(nrOfPages),
 	});
-	window.location.href = "index.html";
+	window.location.href = "displayWebsiteList.html";
 });
 
 socket.on("log", (msg) => {
@@ -30,6 +36,10 @@ socket.on("log", (msg) => {
 
 returnButton.addEventListener("click", () => {
 	window.location.href = "index.html";
+});
+
+backButton.addEventListener("click", () => {
+	window.location.href = "displayWebsiteList.html";
 });
 
 nextButton.addEventListener("click", () => {

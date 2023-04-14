@@ -1,7 +1,7 @@
 //TODO: Add your own socket.io server url
-//TODO: Change website workflow more like a wizard (installation)
 //TODO: Add more feedback to the user, like explaining how to use the dataset etc
 //TODO: Clean UI
+//TODO: Add Back button when in workflow, otherwise MainMenu
 
 const startButton = document.getElementById("startButton");
 const addWebsiteButton = document.getElementById("addWebsite");
@@ -17,6 +17,7 @@ if (sessionStorage.getItem("datasetUrl")) {
 
 startButton.addEventListener("click", () => {
 	console.log("Starting Scraper");
+	sessionStorage.setItem("wizard", "true");
 	window.location.href = "displayWebsiteList.html";
 });
 

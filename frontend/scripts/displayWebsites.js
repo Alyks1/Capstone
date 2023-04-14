@@ -7,6 +7,7 @@ const nextButton = document.getElementById("nextButton");
 const socket = io(getSocketURL());
 
 socket.emit("getWebsites");
+returnButton.style.visibility = "visible";
 
 socket.on("websites", (websites) => {
 	console.log("received websites");
