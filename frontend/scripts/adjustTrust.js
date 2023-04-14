@@ -8,12 +8,12 @@ const backButton = document.getElementById("backButton");
 const nextButton = document.getElementById("nextButton");
 const socket = io(getSocketURL());
 
-socket.emit("getTrustCalc");
-
 if (sessionStorage.getItem("wizard")) {
 	returnButton.style.visibility = "hidden";
 	backButton.style.visibility = "visible";
 }
+
+socket.emit("getTrustCalc");
 
 socket.on("trustCalc", (json) => {
 	const trustCalc = JSON.parse(json);

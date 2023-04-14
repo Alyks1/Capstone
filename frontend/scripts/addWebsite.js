@@ -30,10 +30,6 @@ submitButton.addEventListener("click", () => {
 	window.location.href = "displayWebsiteList.html";
 });
 
-socket.on("log", (msg) => {
-	console.log(msg);
-});
-
 returnButton.addEventListener("click", () => {
 	window.location.href = "index.html";
 });
