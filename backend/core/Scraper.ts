@@ -19,7 +19,7 @@ export async function Scraper(
 		try {
 			await page.waitForSelector(groupInfo.rootDiv);
 		} catch (error) {
-			Logger.warn(`[Scraper.ts, 21] ${error}`);
+			Logger.warn(`[Scraper.ts, 22] ${error}`);
 			break;
 		}
 
@@ -53,12 +53,12 @@ export async function Scraper(
 				posts.push({ text: text, imgSrc: imgSrc, data: blankData });
 			allPosts.add(text);
 		}
-		Logger.debug(allPosts.size);
-		Logger.info(`Scraped Posts: ${posts.length}`);
+		Logger.trace(allPosts.size);
+		Logger.debug(`Scraped Posts: ${posts.length}`);
 		if (i === pages - 1) break;
 		const wasSuccessfull = await moveToNextPageSuccessful(page, groupInfo, i);
 		if (!wasSuccessfull) {
-			Logger.warn("[Scraper.ts, 59] Moving to next page unsuccessful");
+			Logger.warn("[Scraper.ts, 61] Moving to next page unsuccessful");
 			break;
 		}
 	}
@@ -70,18 +70,15 @@ async function moveToNextPageSuccessful(
 	groupInfo: WebsiteGroupInfo,
 	index: number,
 ) {
-	Logger.debug("Moving to next page");
-	//Store NextIdentifier as a list  (comma separated values)
+	Logger.trace("Moving to next page");
 	const rawNextBtnFlow = groupInfo.nextIdentifier.split(",");
 	const nextBtnFlow = rawNextBtnFlow.filter((e) => e !== "");
 	//Go through the list on chronological order to find the next page
 	if (nextBtnFlow.length > 0) {
-		//Get the root element ie the first element in the list
-		//const root = await page.$(nextBtnFlow.pop());
 		for (let element of nextBtnFlow) {
 			element = replaceNthWithIndex(element, index, true);
 			if (element.includes("{ID#"))
-				element = await getElementWithInteralID(element, page);
+				element = await getElementSelectorWithInteralID(element, page);
 
 			Logger.trace(`Clicking "${element} > a"`);
 			await page.click(`${element} > a`);
@@ -95,7 +92,7 @@ async function moveToNextPageSuccessful(
 		try {
 			await page.waitForNetworkIdle({ idleTime: 100, timeout: 30000 });
 		} catch (error) {
-			Logger.warn(`[Scraper.ts, 97] ${error}`);
+			Logger.warn(`[Scraper.ts, 95] ${error}`);
 			return false;
 		}
 	}
@@ -117,7 +114,7 @@ function replaceNthWithIndex(
 	return element;
 }
 
-async function getElementWithInteralID(element: string, page: Page) {
+async function getElementSelectorWithInteralID(element: string, page: Page) {
 	const i = element.indexOf("{ID#");
 	const j = element.indexOf("}");
 	const id = element.substring(i + 4, j);
@@ -130,5 +127,5 @@ async function getElementWithInteralID(element: string, page: Page) {
 			return element.replace(`{ID#${id}}`, `:nth-child(${i + 1})`);
 		}
 	}
-	Logger.warn(`[Scraper.ts, 122] Could not find li with innerHTML ${id}`);
+	Logger.warn(`[Scraper.ts, 130] Could not find li with innerHTML ${id}`);
 }

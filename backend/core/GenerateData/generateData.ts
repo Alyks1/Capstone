@@ -25,7 +25,7 @@ const YEAR_NOW = 2023;
 
 //TODO: Maybe use Semantic Analyis or Recursive Decent
 /**
- * Returns a list of posts with updated Data field 
+ * Returns a list of posts with updated Data field
  * containing a post date chosen based on the most trusted
  * date provided from the post text.
  * @param posts
@@ -33,7 +33,7 @@ const YEAR_NOW = 2023;
  */
 export function getDateFromPosts(posts: Post[]) {
 	Logger.trace(`Creating data from ${posts.length} posts`);
-	for (let post of posts) {
+	for (const post of posts) {
 		Logger.debug(post.text);
 		const text = Utility.sanatizeText(post.text);
 		const textArr = text.split(" ");
@@ -43,12 +43,15 @@ export function getDateFromPosts(posts: Post[]) {
 		if (data.length < 1) continue;
 		data = calcTrust(data);
 		post.data = chooseMostTrusted(data);
-		Logger.info(`(${post.data.date} : ${post.data.trust})`);
+		Logger.debug(`(${post.data.date} : ${post.data.trust})`);
 	}
 	//Remove empty data
 	posts = posts.filter((x) => x.data.trust > 0);
 	//clean up for testing
-	posts = posts.map((x) => { x.data.pos = 0; return x; });
+	posts = posts.map((x) => {
+		x.data.pos = 0;
+		return x;
+	});
 	return posts;
 }
 
@@ -58,7 +61,7 @@ export function getDateFromPosts(posts: Post[]) {
  * @returns
  */
 function createDate(text: string[]) {
-	let data: WorkingData[] = [];
+	const data: WorkingData[] = [];
 	for (let i = 0; i < text.length; i++) {
 		data[i] = {
 			date: text[i],
@@ -102,7 +105,7 @@ function treeStump(data: WorkingData, text: string[]) {
 }
 
 /**
- * Looks at the next word to match with the date types. 
+ * Looks at the next word to match with the date types.
  * If there is a match, look at the next position and do again.
  * @param data Current data being worked on
  * @param text Array of all text words
@@ -142,7 +145,7 @@ function switchTypes(data: WorkingData, text: string[]): WorkingData {
 	return noMatch(data);
 }
 
-export const createDateTesting = { createDate};
+export const createDateTesting = { createDate };
 export const treeStumpTesting = { treeStump };
 export const LookAheadTesting = { LookAhead };
 export const switchTypesTesting = { switchTypes };

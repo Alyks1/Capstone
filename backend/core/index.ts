@@ -18,7 +18,7 @@ export async function startScraper(
 	socket.emit("log", "Scraper Started");
 	//TODO: Add integration tests
 	//TODO: Make images same dimensions
-	const browser = await getBrowser(false);
+	const browser = await getBrowser(true);
 
 	const page = await browser.newPage();
 	const websites = await getActiveWebsites();
@@ -44,7 +44,7 @@ export async function startScraper(
 		try {
 			await page.goto(website.url, { timeout: 0 });
 		} catch (e) {
-			Logger.warn(`[Index.ts, 77] ${website.url}. ${e}`);
+			Logger.warn(`[Index.ts, 47] ${website.url}. ${e}`);
 			continue;
 		}
 
