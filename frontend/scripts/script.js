@@ -18,7 +18,7 @@ const datasetDownloadDiv = document.getElementById("datasetDownloadDiv");
 const datasetDownloadLink = document.getElementById("datasetDownloadLink");
 
 const progressBarDiv = document.getElementById("progressDiv");
-const progressBar = document.getElementById("progressBar");
+// const progressBar = document.getElementById("progressBar");
 
 displayDataButton.disabled = true;
 
@@ -27,33 +27,33 @@ if (sessionStorage.getItem("datasetUrl")) {
 	displayDataButton.disabled = false;
 }
 
-socket.on("log", (msg) => {
-	console.log(msg);
-	const progressText = document.getElementById("progressText");
-	progressText.textContent = msg;
-	progressBar.value++;
-});
+// socket.on("log", (msg) => {
+// 	console.log(msg);
+// 	const progressText = document.getElementById("progressText");
+// 	progressText.textContent = msg;
+// 	progressBar.value++;
+// });
 
-socket.on("error", (msg) => {
-	console.log(msg);
-	resetProgressBar();
-	resetButtons();
-});
+// socket.on("error", (msg) => {
+// 	console.log(msg);
+// 	resetProgressBar();
+// 	resetButtons();
+// });
 
-socket.on("sendDatasetUrl", (url) => {
-	console.log(`Dataset url: ${url}`);
-	sessionStorage.setItem("datasetUrl", url);
-	progressBar.value++;
-	if (progressBar.value === progressBar.max) {
-		resetProgressBar();
-	}
-	showDownloadLink();
-	resetButtons();
-});
+// socket.on("sendDatasetUrl", (url) => {
+// 	console.log(`Dataset url: ${url}`);
+// 	sessionStorage.setItem("datasetUrl", url);
+// 	progressBar.value++;
+// 	if (progressBar.value === progressBar.max) {
+// 		resetProgressBar();
+// 	}
+// 	showDownloadLink();
+// 	resetButtons();
+// });
 
-socket.on("sendDatasetInfo", (url) => {
-	sessionStorage.setItem("datasetInfo", url);
-});
+// socket.on("sendDatasetInfo", (url) => {
+// 	sessionStorage.setItem("datasetInfo", url);
+// });
 
 startScraperButton.addEventListener("click", () => {
 	console.log("Starting Scraper");
@@ -63,7 +63,7 @@ startScraperButton.addEventListener("click", () => {
 	displayWebsiteButton.disabled = true;
 	updateTrustCalcButton.disabled = true;
 	displayDataButton.disabled = true;
-	socket.emit("start");
+	window.location.href = "displayWebsiteList.html";
 });
 
 addWebsiteButton.addEventListener("click", () => {
@@ -82,20 +82,20 @@ displayDataButton.addEventListener("click", () => {
 	window.location.href = "displayData.html";
 });
 
-function resetProgressBar() {
-	progressBarDiv.style.visibility = "hidden";
-	progressBar.value = 0;
-}
+// function resetProgressBar() {
+// 	progressBarDiv.style.visibility = "hidden";
+// 	progressBar.value = 0;
+// }
 
 function showDownloadLink() {
 	datasetDownloadDiv.style.visibility = "visible";
 	datasetDownloadLink.href = sessionStorage.getItem("datasetUrl");
 }
 
-function resetButtons() {
-	displayDataButton.disabled = false;
-	startScraperButton.disabled = false;
-	addWebsiteButton.disabled = false;
-	displayWebsiteButton.disabled = false;
-	updateTrustCalcButton.disabled = false;
-}
+// function resetButtons() {
+// 	displayDataButton.disabled = false;
+// 	startScraperButton.disabled = false;
+// 	addWebsiteButton.disabled = false;
+// 	displayWebsiteButton.disabled = false;
+// 	updateTrustCalcButton.disabled = false;
+// }
