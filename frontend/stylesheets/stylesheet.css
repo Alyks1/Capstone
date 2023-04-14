@@ -1,17 +1,17 @@
 body {
-    text-align: center;
+  text-align: center;
 }
 
 text {
   font-family: sans-serif;
 }
-  
+
 legend {
   background-color: white;
   padding: 5px 10px;
   margin: 5px;
 }
-  
+
 input {
   margin: 5px;
   align-items: center;
@@ -95,57 +95,56 @@ button:-webkit-details-marker {
 }
 
 .switch {
-    --inactive-bg: #cfd8dc;
-    --active-bg: #000000;
-    --size: 1rem;
-    appearance: none;
-    width: calc(var(--size) * 2.2);
-    height: var(--size);
-    display: inline-block;
-    border-radius: calc(var(--size) / 2);
-    cursor: pointer;
-    background-color: var(--inactive-bg);
-    background-image: radial-gradient(
-        circle calc(var(--size) / 2.1),
-        #fff 100%,
-        #0000 0
-    ),
+  --inactive-bg: #cfd8dc;
+  --active-bg: #000000;
+  --size: 1rem;
+  appearance: none;
+  width: calc(var(--size) * 2.2);
+  height: var(--size);
+  display: inline-block;
+  border-radius: calc(var(--size) / 2);
+  cursor: pointer;
+  background-color: var(--inactive-bg);
+  background-image: radial-gradient(circle calc(var(--size) / 2.1),
+      #fff 100%,
+      #0000 0),
     radial-gradient(circle calc(var(--size) / 1.5), #0003 0%, #0000 100%);
-    background-repeat: no-repeat;
-    background-position: calc(var(--size) / -1.75) 0;
-    transition: background 0.2s ease-out;
+  background-repeat: no-repeat;
+  background-position: calc(var(--size) / -1.75) 0;
+  transition: background 0.2s ease-out;
 }
+
 .switch:checked {
-    background-color: var(--active-bg);
-    background-position: calc(var(--size) / 1.75) 0;
+  background-color: var(--active-bg);
+  background-position: calc(var(--size) / 1.75) 0;
 }
 
 .menu {
-    margin: auto;
-    width: 50%;
-    padding: 10px;
-    display: block;
-    overflow: hidden;
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+  display: block;
+  overflow: hidden;
 }
 
 .startScraper:hover {
-    background-color: black;
-    color: white;
-    text-decoration: none;
-    transition-duration: 0.7s;
+  background-color: black;
+  color: white;
+  text-decoration: none;
+  transition-duration: 0.7s;
 }
 
 .download {
-    background-color: DodgerBlue;
-    border: none;
-    color: white;
-    padding: 12px 30px;
-    cursor: pointer;
-    font-size: 20px;
-  }
-  
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
 .download:hover {
-    background-color: RoyalBlue;
+  background-color: RoyalBlue;
 }
 
 .dataList {
@@ -157,7 +156,8 @@ button:-webkit-details-marker {
 }
 
 .fixedDiv {
-  padding: 5px;;
+  padding: 5px;
+  ;
   width: 100%;
   z-index: 1;
   position: fixed;
@@ -167,13 +167,11 @@ button:-webkit-details-marker {
 }
 
 #datasetDownloadDiv {
-    visibility: hidden;
-    margin: 10px;
+  margin: 10px;
 }
 
 #progressDiv {
-    visibility: hidden;
-    margin: auto;
-    width: 50%;
-    padding: 10px;
+  margin: auto;
+  width: 50%;
+  padding: 10px;
 }
