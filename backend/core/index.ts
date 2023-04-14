@@ -84,8 +84,7 @@ export async function startScraper(
 	Logger.info("Finished creating dataset");
 
 	socket.emit("log", "Scraper Finished");
-	socket.emit("sendDatasetUrl", "/output/dataset.tar.gz");
-	socket.emit("sendDatasetInfo", "/output/backup/backup.csv");
+	socket.emit("sendDatasetInfo", "/output/dataset.tar.gz,/output/backup/backup.csv");
 	await browser.close();
 }
 

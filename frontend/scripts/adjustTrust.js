@@ -21,27 +21,12 @@ socket.on("trustCalc", (json) => {
 	form.elements.namedItem("reduceTrust").value = Number(trustCalc.reduceTrust);
 });
 
-socket.on("log", (msg) => {
-	console.log(msg);
-});
-
-socket.on("sendDatasetUrl", (url) => {
-	console.log(`Dataset url: ${url}`);
-	window.location.href = "displayData.html";
-	sessionStorage.setItem("datasetUrl", url);
-});
-
-socket.on("sendDatasetInfo", (url) => {
-	console.log(`Dataset info: ${url}`);
-	sessionStorage.setItem("datasetInfo", url);
-});
-
 returnButton.addEventListener("click", () => {
 	window.location.href = "index.html";
 });
 
 nextButton.addEventListener("click", () => {
-	socket.emit("start");
+	window.location.href = "loadingScreen.html";
 });
 
 submitButton.addEventListener("click", () => {
