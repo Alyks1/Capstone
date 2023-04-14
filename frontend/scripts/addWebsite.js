@@ -4,7 +4,14 @@ import { getSocketURL } from "./utility.js";
 const form = document.getElementById("form");
 const submitButton = document.getElementById("submit");
 const returnButton = document.getElementById("returnButton");
+const backButton = document.getElementById("backButton");
+const nextButton = document.getElementById("nextButton");
 const socket = io(getSocketURL());
+
+if (sessionStorage.getItem("wizard")) {
+	returnButton.style.display = "none";
+	backButton.style.display = "inline-block";
+}
 
 submitButton.addEventListener("click", () => {
 	console.log("Adding website");
@@ -15,27 +22,29 @@ submitButton.addEventListener("click", () => {
 	const nrOfPages = inputs.namedItem("nrOfPages").value ?? "";
 
 	if (!inputsOK(inputs)) return;
-	socket.emit("addWebsite",
-		{
-			url: url,
-			weight: Number(weight),
-			nrOfPages: Number(nrOfPages),
-		}
-	);
-	window.location.href = "index.html";
-});
-
-socket.on("log", (msg) => {
-	console.log(msg);
+	socket.emit("addWebsite", {
+		url: url,
+		weight: Number(weight),
+		nrOfPages: Number(nrOfPages),
+	});
+	window.location.href = "displayWebsiteList.html";
 });
 
 returnButton.addEventListener("click", () => {
 	window.location.href = "index.html";
 });
 
+backButton.addEventListener("click", () => {
+	window.location.href = "displayWebsiteList.html";
+});
+
+nextButton.addEventListener("click", () => {
+	window.location.href = "adjustTrust.html";
+});
+
 function inputsOK(inputs) {
 	for (let i = 0; i < inputs.length; i++) {
-		if (inputs[i].value == "") {
+		if (inputs[i].value === "") {
 			alert("Please fill out all fields");
 			return false;
 		}
