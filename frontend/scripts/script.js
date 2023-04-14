@@ -1,7 +1,6 @@
 //TODO: Add your own socket.io server url
 //TODO: Add more feedback to the user, like explaining how to use the dataset etc
 //TODO: Clean UI
-//TODO: Add Back button when in workflow, otherwise MainMenu
 
 const startButton = document.getElementById("startButton");
 const addWebsiteButton = document.getElementById("addWebsite");
@@ -10,6 +9,7 @@ const updateTrustCalcButton = document.getElementById("updateTrustCalc");
 const displayDataButton = document.getElementById("displayData");
 
 displayDataButton.disabled = true;
+sessionStorage.removeItem("wizard");
 
 if (sessionStorage.getItem("datasetUrl")) {
 	displayDataButton.disabled = false;

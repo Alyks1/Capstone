@@ -10,7 +10,8 @@ const deactivatedData = sessionStorage.getItem("deactivatedData")
 	? JSON.parse(sessionStorage.getItem("deactivatedData"))
 	: [];
 
-returnButton.style.visibility = "visible";
+returnButton.style.display = "inline-block";
+sessionStorage.removeItem("wizard");
 
 if (sessionStorage.getItem("datasetUrl")) {
 	downloadButton.href = sessionStorage.getItem("datasetUrl");

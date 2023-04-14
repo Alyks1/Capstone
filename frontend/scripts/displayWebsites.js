@@ -7,7 +7,7 @@ const nextButton = document.getElementById("nextButton");
 const socket = io(getSocketURL());
 
 socket.emit("getWebsites");
-returnButton.style.visibility = "visible";
+returnButton.style.display = "inline-block";
 
 socket.on("websites", (websites) => {
 	console.log("received websites");

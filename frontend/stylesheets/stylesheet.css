@@ -177,5 +177,5 @@ button:-webkit-details-marker {
 }
 
 #backButton {
-  visibility: hidden;
+  display: none;
 }

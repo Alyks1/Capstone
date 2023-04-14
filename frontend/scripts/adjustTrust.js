@@ -9,8 +9,8 @@ const nextButton = document.getElementById("nextButton");
 const socket = io(getSocketURL());
 
 if (sessionStorage.getItem("wizard")) {
-	returnButton.style.visibility = "hidden";
-	backButton.style.visibility = "visible";
+	returnButton.style.display = "none";
+	backButton.style.display = "inline-block";
 }
 
 socket.emit("getTrustCalc");
