@@ -8,9 +8,11 @@ const backButton = document.getElementById("backButton");
 const nextButton = document.getElementById("nextButton");
 const socket = io(getSocketURL());
 
+nextButton.style.display = "none";
 if (sessionStorage.getItem("wizard")) {
 	returnButton.style.display = "none";
 	backButton.style.display = "inline-block";
+	nextButton.style.display = "inline-block";
 }
 
 socket.emit("getTrustCalc");

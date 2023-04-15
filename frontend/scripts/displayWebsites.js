@@ -6,6 +6,12 @@ const returnButton = document.getElementById("returnButton");
 const nextButton = document.getElementById("nextButton");
 const socket = io(getSocketURL());
 
+nextButton.style.display = "none";
+if (sessionStorage.getItem("wizard")) {
+	returnButton.style.display = "none";
+	nextButton.style.display = "inline-block";
+}
+
 socket.emit("getWebsites");
 returnButton.style.display = "inline-block";
 
