@@ -1,9 +1,10 @@
 body {
   text-align: center;
+  font-family: Verdana;
 }
 
 text {
-  font-family: sans-serif;
+  font-family: Verdana;
 }
 
 legend {
@@ -168,6 +169,13 @@ button:-webkit-details-marker {
   top: 0;
   left: 23px;
   text-align: left;
+}
+
+.display {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+  border: #000000 1px solid;
 }
 
 #datasetDownloadDiv {
