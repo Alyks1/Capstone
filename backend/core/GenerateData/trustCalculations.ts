@@ -21,9 +21,6 @@ let trustCalcOptions: TrustCalcOptions = {
 
 /**
  * Adds or removes trust based on the number properties.
- *
- * - Numbers between 0 and 100 have decreased trust
- * - Many different numbers have increased trust
  * @param data WorkingData array which to calc trust on
  * @returns
  */
@@ -37,11 +34,11 @@ export function calcTrust(data: WorkingData[]) {
 		//If many different numbers, more precision
 		if (new Set([...x.date]).size === x.date.length)
 			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.differentNr);
-		//if the date is not a multiple of 10 and 5, more precision
-		if (+x.date % 10 !== 0 && +x.date % 5 !== 0)
+		//if the date is not a multiple of 5, more precision
+		if (+x.date % 5 !== 0)
 			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.multipleOf10and5);
 		//if the date is between 1 and 10, less likely to be a year
-		if (+x.date > 0 && +x.date < 11)
+		if (+x.date < 0 || +x.date > 11)
 			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.between0and10);
 		//reduce trust by one to stop trust inflation
 		Logger.debug(`Reduce trust: ${trustCalcOptions.reduceTrust}`);
