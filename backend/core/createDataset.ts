@@ -101,10 +101,9 @@ async function createFilesFromCSV(
 		const id = line.split(",")[0];
 		if (id === "") continue;
 		const imgSrc = line.split(",")[3];
-		const imageBuffer = await resizeImage(imgSrc, page);
 		const imgName = `${id}.jpg`;
 		const imgPath = join(`${filePath}/`, imgName);
-		await writeFile(imgPath, imageBuffer);
+		await createImage(imgSrc, imgPath, page);
 	}
 }
 
@@ -152,10 +151,12 @@ export async function updateDataset(ignoreIDs: string[]) {
 	await createTar();
 }
 
-async function resizeImage(src: string, page: Page) {
+async function createImage(src: string, fileName: string, page: Page) {
 	//convert this buffer to image
 	const response = await page.goto(src);
 	const imageBuffer = await response.buffer();
-	const buf = sharp(imageBuffer).resize(224, 224).toBuffer();
-	return buf;
+	await sharp(imageBuffer)
+		.resize(224, 224)
+		.toFile(fileName)
+		.finally(() => {});
 }
