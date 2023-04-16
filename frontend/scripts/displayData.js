@@ -24,6 +24,7 @@ returnButton.addEventListener("click", () => {
 });
 
 updateDataButton.addEventListener("click", () => {
+	//TODO: Change Download link when the dataset is outdated
 	socket.emit("updateDataset", deactivatedData);
 	sessionStorage.setItem("deactivatedData", JSON.stringify(deactivatedData));
 	window.location.href = "displayData.html";
@@ -55,7 +56,6 @@ function createList(data) {
 		const li = document.createElement("li");
 		li.className = "dataList";
 		const text = `Year: ${d.year}, Trust: ${d.trust}`;
-		// const img = createImg(d.src);
 		const canvas = createCanvas(d.src);
 		const p = createP(text);
 		const deactivateButton = createDeactivateButton(d.id, li);
@@ -75,12 +75,6 @@ function createList(data) {
 	}
 }
 
-function createImg(src) {
-	const img = document.createElement("img");
-	img.src = src;
-	return img;
-}
-
 function createCanvas(src) {
 	const canvas = document.createElement("canvas");
 	const ctx = canvas.getContext("2d");
@@ -90,7 +84,7 @@ function createCanvas(src) {
 	canvas.height = IMAGE_SIZE;
 	img.onload = () => {
 		ctx.drawImage(img, 0, 0, IMAGE_SIZE, IMAGE_SIZE);
-	}
+	};
 	return canvas;
 }
 
@@ -110,7 +104,6 @@ async function createFile(path, name, type) {
 }
 
 function createDeactivateButton(id, li) {
-	//TODO: Change Download link when the dataset is outdated
 	const button = document.createElement("button");
 	button.textContent = "Deactivate";
 	button.id = `${id}Deactivate`;
