@@ -7,13 +7,13 @@ import { stringify } from "csv";
 import { v4 as uuidv4 } from "uuid";
 import * as tar from "tar";
 import fs from "fs";
-import writeFile from "write-file-atomic";
 import { getBrowser } from ".";
 import sharp from "sharp";
 
 const DATASET_PATH = "../frontend/output/dataset";
 const RESULT_PATH = "../frontend/output/dataset.tar.gz";
 const BACKUP_PATH = "../frontend/output/backup";
+const IMAGE_SIZE = 224;
 
 interface CSVType {
 	date: string;
@@ -155,8 +155,9 @@ async function createImage(src: string, fileName: string, page: Page) {
 	//convert this buffer to image
 	const response = await page.goto(src);
 	const imageBuffer = await response.buffer();
+	//TODO: Let user choose fit type?
 	await sharp(imageBuffer)
-		.resize(224, 224)
+		.resize(IMAGE_SIZE, IMAGE_SIZE, { fit: "fill" })
 		.toFile(fileName)
 		.finally(() => {});
 }

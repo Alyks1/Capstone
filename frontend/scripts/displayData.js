@@ -1,6 +1,8 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import { getSocketURL } from "./utility.js";
 
+const IMAGE_SIZE = 224;
+
 const returnButton = document.getElementById("returnButton");
 const updateDataButton = document.getElementById("updateDatasetButton");
 const downloadButton = document.getElementById("datasetDownloadLink");
@@ -53,12 +55,13 @@ function createList(data) {
 		const li = document.createElement("li");
 		li.className = "dataList";
 		const text = `Year: ${d.year}, Trust: ${d.trust}`;
-		const img = createImg(d.src);
+		// const img = createImg(d.src);
+		const canvas = createCanvas(d.src);
 		const p = createP(text);
 		const deactivateButton = createDeactivateButton(d.id, li);
 		const activateButton = createActivateButton(d.id, li);
 		li.appendChild(p);
-		li.appendChild(img);
+		li.appendChild(canvas);
 		li.appendChild(deactivateButton);
 		li.appendChild(activateButton);
 
@@ -76,6 +79,19 @@ function createImg(src) {
 	const img = document.createElement("img");
 	img.src = src;
 	return img;
+}
+
+function createCanvas(src) {
+	const canvas = document.createElement("canvas");
+	const ctx = canvas.getContext("2d");
+	const img = new Image();
+	img.src = src;
+	canvas.width = IMAGE_SIZE;
+	canvas.height = IMAGE_SIZE;
+	img.onload = () => {
+		ctx.drawImage(img, 0, 0, IMAGE_SIZE, IMAGE_SIZE);
+	}
+	return canvas;
 }
 
 function createP(text) {
