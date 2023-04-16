@@ -48,9 +48,9 @@ export async function createDataset(page: Page, posts: Post[]) {
 			imgSrc: src,
 		});
 	}
-	await createCSV(csv, "/datasetInfo.csv", DATASET_PATH);
+	await createCSV(csv, "/_datasetInfo.csv", DATASET_PATH);
 	await createCSV(csv, "/backup.csv", BACKUP_PATH);
-	await createFilesFromCSV(page, "/datasetInfo.csv", DATASET_PATH);
+	await createFilesFromCSV(page, "/_datasetInfo.csv", DATASET_PATH);
 	await createFilesFromCSV(page, "/backup.csv", BACKUP_PATH);
 	await createTar();
 }
@@ -146,16 +146,14 @@ export async function updateDataset(ignoreIDs: string[]) {
 			imgSrc: src,
 		});
 	}
-	await createCSV(csv, "/datasetInfo.csv", DATASET_PATH);
-	await createFilesFromCSV(page, "/datasetInfo.csv", DATASET_PATH);
+	await createCSV(csv, "/_datasetInfo.csv", DATASET_PATH);
+	await createFilesFromCSV(page, "/_datasetInfo.csv", DATASET_PATH);
 	await createTar();
 }
 
 async function createImage(src: string, fileName: string, page: Page) {
-	//convert this buffer to image
 	const response = await page.goto(src);
 	const imageBuffer = await response.buffer();
-	//TODO: Let user choose fit type?
 	await sharp(imageBuffer)
 		.resize(IMAGE_SIZE, IMAGE_SIZE, { fit: "fill" })
 		.toFile(fileName)
