@@ -17,7 +17,6 @@ export async function startScraper(
 ) {
 	socket.emit("log", "Scraper Started");
 	//TODO: Add integration tests
-	//TODO: Make images same dimensions
 	const browser = await getBrowser(true);
 
 	const page = await browser.newPage();

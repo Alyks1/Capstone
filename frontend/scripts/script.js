@@ -1,5 +1,5 @@
 //TODO: Add your own socket.io server url
-//TODO: Add more feedback to the user, like explaining how to use the dataset etc
+//TODO: Add more feedback to the user
 //TODO: Clean UI
 
 const startButton = document.getElementById("startButton");
