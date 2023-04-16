@@ -9,6 +9,7 @@ import * as tar from "tar";
 import fs from "fs";
 import writeFile from "write-file-atomic";
 import { getBrowser } from ".";
+import sharp from "sharp";
 
 const DATASET_PATH = "../frontend/output/dataset";
 const RESULT_PATH = "../frontend/output/dataset.tar.gz";
@@ -100,8 +101,7 @@ async function createFilesFromCSV(
 		const id = line.split(",")[0];
 		if (id === "") continue;
 		const imgSrc = line.split(",")[3];
-		const response = await page.goto(imgSrc);
-		const imageBuffer = await response.buffer();
+		const imageBuffer = await resizeImage(imgSrc, page);
 		const imgName = `${id}.jpg`;
 		const imgPath = join(`${filePath}/`, imgName);
 		await writeFile(imgPath, imageBuffer);
@@ -150,4 +150,12 @@ export async function updateDataset(ignoreIDs: string[]) {
 	await createCSV(csv, "/datasetInfo.csv", DATASET_PATH);
 	await createFilesFromCSV(page, "/datasetInfo.csv", DATASET_PATH);
 	await createTar();
+}
+
+async function resizeImage(src: string, page: Page) {
+	//convert this buffer to image
+	const response = await page.goto(src);
+	const imageBuffer = await response.buffer();
+	const buf = sharp(imageBuffer).resize(224, 224).toBuffer();
+	return buf;
 }
