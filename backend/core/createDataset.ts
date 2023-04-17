@@ -51,7 +51,6 @@ export async function createDataset(page: Page, posts: Post[]) {
 	await createCSV(csv, "/_datasetInfo.csv", DATASET_PATH);
 	await createCSV(csv, "/backup.csv", BACKUP_PATH);
 	await createFilesFromCSV(page, "/_datasetInfo.csv", DATASET_PATH);
-	await createFilesFromCSV(page, "/backup.csv", BACKUP_PATH);
 	await createTar();
 }
 
@@ -154,6 +153,7 @@ export async function updateDataset(ignoreIDs: string[]) {
 async function createImage(src: string, fileName: string, page: Page) {
 	const response = await page.goto(src);
 	const imageBuffer = await response.buffer();
+	//TODO: Allow user to choose image format?
 	await sharp(imageBuffer)
 		.resize(IMAGE_SIZE, IMAGE_SIZE, { fit: "fill" })
 		.toFile(fileName)
