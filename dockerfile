@@ -21,8 +21,7 @@ ADD . ./
 
 #Install the rest
 RUN pnpm install -r --offline --prod
-#Setup Prisma DB
-RUN pnpm prisma generate
+RUN cd backend && pnpm prisma generate
 
 EXPOSE 3000
 
