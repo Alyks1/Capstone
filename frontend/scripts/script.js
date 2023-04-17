@@ -1,4 +1,3 @@
-//TODO: Add your own socket.io server url
 //TODO: Add more feedback to the user
 //TODO: Clean UI
 

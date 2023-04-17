@@ -24,7 +24,6 @@ returnButton.addEventListener("click", () => {
 });
 
 updateDataButton.addEventListener("click", () => {
-	//TODO: Change Download link when the dataset is outdated
 	socket.emit("updateDataset", deactivatedData);
 	sessionStorage.setItem("deactivatedData", JSON.stringify(deactivatedData));
 	window.location.href = "displayData.html";
@@ -34,6 +33,7 @@ await getDataFromFile();
 
 async function getDataFromFile() {
 	const filePath = sessionStorage.getItem("datasetInfo") ?? "";
+	//This contains the backup.csv bath ^
 	const path = `../../../${filePath}`;
 	const reader = new FileReader();
 	await createFile(path, "datasetInfo.csv", "text/csv").then((file) => {
