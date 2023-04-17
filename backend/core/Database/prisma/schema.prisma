@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  schema   = "/backend/core/Database/prisma/schema.prisma"
 }
 
 datasource db {
