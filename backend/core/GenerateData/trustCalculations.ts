@@ -11,7 +11,7 @@ export interface TrustCalcOptions {
 }
 
 // rome-ignore lint/style/useConst: these should be updated
-let trustCalcOptions: TrustCalcOptions = {
+export let trustCalcOptions: TrustCalcOptions = {
 	notBetween0and100: true,
 	differentNr: false,
 	multipleOf10and5: true,
@@ -24,25 +24,28 @@ let trustCalcOptions: TrustCalcOptions = {
  * @param data WorkingData array which to calc trust on
  * @returns
  */
-export function calcTrust(data: WorkingData[]) {
-	getTrustCalcOptions();
+export function calcTrust(
+	data: WorkingData[],
+	trustCalcOptions = getTrustCalcOptions(),
+) {
+	const options = JSON.parse(trustCalcOptions);
 	data.forEach((x) => {
 		Logger.trace(`Before: ${x.date} : ${x.trust}`);
 		//If the date is not between 0 and 100
 		if (+x.date < 0 || +x.date > 101)
-			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.notBetween0and100);
+			x.trust = adjustTrust(x.trust, 1, options.notBetween0and100);
 		//If many different numbers, more precision
 		if (new Set([...x.date]).size === x.date.length)
-			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.differentNr);
+			x.trust = adjustTrust(x.trust, 1, options.differentNr);
 		//if the date is not a multiple of 5, more precision
 		if (+x.date % 5 !== 0)
-			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.multipleOf10and5);
+			x.trust = adjustTrust(x.trust, 1, options.multipleOf10and5);
 		//if the date is between 1 and 10, less likely to be a year
 		if (+x.date < 0 || +x.date > 11)
-			x.trust = adjustTrust(x.trust, 1, trustCalcOptions.between0and10);
+			x.trust = adjustTrust(x.trust, 1, options.between0and10);
 		//reduce trust by one to stop trust inflation
-		Logger.debug(`Reduce trust: ${trustCalcOptions.reduceTrust}`);
-		x.trust = adjustTrust(x.trust, trustCalcOptions.reduceTrust * -1, true);
+		Logger.debug(`Reduce trust: ${options.reduceTrust}`);
+		x.trust = adjustTrust(x.trust, options.reduceTrust * -1, true);
 		return x;
 	});
 	if (data.length === 1) data[0].trust;
@@ -65,8 +68,8 @@ export async function setTrustCalcOptions(activations) {
 	await fs.promises.writeFile("./trustActivations.json", writeData);
 }
 
-export async function getTrustCalcOptions() {
-	const buffer = await fs.promises.readFile("./trustActivations.json");
+export function getTrustCalcOptions() {
+	const buffer = fs.readFileSync("./trustActivations.json");
 	const data: TrustCalcOptions = JSON.parse(buffer.toString());
 	trustCalcOptions.notBetween0and100 = data.notBetween0and100;
 	trustCalcOptions.differentNr = data.differentNr;
