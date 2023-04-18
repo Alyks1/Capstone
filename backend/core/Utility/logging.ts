@@ -3,10 +3,10 @@ import { Utility } from "./utility";
 
 enum Loglevel {
 	Network = 1,
-	Trace,
-	Debug,
-	Info,
-	Warn,
+	Trace = 2,
+	Debug = 3,
+	Info = 4,
+	Warn = 5,
 }
 
 const loglevels: Record<string, Loglevel> = {

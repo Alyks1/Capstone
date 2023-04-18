@@ -46,8 +46,8 @@ submitButton.addEventListener("click", () => {
 	socket.emit("setTrustCalc", {
 		notBetween0and100: getChecked("notBetween0and100", form.elements),
 		differentNr: getChecked("differentNr", form.elements),
-		multipleOf10and5: getChecked("multipleOf10and5", form.elements),
-		between0and10: getChecked("between0and10", form.elements),
+		notMultipleOf10and5: getChecked("notMultipleOf10and5", form.elements),
+		notBetween0and10: getChecked("notBetween0and10", form.elements),
 		reduceTrust: form.elements.namedItem("reduceTrust").value,
 	});
 });

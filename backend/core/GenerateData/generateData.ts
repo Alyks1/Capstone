@@ -16,6 +16,7 @@ import {
 	isYearOld,
 	millennium,
 	noMatch,
+	notYear,
 	yearOld,
 } from "./tokens";
 import { chooseMostTrusted, filterData } from "./processData";
@@ -133,6 +134,7 @@ function LookAhead(data: WorkingData, text: string[]) {
 function switchTypes(data: WorkingData, text: string[]): WorkingData {
 	const type = text[data.pos];
 	Logger.trace(`switching Type ${type} for ${data.date}`);
+	if (notYear(type)) return noMatch(data);
 	if (isBC(type)) return BC(data);
 	if (isAD(type)) return AD(data);
 	if (isCenturies(type)) return centuries(data);

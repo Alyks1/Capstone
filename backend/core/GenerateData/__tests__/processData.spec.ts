@@ -4,8 +4,6 @@ import {
 	filterData,
 } from "../processData";
 
-//TODO: Add calcTrust tests with mock json
-
 describe("filterData", () => {
 	it("Should remove entries with less than 1 trust", () => {
 		const data = [
