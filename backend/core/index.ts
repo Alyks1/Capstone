@@ -16,7 +16,6 @@ export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
 ) {
 	socket.emit("log", "Scraper Started");
-	//TODO: Add integration tests
 	const browser = await getBrowser(true);
 
 	const page = await browser.newPage();

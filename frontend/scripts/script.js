@@ -1,5 +1,3 @@
-//TODO: Add more feedback to the user
-
 const startButton = document.getElementById("startButton");
 const addWebsiteButton = document.getElementById("addWebsite");
 const displayWebsiteButton = document.getElementById("displayWebsites");
