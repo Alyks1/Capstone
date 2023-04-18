@@ -11,55 +11,56 @@ const backButton = document.getElementById("backButton");
 const MaxNrOfPages = 10;
 const MaxWeight = 1;
 
+backButton.style.display = "inline-block";
 socket.emit("getSingularWebsite", getID());
 
 socket.on("singularWebsite", (website) => {
-    console.log(website);
-    const url = cleanUrl(website.url);
-    header.textContent = url;
-    websiteInfo.textContent = `NrOfPages: ${website.nrOfPages} - Weight: ${website.weight}`;
-    document.getElementById("nrOfPages").value = website.nrOfPages;
-    document.getElementById("weight").value = website.weight;
-})
+	console.log(website);
+	const url = cleanUrl(website.url);
+	header.textContent = url;
+	websiteInfo.textContent = `NrOfPages: ${website.nrOfPages} - Weight: ${website.weight}`;
+	document.getElementById("nrOfPages").value = website.nrOfPages;
+	document.getElementById("weight").value = website.weight;
+});
 
 updateButton.addEventListener("click", () => {
-    const id = getID();
-    const newNrOfPages = document.getElementById("nrOfPages").value
-    const weight = document.getElementById("weight").value
+	const id = getID();
+	const newNrOfPages = document.getElementById("nrOfPages").value;
+	const weight = document.getElementById("weight").value;
 
-    if (!updateIsOK(newNrOfPages, weight)) return
+	if (!updateIsOK(newNrOfPages, weight)) return;
 
-    socket.emit("updateWebsite", {
-        id: id,
-        nrOfPages: Number(newNrOfPages),
-        weight: Number(weight)
-    });
-    window.location.href = "displayWebsiteList.html";
+	socket.emit("updateWebsite", {
+		id: id,
+		nrOfPages: Number(newNrOfPages),
+		weight: Number(weight),
+	});
+	window.location.href = "displayWebsiteList.html";
 });
 
 backButton.addEventListener("click", () => {
-    window.location.href = "displayWebsiteList.html";
+	window.location.href = "displayWebsiteList.html";
 });
 
 function getID() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-    console.log(id);  
-    return Number(id);
+	const urlParams = new URLSearchParams(window.location.search);
+	const id = urlParams.get("id");
+	console.log(id);
+	return Number(id);
 }
 
 function updateIsOK(nrOfPages, weight) {
-    if (nrOfPages > MaxNrOfPages) {
-        alert(`Max nr of pages is ${MaxNrOfPages}`);
-        return false;
-    }
-    if (weight > MaxWeight) {
-        alert(`Max weight is ${MaxWeight}`);
-        return false;
-    }
-    if (nrOfPages < 0 || weight < 0) {
-        alert("Minimum is 0");
-        return false; 
-    }
-    return true
+	if (nrOfPages > MaxNrOfPages) {
+		alert(`Max nr of pages is ${MaxNrOfPages}`);
+		return false;
+	}
+	if (weight > MaxWeight) {
+		alert(`Max weight is ${MaxWeight}`);
+		return false;
+	}
+	if (nrOfPages < 0 || weight < 0) {
+		alert("Minimum is 0");
+		return false;
+	}
+	return true;
 }

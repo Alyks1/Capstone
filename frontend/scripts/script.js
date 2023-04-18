@@ -1,5 +1,4 @@
 //TODO: Add more feedback to the user
-//TODO: Clean UI
 
 const startButton = document.getElementById("startButton");
 const addWebsiteButton = document.getElementById("addWebsite");

@@ -34,10 +34,12 @@ function createList(websites) {
 		const url = cleanUrl(website.url);
 
 		const li = document.createElement("li");
+		li.style.borderBottom = "1px solid gray";
+		if (websites.length === i + 1) li.style.borderBottom = "none";
 
 		const a = createA(url, id);
 		const p = createP(website);
-		const button = createDeactivateButton(id);
+		const button = createDeactivateButton(id, website.nrOfPages);
 		const updateButton = createUpdateButton(id);
 
 		li.appendChild(a);
@@ -48,13 +50,15 @@ function createList(websites) {
 	});
 }
 
-function createDeactivateButton(i) {
+function createDeactivateButton(i, nrOfPages) {
 	const button = document.createElement("button");
 	button.textContent = "Deactivate";
 	button.addEventListener("click", () => {
 		socket.emit("deactivateWebsite", i);
+		button.style.display = "none";
 		window.location.href = "displayWebsiteList.html";
 	});
+	if (nrOfPages === 0) button.style.display = "none";
 	return button;
 }
 
@@ -68,10 +72,10 @@ function createUpdateButton(i) {
 }
 
 function createA(url, i) {
-	const a = document.createElement("a");
-	a.href = `updateWebsite.html?id=${i}`;
-	a.textContent = url;
-	return a;
+	const p = document.createElement("p");
+	p.style.fontWeight = "bold";
+	p.textContent = url;
+	return p;
 }
 
 function createP(website) {

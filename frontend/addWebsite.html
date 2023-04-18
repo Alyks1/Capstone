@@ -20,9 +20,26 @@
         <input type="number" id="nrOfPages" name="nrOfPages" min="0" max="10" step="1" required="true" /><br><br>
         <button type="button" id="submit" value="Submit">Submit</button>
     </form>
-    <button id="returnButton">Main Menu</button>
-    <button id="backButton">Back</button>
-    <button id="nextButton">Next</button>
+    <div class="fixedDiv">
+        <button id="returnButton">Main Menu</button>
+        <button id="backButton">Back</button>
+        <button id="nextButton">Next</button>
+    </div>
+    <div class="display">
+        <p>
+            Currently supported websites are subreddits from Reddit.com and old.reddit.com, and the Kunst Historische
+            Museum in Vienna under khm.at.
+            More websites will be added in the future.
+            <br><br>
+            The website weight is a number between 0-1 that acts as a multiplier for the data being scraped from the
+            website. The more accurate the website, the higher the website weight should be. For example, trusting the
+            Kunst Historische Museum more and Reddit less would be ideal.
+            <br><br>
+            The Number of pages indicates how much from the website to scrape. Currently this is maxed at 10 but this
+            will be changed in the future.<br>
+            Please note that some websites have a limit on how many pages can be scraped.
+        </p>
+    </div>
     <script src="scripts/addWebsite.js" type="module"></script>
 </body>
 
