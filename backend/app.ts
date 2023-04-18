@@ -2,10 +2,18 @@ import { Logger } from "./core/Utility/logging";
 import { Server } from "socket.io";
 import { startScraper } from "./core/index";
 import express from "express";
-import { setTrustCalcOptions, getTrustCalcOptions, TrustCalcOptions } 
-from "./core/GenerateData/trustCalculations";
-import { addWebsite, deactivateWebsite, getWebsite, 
-	getWebsites, updateWebsite } from "./core/Database/dbWebsite";
+import {
+	setTrustCalcOptions,
+	getTrustCalcOptions,
+	TrustCalcOptions,
+} from "./core/GenerateData/trustCalculations";
+import {
+	addWebsite,
+	deactivateWebsite,
+	getWebsite,
+	getWebsites,
+	updateWebsite,
+} from "./core/Database/dbWebsite";
 import { updateDataset } from "./core/createDataset";
 
 function startServer() {
@@ -29,16 +37,16 @@ function startServer() {
 		});
 		socket.on("addWebsite", async (website) => {
 			Logger.trace(`Adding website ${website.url}`);
-			const data = await addWebsite(website)
+			const data = await addWebsite(website);
 			socket.emit("log", data);
 		});
 		socket.on("getWebsites", async () => {
-			Logger.trace("Sending websites to client")
+			Logger.trace("Sending websites to client");
 			const websites = await getWebsites();
 			socket.emit("websites", websites);
 		});
 		socket.on("getSingularWebsite", async (id: number) => {
-			Logger.trace(`Sending website with id ${id} to client`)
+			Logger.trace(`Sending website with id ${id} to client`);
 			const website = await getWebsite(id);
 			socket.emit("singularWebsite", website);
 		});
@@ -54,7 +62,7 @@ function startServer() {
 		});
 		socket.on("getTrustCalc", async () => {
 			Logger.trace("Sending trustCalc to client");
-			const data = await getTrustCalcOptions();
+			const data = getTrustCalcOptions();
 			socket.emit("trustCalc", data);
 		});
 		socket.on("setTrustCalc", async (activations: TrustCalcOptions) => {
