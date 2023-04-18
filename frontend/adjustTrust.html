@@ -12,22 +12,36 @@
         <h1>Scraper Trust Settings:</h1>
     </div>
     <form id="form">
-        <legend>Increase trust if the year found is:</legend>
+        <legend style="font-size: 1.2rem;">Increase trust if the year found is:</legend>
 
         <label for="notBetween0and100">NOT between 0 and 100</label>
-        <input type="checkbox" class="switch" id="notBetween0and100" name="notBetween0and100"><br><br>
+        <input type="checkbox" class="switch" id="notBetween0and100" name="notBetween0and100"><br>
         <label for="notMultipleOf10and5">NOT a multiple of 5:</label>
-        <input type="checkbox" class="switch" id="notMultipleOf10and5" name="notMultipleOf10and5" /><br><br>
+        <input type="checkbox" class="switch" id="notMultipleOf10and5" name="notMultipleOf10and5" /><br>
         <label for="notBetween0and10">NOT between 0 and 10:</label>
-        <input type="checkbox" class="switch" id="notBetween0and10" name="notBetween0and10" /><br><br>
+        <input type="checkbox" class="switch" id="notBetween0and10" name="notBetween0and10" /><br>
         <label for="differentNr">a combination of many different numbers (E.g. 1872 vs 1000):</label>
-        <input type="checkbox" class="switch" id="differentNr" name="differentNr" /><br><br>
+        <input type="checkbox" class="switch" id="differentNr" name="differentNr" /><br>
         <p>Use this field to reduce the overall trust by the inputed amount.
             This can be done to keep trust lower and reduce 'Trust inflation'. Default is 1.</p>
-        <input type="number" id="reduceTrust" name="reduceTrust" /><br><br>
+        <input type="number" id="reduceTrust" name="reduceTrust" /><br>
         <button type="button" id="submitButton">Submit</button>
 
     </form>
+    <div class="display">
+        <p>
+            Not between 0 and 100: Trust is increased from data where the date is not between 0 and 100. <br>
+            For example: 564 and -1000 are increased, 50 and 21 are not.<br><br>
+            Not a multiple of 5: Trust is increased from data where the date is not a multiple of 5. <br>
+            For example: 564 and -1234 are increased, 1000 and -50 are not.<br><br>
+            Not between 0 and 10: Trust is increased from data where the date is not between 0 and 10. <br>
+            For example: 564 and -1234 are increased, 2 and 9 are not.<br><br>
+            Different numbers: Trust is increased from data where the date is a combination of many different
+            numbers.<br>
+            For example: 564 and -1234 are increased, 1000 and 1776 are not.<br><br>
+            Reduce trust: This field can be used to reduce the overall trust by the inputed amount.
+        </p>
+    </div>
     <div class="fixedDiv">
         <button id="returnButton">Main Menu</button>
         <button id="backButton">Back</button>

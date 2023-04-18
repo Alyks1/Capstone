@@ -67,7 +67,7 @@ function createList(data) {
 
 		if (deactivatedData.indexOf(d.id) !== -1) {
 			deactivateButton.style.display = "none";
-			activateButton.style.display = "inline-block";
+			activateButton.style.display = "block";
 			li.style.opacity = 0.5;
 		}
 
@@ -107,10 +107,11 @@ function createDeactivateButton(id, li) {
 	const button = document.createElement("button");
 	button.textContent = "Deactivate";
 	button.id = `${id}Deactivate`;
+	button.classList.add("centeredButton");
 	button.addEventListener("click", () => {
 		deactivatedData.push(id);
 		button.style.display = "none";
-		document.getElementById(`${id}Activate`).style.display = "inline-block";
+		document.getElementById(`${id}Activate`).style.display = "block";
 		li.style.opacity = 0.5;
 	});
 	return button;
@@ -121,11 +122,12 @@ function createActivateButton(id, li) {
 	button.textContent = "Activate";
 	button.id = `${id}Activate`;
 	button.style.display = "none";
+	button.classList.add("centeredButton");
 	button.addEventListener("click", () => {
 		const i = deactivatedData.indexOf(id);
 		deactivatedData.splice(i, 1);
 		button.style.display = "none";
-		document.getElementById(`${id}Deactivate`).style.display = "inline-block";
+		document.getElementById(`${id}Deactivate`).style.display = "block";
 		li.style.opacity = 1;
 	});
 	return button;

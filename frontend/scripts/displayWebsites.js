@@ -37,13 +37,13 @@ function createList(websites) {
 		li.style.borderBottom = "1px solid gray";
 		if (websites.length === i + 1) li.style.borderBottom = "none";
 
-		const a = createA(url, id);
-		const p = createP(website);
+		const urlP = createWebsiteUrlP(url, id);
+		const infoP = createInfoP(website);
 		const button = createDeactivateButton(id, website.nrOfPages);
 		const updateButton = createUpdateButton(id);
 
-		li.appendChild(a);
-		li.appendChild(p);
+		li.appendChild(urlP);
+		li.appendChild(infoP);
 		li.appendChild(button);
 		li.appendChild(updateButton);
 		list.appendChild(li);
@@ -71,14 +71,14 @@ function createUpdateButton(i) {
 	return button;
 }
 
-function createA(url, i) {
+function createWebsiteUrlP(url, i) {
 	const p = document.createElement("p");
 	p.style.fontWeight = "bold";
 	p.textContent = url;
 	return p;
 }
 
-function createP(website) {
+function createInfoP(website) {
 	const p = document.createElement("p");
 	p.textContent = `NrOfPages: ${website.nrOfPages} - Weight: ${website.weight}`;
 	return p;
