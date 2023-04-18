@@ -1,6 +1,7 @@
 {
     "scripts": {
-        "start": "cd backend && npm start"
+        "start": "cd backend && npm start",
+        "test": "cd backend && npm test"
     },
     "dependencies": {
         "rome": "^11.0.0"
