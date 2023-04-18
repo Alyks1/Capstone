@@ -1,24 +1,28 @@
 import { Post } from "../Types/Post";
 import { Utility } from "../Utility/utility";
-import { BC, isAD, isBC, isCenturies, isYearOld } from "./tokens";
+import { isAD, isBC, isCenturies, isYearOld } from "./tokens";
 
 const tokens: string[] = [];
 let index = 0;
 
 export function start(posts: Post[]) {
 	for (const post of posts) {
+		index = 0;
 		tokens.length = 0;
 		const text = Utility.sanatizeText(post.text).split(" ");
 		tokens.push(...tokenize(text));
 		const results: string[] = [];
 		for (let i = 0; i < text.length; i++) {
 			const r = evaluate(tokens[i], text[i]);
+			//Check global trust value
+			//-> add additional trust calculations
+			//-> if its more than previous, replace
 			if (tokens[i] === "N") results.push(r);
 			index = index + 1;
 		}
 		const rs = results.filter((x) => x !== undefined);
 		console.log(rs);
-		//Choose most trusted
+		//TODO: Choose most trusted (simple: save the one with the higher trust. Problem: no additional trust calcs can be performed)
 		post.data.date = rs[0];
 	}
 	return posts;
