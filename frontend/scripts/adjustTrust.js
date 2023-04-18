@@ -24,7 +24,7 @@ socket.on("trustCalc", (json) => {
 	for (let i = 0; i < form.elements.length - 2; i++) {
 		const input = form.elements[i];
 		console.log(input.name);
-		input.checked = parseToBool(trustCalc[input.name]);
+		input.checked = trustCalc[input.name];
 	}
 	form.elements.namedItem("reduceTrust").value = Number(trustCalc.reduceTrust);
 });
@@ -52,12 +52,6 @@ submitButton.addEventListener("click", () => {
 	});
 });
 
-function parseToBool(checked) {
-	if (checked === "true") return true;
-	else if (checked === "false") return false;
-	else throw new Error(`Invalid value for boolean: ${checked}`);
-}
-
 function getChecked(name, inputs) {
-	return inputs.namedItem(name).checked.toString();
+	return inputs.namedItem(name).checked;
 }

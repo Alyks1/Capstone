@@ -32,20 +32,28 @@ export function calcTrust(
 	data.forEach((x) => {
 		Logger.trace(`Before: ${x.date} : ${x.trust}`);
 		//if the date is not between 1 and 10, increase trust
-		if (+x.date < 0 || +x.date > 11)
-			x.trust = adjustTrust(x.trust, 1, options.notBetween0and10);
+		if ((+x.date < 0 || +x.date > 11) && options.notBetween0and10) {
+			Logger.trace(`Not between 0 and 10: ${x.date}`);
+			x.trust = adjustTrust(x.trust, 1);
+		}
 		//If many different numbers, more precision, increase trust
-		if (new Set([...x.date]).size === x.date.length)
-			x.trust = adjustTrust(x.trust, 1, options.differentNr);
+		if (new Set([...x.date]).size === x.date.length && options.differentNr) {
+			Logger.trace(`Different numbers: ${x.date}`);
+			x.trust = adjustTrust(x.trust, 1);
+		}
 		//if the date is not a multiple of 5, more precision, increase trust
-		if (+x.date % 5 !== 0)
-			x.trust = adjustTrust(x.trust, 1, options.notMultipleOf10and5);
+		if (+x.date % 5 !== 0 && options.notMultipleOf10and5) {
+			Logger.trace(`Not multiple of 5: ${x.date}`);
+			x.trust = adjustTrust(x.trust, 1);
+		}
 		//If the date is not between 0 and 100 increase trust
-		if (+x.date < 0 || +x.date > 101)
-			x.trust = adjustTrust(x.trust, 1, options.notBetween0and100);
+		if (+x.date < 0 || (+x.date > 101 && options.notBetween0and100)) {
+			Logger.trace(`Not between 0 and 100: ${x.date}`);
+			x.trust = adjustTrust(x.trust, 1);
+		}
 		//reduce trust by one to stop trust inflation
 		Logger.debug(`Reduce trust: ${options.reduceTrust}`);
-		x.trust = adjustTrust(x.trust, options.reduceTrust * -1, true);
+		x.trust = adjustTrust(x.trust, options.reduceTrust * -1);
 		return x;
 	});
 	if (data.length === 1) data[0].trust;
@@ -80,7 +88,6 @@ export function getTrustCalcOptions() {
 	return JSON.stringify(data);
 }
 
-function adjustTrust(trust: number, adjustment: number, active: boolean) {
-	if (!active) return trust;
+function adjustTrust(trust: number, adjustment: number) {
 	return trust + adjustment;
 }
