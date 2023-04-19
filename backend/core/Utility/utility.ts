@@ -8,6 +8,26 @@ export class Utility {
 	}
 
 	static sanatizeText(text: string) {
+		if (text.match(/[0-9]+-[0-9]+/g)) {
+			const matchArr = text.match(/[0-9]+-[0-9]+/g);
+			let result = "";
+			matchArr.forEach((match) => {
+				const numbers = match.split("-");
+				result = numbers.join(" - ");
+			});
+			console.log(result);
+			text = text.replace(/[0-9]+-[0-9]+/g, result);
+		}
+		if (text.match(/[0-9]+-year/g)) {
+			const matchArr = text.match(/[0-9]+-year/g);
+			let result = "";
+			matchArr.forEach((match) => {
+				const numbers = match.split("-");
+				result = numbers.join(" - ");
+			});
+			console.log(result);
+			text = text.replace(/[0-9]+-year/g, result);
+		}
 		return text
 			.replace(/\s+/g, " ")
 			.replace(/[–/~]/g, "-")
@@ -16,7 +36,7 @@ export class Utility {
 			.replace(/([\(\[\)\]])/g, "")
 			.replace(/(\bBCE\b)/gi, "BC") //Replace BCE with BC
 			.replace(/(\bCE\b)/gi, "AD") //Replace CE with AD
-			.replace(/(st|nd|rd|th)/gi, "") 
+			.replace(/(st|nd|rd|th)/gi, "")
 			.toLowerCase();
 	}
 

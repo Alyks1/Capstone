@@ -32,65 +32,82 @@ describe("calcTrust", () => {
 		},
 	];
 	it("should calc with all options off", () => {
-		const result = calcTrust(data, JSON.stringify(options));
-		expect(result[0].trust).toEqual(1);
-		expect(result[1].trust).toEqual(1);
-		expect(result[2].trust).toEqual(1);
-		expect(result[3].trust).toEqual(1);
+		data.forEach((x) => {
+			const trust = calcTrust(x.trust, x.date, JSON.stringify(options));
+			expect(trust).toEqual(1);
+		});
 	});
 	it("should increase trust for all but index 0", () => {
 		data.forEach((x) => {
 			x.trust = 1;
 		});
 		options.notBetween0and10 = true;
-		const result = calcTrust(data, JSON.stringify(options));
-		expect(result[0].trust).toEqual(1);
-		expect(result[1].trust).toEqual(2);
-		expect(result[2].trust).toEqual(2);
-		expect(result[3].trust).toEqual(2);
+		const results: number[] = [];
+		data.forEach((x) => {
+			const trust = calcTrust(x.trust, x.date, JSON.stringify(options));
+			results.push(trust);
+		});
+		expect(results[0]).toEqual(1);
+		expect(results[1]).toEqual(2);
 	});
 	it("should increase trust for only index 0 and 1", () => {
 		data.forEach((x) => {
 			x.trust = 1;
 		});
 		options.differentNr = true;
-		const result = calcTrust(data, JSON.stringify(options));
-		expect(result[0].trust).toEqual(2);
-		expect(result[1].trust).toEqual(3);
-		expect(result[2].trust).toEqual(2);
-		expect(result[3].trust).toEqual(2);
+		const results: number[] = [];
+		data.forEach((x) => {
+			const trust = calcTrust(x.trust, x.date, JSON.stringify(options));
+			results.push(trust);
+		});
+		expect(results[0]).toEqual(2);
+		expect(results[1]).toEqual(3);
+		expect(results[2]).toEqual(2);
+		expect(results[3]).toEqual(2);
 	});
 	it("should increase trust for all but index 2", () => {
 		data.forEach((x) => {
 			x.trust = 1;
 		});
 		options.notMultipleOf10and5 = true;
-		const result = calcTrust(data, JSON.stringify(options));
-		expect(result[0].trust).toEqual(3);
-		expect(result[1].trust).toEqual(4);
-		expect(result[2].trust).toEqual(2);
-		expect(result[3].trust).toEqual(3);
+		const results: number[] = [];
+		data.forEach((x) => {
+			const trust = calcTrust(x.trust, x.date, JSON.stringify(options));
+			results.push(trust);
+		});
+		expect(results[0]).toEqual(3);
+		expect(results[1]).toEqual(4);
+		expect(results[2]).toEqual(2);
+		expect(results[3]).toEqual(3);
 	});
 	it("should increase trust for all but index 0 and 3", () => {
 		data.forEach((x) => {
 			x.trust = 1;
 		});
 		options.notBetween0and100 = true;
-		const result = calcTrust(data, JSON.stringify(options));
-		expect(result[0].trust).toEqual(3);
-		expect(result[1].trust).toEqual(5);
-		expect(result[2].trust).toEqual(3);
-		expect(result[3].trust).toEqual(3);
+		const results: number[] = [];
+		data.forEach((x) => {
+			const trust = calcTrust(x.trust, x.date, JSON.stringify(options));
+			results.push(trust);
+		});
+		expect(results[0]).toEqual(3);
+		expect(results[1]).toEqual(5);
+		expect(results[2]).toEqual(3);
+		expect(results[3]).toEqual(3);
 	});
 	it("should decrease trust for all by 2", () => {
 		data.forEach((x) => {
 			x.trust = 1;
 		});
 		options.reduceTrust = 2;
-		const result = calcTrust(data, JSON.stringify(options));
-		expect(result[0].trust).toEqual(1);
-		expect(result[1].trust).toEqual(3);
-		expect(result[2].trust).toEqual(1);
-		expect(result[3].trust).toEqual(1);
+		const results: number[] = [];
+		data.forEach((x) => {
+			const trust = calcTrust(x.trust, x.date, JSON.stringify(options));
+			results.push(trust);
+		});
+		expect(results[0]).toEqual(1);
+		expect(results[1]).toEqual(3);
+		expect(results[2]).toEqual(1);
+		expect(results[3]).toEqual(1);
 	});
 });

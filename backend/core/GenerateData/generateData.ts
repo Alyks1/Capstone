@@ -42,7 +42,7 @@ export function getDateFromPosts(posts: Post[]) {
 
 		data = filterData(data);
 		if (data.length < 1) continue;
-		data = calcTrust(data);
+		//data = calcTrust(data.);
 		post.data = chooseMostTrusted(data);
 		Logger.debug(`(${post.data.date} : ${post.data.trust})`);
 	}
