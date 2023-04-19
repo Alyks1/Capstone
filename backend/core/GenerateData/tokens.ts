@@ -85,7 +85,7 @@ export function yearOld(data: WorkingData, now: number): WorkingData {
 }
 
 export function isConnectingWord(str: string) {
-	return str.includes("-") || str.includes("to");
+	return str.includes("-") || str.includes("to") || str === "or";
 }
 
 export function connectingWord(data: WorkingData, text: string[]) {

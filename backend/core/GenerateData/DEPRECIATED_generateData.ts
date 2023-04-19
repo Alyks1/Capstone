@@ -24,7 +24,6 @@ import { calcTrust } from "./trustCalculations";
 
 const YEAR_NOW = 2023;
 
-//TODO: Maybe use Semantic Analyis or Recursive Decent
 /**
  * Returns a list of posts with updated Data field
  * containing a post date chosen based on the most trusted

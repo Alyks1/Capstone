@@ -1,4 +1,4 @@
-import { getDateFromPosts } from "../generateData";
+import { getDateFromPosts } from "../DEPRECIATED_generateData";
 import { start } from "../lexicalAnalysis";
 
 const data = [
@@ -49,6 +49,24 @@ const data = [
 	},
 	{
 		text: "An almost 2,000-year-old Roman road discovered by archaeologists at the construction site of the A3 motorway. This great find was made in Sălaj County, located in north-western Romania (Krisana and Transylvania). [720x960]",
+		imgSrc: "test",
+		data: {
+			date: "",
+			trust: 0,
+			pos: 0,
+		},
+	},
+	{
+		text: "The mètre étalon is a small shelf of marble installed beneath the arcade at 36 rue Vaugirard in Paris. After the Académie des Sciences defined the meter for the first time on March 1791, 16 of these were set in Paris between 1796-1797 so that people could familiarize with the new measure [4032x3024]",
+		imgSrc: "test",
+		data: {
+			date: "",
+			trust: 0,
+			pos: 0,
+		},
+	},
+	{
+		text: "Späte 6. Dynastie, ca. 2200-2191 v. Chr., Giza, Mastaba des Schepses-ptah (S 338/339), westlicher Serdab",
 		imgSrc: "test",
 		data: {
 			date: "",
@@ -113,8 +131,25 @@ const expected = [
 			pos: 0,
 		},
 	},
+	{
+		text: "The mètre étalon is a small shelf of marble installed beneath the arcade at 36 rue Vaugirard in Paris. After the Académie des Sciences defined the meter for the first time on March 1791, 16 of these were set in Paris between 1796-1797 so that people could familiarize with the new measure [4032x3024]",
+		imgSrc: "test",
+		data: {
+			date: "1769.5",
+			trust: 0,
+			pos: 0,
+		},
+	},
+	{
+		text: "Späte 6. Dynastie, ca. 2200-2191 v. Chr., Giza, Mastaba des Schepses-ptah (S 338/339), westlicher Serdab",
+		imgSrc: "test",
+		data: {
+			date: "2195.5",
+			trust: 0,
+			pos: 0,
+		},
+	},
 ];
-
 // describe("GenerateData", () => {
 // 	const result = getDateFromPosts(data);
 // 	it("should return the correct date", () => {

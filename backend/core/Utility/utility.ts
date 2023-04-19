@@ -8,27 +8,7 @@ export class Utility {
 	}
 
 	static sanatizeText(text: string) {
-		if (text.match(/[0-9]+-[0-9]+/g)) {
-			const matchArr = text.match(/[0-9]+-[0-9]+/g);
-			let result = "";
-			matchArr.forEach((match) => {
-				const numbers = match.split("-");
-				result = numbers.join(" - ");
-			});
-			console.log(result);
-			text = text.replace(/[0-9]+-[0-9]+/g, result);
-		}
-		if (text.match(/[0-9]+-year/g)) {
-			const matchArr = text.match(/[0-9]+-year/g);
-			let result = "";
-			matchArr.forEach((match) => {
-				const numbers = match.split("-");
-				result = numbers.join(" - ");
-			});
-			console.log(result);
-			text = text.replace(/[0-9]+-year/g, result);
-		}
-		return text
+		text = text
 			.replace(/\s+/g, " ")
 			.replace(/[–/~]/g, "-")
 			.replace(/[.,;]/g, "")
@@ -38,6 +18,28 @@ export class Utility {
 			.replace(/(\bCE\b)/gi, "AD") //Replace CE with AD
 			.replace(/(st|nd|rd|th)/gi, "")
 			.toLowerCase();
+
+		if (text.match(/[0-9]+-[0-9]+/g)) {
+			const matchArr = text.match(/[0-9]+-[0-9]+/g);
+			let result = "";
+			matchArr.forEach((match) => {
+				const numbers = match.split("-");
+				result = numbers.join(" - ");
+			});
+			console.log(matchArr);
+			text = text.replace(/[0-9]+-[0-9]+/g, result);
+		}
+		if (text.match(/[0-9]+-year/g)) {
+			const matchArr = text.match(/[0-9]+-year/g);
+			let result = "";
+			matchArr.forEach((match) => {
+				const numbers = match.split("-");
+				result = numbers.join(" - ");
+			});
+			text = text.replace(/[0-9]+-year/g, result);
+		}
+
+		return text;
 	}
 
 	static isNumber(str: string) {

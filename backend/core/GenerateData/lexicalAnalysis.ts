@@ -12,21 +12,23 @@ let newTrust = 0;
 
 export function start(posts: Post[]) {
 	for (const post of posts) {
-		console.log("##########################");
-		tokens.length = 0;
-		text.length = 0;
-		index = 0;
+		reset();
 		text.push(...Utility.sanatizeText(post.text).split(" "));
 		tokens.push(...tokenize(text));
+		Logger.trace(text);
+		Logger.trace(tokens);
+		console.log(text);
+		console.log(tokens);
 		let result = "";
 		let trust = 0;
 		for (let i = 0; i < text.length; i++) {
 			newTrust = 0;
 			if (tokens[i] === "N") {
 				const r = evaluate(tokens[i], text[i], ["N"]);
+				Logger.debug(`Trust before trust calc: ${newTrust}`);
 				const t = calcTrust(newTrust, r);
 				if (t > trust) {
-					console.log(`New result: ${r} with trust: ${t}`);
+					Logger.trace(`New result: ${r} with trust: ${t}`);
 					trust = t;
 					result = r;
 				}
@@ -34,13 +36,15 @@ export function start(posts: Post[]) {
 				index = index + 1;
 			}
 		}
-		console.log(text);
-		console.log(tokens);
-		console.log(result);
+		if (trust === 0) continue;
+		Logger.info(`Final result: ${result} with trust: ${trust}`);
 		post.data.date = result;
+		post.data.trust = trust;
 	}
+	posts.filter((x) => x === undefined);
 	return posts;
 }
+
 function tokenize(text: string[]) {
 	const tokens: string[] = [];
 	for (const word of text) {
@@ -73,9 +77,14 @@ function evaluate(token: string, date: string, accept: string[]): string {
 			return evaluate(nextToken(), date, ["A", "B", "C", "M", "Y", "W"]);
 		} else if (token === "W") {
 			//Save current pos
-			const saveIndex = index + 1;
+			const saveIndex = index;
+			if (tokens[index + 1] === "Y") {
+				return evaluate(nextToken(), date, ["Y"]);
+			}
 			date = evaluate(nextToken(), date, ["N", "Y"]);
-			return connectingWord(date, saveIndex);
+			index = saveIndex;
+			const secondNum = evaluate(nextToken(), text[index], ["N", "Y"]);
+			return connectingWord(date, secondNum);
 		} else if (token === "C") {
 			date = evaluate(nextToken(), date, ["A", "B", "W"]);
 			return century(date);
@@ -101,18 +110,15 @@ function nextToken() {
 	return tokens[index];
 }
 
-function connectingWord(date: string, saveIndex: number) {
-	//date + second number
-	//second number needs to be gotten from text[index - 1] or text[index - 2] or text[index - 3]
-	//depending on the depth of the recursion
-	//Get level of recursion
-	const indexDiff = index - saveIndex;
-	//Get second number based on recursion level
-	let secondNum = text[index - indexDiff];
-	//Handle BC
-	if (+date < 0) secondNum = `-${secondNum}`;
-	//Handle year old
-	if (!Utility.isNumber(secondNum)) {
+function reset() {
+	tokens.length = 0;
+	text.length = 0;
+	index = 0;
+}
+
+function connectingWord(date: string, secondNum: string) {
+	Logger.debug(`date: ${date}, secondNum: ${secondNum}`);
+	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
 		Logger.debug("Going from connecting word to year old");
 		return date;
 	}
@@ -120,6 +126,7 @@ function connectingWord(date: string, saveIndex: number) {
 }
 
 function yearOld(date: string) {
+	if (!date.match(/\d+/g)) return "";
 	const num = date.match(/\d+/g)[0];
 	return (2023 - +num).toString();
 }
