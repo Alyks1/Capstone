@@ -17,8 +17,6 @@ export function start(posts: Post[]) {
 		tokens.push(...tokenize(text));
 		Logger.trace(text);
 		Logger.trace(tokens);
-		console.log(text);
-		console.log(tokens);
 		let result = "";
 		let trust = 0;
 		for (let i = 0; i < text.length; i++) {
@@ -76,7 +74,6 @@ function evaluate(token: string, date: string, accept: string[]): string {
 		if (token === "N") {
 			return evaluate(nextToken(), date, ["A", "B", "C", "M", "Y", "W"]);
 		} else if (token === "W") {
-			//Save current pos
 			const saveIndex = index;
 			if (tokens[index + 1] === "Y") {
 				return evaluate(nextToken(), date, ["Y"]);
