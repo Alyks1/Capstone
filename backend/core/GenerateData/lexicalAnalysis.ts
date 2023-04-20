@@ -116,7 +116,6 @@ function reset() {
 function connectingWord(date: string, secondNum: string) {
 	Logger.debug(`date: ${date}, secondNum: ${secondNum}`);
 	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
-		Logger.debug("Going from connecting word to year old");
 		return date;
 	}
 	return ((+date + +secondNum) / 2).toString();
