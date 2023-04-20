@@ -9,7 +9,6 @@ const text: string[] = [];
 let index = 0;
 
 let newTrust = 0;
-//TODO: Test 1758/61 cases not breaking 1st /2nd
 //TODO: Fix 1st century BC to 1st century AD
 //Century is computed twice. Once for the pass after W,
 //Then again on the way back to N before the W
@@ -21,7 +20,7 @@ let newTrust = 0;
 //But 1st century BC - 1st century AD should stop calculating after the -
 //TODO: Create "ignore tokens" like kg, cm, m, dynasty, etc
 
-export function start(posts: Post[]) {
+export function lexicalAnalysis(posts: Post[]) {
 	for (const post of posts) {
 		reset();
 		text.push(...Utility.sanatizeText(post.text).split(" "));
@@ -86,8 +85,7 @@ function evaluate(token: string, date: string, accept: string[]): string {
 	if (accept.includes(token)) {
 		newTrust++;
 		if (token === "N") {
-			const r = evaluate(nextToken(), date, ["A", "B", "C", "M", "Y", "W", "S"]);
-			return r
+			return evaluate(nextToken(), date, ["A", "B", "C", "M", "Y", "W", "S"]);
 		} else if (token === "W") {
 			let saveIndex = index;
 			if (tokens[index + 1] === "Y") {
@@ -96,16 +94,13 @@ function evaluate(token: string, date: string, accept: string[]): string {
 			date = evaluate(nextToken(), date, ["N", "Y"]);
 			index = saveIndex;
 			const secondNum = evaluate(nextToken(), text[index], ["N", "Y"]);
-			const r = connectingWord(date, secondNum);
-			return r
+			return connectingWord(date, secondNum);
 		} else if (token === "C") {
 			date = evaluate(nextToken(), date, ["A", "B", "W"]);
-			const r = century(date);
-			return r
+			return century(date);
 		} else if (token === "M") {
 			date = evaluate(nextToken(), date, ["A", "B", "W"]);
-			const r = millennium(date);
-			return r
+			return millennium(date);
 		} else if (token === "A") {
 			date = evaluate(nextToken(), date, ["W"]);
 			return date;
@@ -113,15 +108,13 @@ function evaluate(token: string, date: string, accept: string[]): string {
 			return `-${date}`;
 		} else if (token === "Y") {
 			date = evaluate(nextToken(), date, ["W"]);
-			const r = yearOld(date);
-			return r
+			return yearOld(date);
 		} else if (token === "S") {
 			const saveIndex = index;
 			date = evaluate(nextToken(), date, ["N"]);
 			index = saveIndex;
 			const secondNum = evaluate(nextToken(), text[index], ["N"]);
-			const r = slash(date, secondNum);
-			return r
+			return slash(date, secondNum);
 		}
 	}
 

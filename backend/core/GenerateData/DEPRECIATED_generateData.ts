@@ -38,10 +38,12 @@ export function getDateFromPosts(posts: Post[]) {
 		const text = Utility.sanatizeText(post.text);
 		const textArr = text.split(" ");
 		let data = createDate(textArr);
-
 		data = filterData(data);
 		if (data.length < 1) continue;
-		//data = calcTrust(data.);
+		data = data.map((x) => {
+			x.trust = calcTrust(x.trust, x.date)
+			return x;
+		})
 		post.data = chooseMostTrusted(data);
 		Logger.debug(`(${post.data.date} : ${post.data.trust})`);
 	}

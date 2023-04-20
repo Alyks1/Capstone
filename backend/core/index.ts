@@ -11,7 +11,7 @@ import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { getActiveWebsites } from "./Database/dbWebsite";
 import { getWebsiteGroupInfo } from "./Database/dbWebsiteGroupInfo";
-import { start } from "./GenerateData/lexicalAnalysis";
+import { lexicalAnalysis } from "./GenerateData/DEPRECIATED_lexicalAnalysis";
 
 export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
@@ -67,7 +67,7 @@ export async function startScraper(
 			alreadyScrapedPosts,
 		);
 
-		const processedPosts = start(newPosts);
+		const processedPosts = getDateFromPosts(newPosts);
 		const weightedPosts = addWebsiteWeight(processedPosts, website.weight);
 		socket.emit("log", "Downloading images");
 		allPosts.push(...weightedPosts);
