@@ -1,7 +1,7 @@
 import {Utility} from "../utility";
 
 const testCases = [
-    {input: "Clean chars like – and ~", expect: "clean chars like - a -"},
+    {input: "Clean chars like – and ~", expect: "clean chars like  -  a  - "},
     {input: "Remove punctuation like . , ;", expect: "remove punctuation like   "},
     {input: "Remove img resolution like (1080x960),[1440 x 1080],(1080 x 960),[240×12]", expect: "remove img resolution like "},
     {input: "Remove brackets like () or []", expect: "remove brackets like  or "},

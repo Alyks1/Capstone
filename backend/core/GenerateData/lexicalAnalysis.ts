@@ -9,7 +9,10 @@ const text: string[] = [];
 let index = 0;
 
 let newTrust = 0;
-
+//TODO: Fix 1758/61 cases: maybe let / be its own token
+//that can then be handled with extra logic to check if the N behind the /
+//is shorter than the number before. This assumes that / are only used when numbers are close
+//and this would break for example 100/50 BC
 export function start(posts: Post[]) {
 	for (const post of posts) {
 		reset();
@@ -36,7 +39,7 @@ export function start(posts: Post[]) {
 		}
 		if (trust === 0) continue;
 		Logger.info(`Final result: ${result} with trust: ${trust}`);
-		post.data.date = result;
+		post.data.date = Math.round(+result).toString();
 		post.data.trust = trust;
 	}
 	posts.filter((x) => x === undefined);

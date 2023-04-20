@@ -10,7 +10,7 @@ export class Utility {
 	static sanatizeText(text: string) {
 		text = text
 			.replace(/\s+/g, " ")
-			.replace(/[–/~]/g, "-")
+			.replace(/[–/~]/g, " - ")
 			.replace(/[.,;]/g, "")
 			.replace(/([\(\[])([0-9])*([x× ])+[0-9]*([\)\]])/g, "") //Remove img resolution eg (1080x960)
 			.replace(/([\(\[\)\]])/g, "")

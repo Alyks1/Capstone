@@ -74,6 +74,15 @@ const data = [
 			pos: 0,
 		},
 	},
+	{
+		text: "VIENNA VIEWED FROM THE BELVEDERE PALACE 1758/61 Artist: Bernardo Bellotto, gen. Canaletto",
+		imgSrc: "test",
+		data: {
+			date: "",
+			trust: 0,
+			pos: 0,
+		},
+	},
 ];
 
 const expected = [
@@ -135,7 +144,7 @@ const expected = [
 		text: "The mètre étalon is a small shelf of marble installed beneath the arcade at 36 rue Vaugirard in Paris. After the Académie des Sciences defined the meter for the first time on March 1791, 16 of these were set in Paris between 1796-1797 so that people could familiarize with the new measure [4032x3024]",
 		imgSrc: "test",
 		data: {
-			date: "1769.5",
+			date: "1797",
 			trust: 0,
 			pos: 0,
 		},
@@ -144,12 +153,22 @@ const expected = [
 		text: "Späte 6. Dynastie, ca. 2200-2191 v. Chr., Giza, Mastaba des Schepses-ptah (S 338/339), westlicher Serdab",
 		imgSrc: "test",
 		data: {
-			date: "2195.5",
+			date: "-2195",
+			trust: 0,
+			pos: 0,
+		},
+	},
+	{
+		text: "VIENNA VIEWED FROM THE BELVEDERE PALACE 1758/61 Artist: Bernardo Bellotto, gen. Canaletto",
+		imgSrc: "test",
+		data: {
+			date: "1760",
 			trust: 0,
 			pos: 0,
 		},
 	},
 ];
+
 // describe("GenerateData", () => {
 // 	const result = getDateFromPosts(data);
 // 	it("should return the correct date", () => {
@@ -163,11 +182,8 @@ const expected = [
 describe("lexicalAnalyis", () => {
 	const result = start(data);
 	it("should return the correct date", () => {
-		expect(result[0].data.date).toEqual(expected[0].data.date);
-		expect(result[1].data.date).toEqual(expected[1].data.date);
-		expect(result[2].data.date).toEqual(expected[2].data.date);
-		expect(result[3].data.date).toEqual(expected[3].data.date);
-		expect(result[4].data.date).toEqual(expected[4].data.date);
-		expect(result[5].data.date).toEqual(expected[5].data.date);
+		result.forEach((x, i) => {
+			expect(x.data.date).toEqual(expected[i].data.date);
+		})
 	});
 });
