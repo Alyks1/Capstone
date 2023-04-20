@@ -1,7 +1,7 @@
 import { Post } from "../Types/Post";
 import { Logger } from "../Utility/logging";
 import { Utility } from "../Utility/utility";
-import { isAD, isBC, isCenturies, isConnectingWord, isYearOld } from "./tokens";
+import { isAD, isBC, isCenturies, isConnectingWord, isSlash, isYearOld } from "./tokens";
 import { calcTrust } from "./trustCalculations";
 
 const tokens: string[] = [];
@@ -9,17 +9,25 @@ const text: string[] = [];
 let index = 0;
 
 let newTrust = 0;
-//TODO: Fix 1758/61 cases: maybe let / be its own token
-//that can then be handled with extra logic to check if the N behind the /
-//is shorter than the number before. This assumes that / are only used when numbers are close
-//and this would break for example 100/50 BC
+//TODO: Test 1758/61 cases not breaking 1st /2nd
+//TODO: Fix 1st century BC to 1st century AD
+//Century is computed twice. Once for the pass after W,
+//Then again on the way back to N before the W
+//N1 C B W N2 C A
+//goes: N1 C B W -> N1 C A
+//				 -> N2 C A
+//So path back: A C N2 and A C N1 B C 
+//Problem is 1st - 2nd century BC needs to read all the way through
+//But 1st century BC - 1st century AD should stop calculating after the -
+//TODO: Create "ignore tokens" like kg, cm, m, dynasty, etc
+
 export function start(posts: Post[]) {
 	for (const post of posts) {
 		reset();
 		text.push(...Utility.sanatizeText(post.text).split(" "));
 		tokens.push(...tokenize(text));
-		Logger.trace(text);
-		Logger.trace(tokens);
+		Logger.info(text);
+		Logger.info(tokens);
 		let result = "";
 		let trust = 0;
 		for (let i = 0; i < text.length; i++) {
@@ -61,7 +69,10 @@ function tokenize(text: string[]) {
 			tokens.push("B");
 		} else if (isConnectingWord(word)) {
 			tokens.push("W");
-		} else {
+		} else if (isSlash(word)) {
+			tokens.push("S");
+		}
+		else {
 			tokens.push("X");
 		}
 	}
@@ -75,34 +86,46 @@ function evaluate(token: string, date: string, accept: string[]): string {
 	if (accept.includes(token)) {
 		newTrust++;
 		if (token === "N") {
-			return evaluate(nextToken(), date, ["A", "B", "C", "M", "Y", "W"]);
+			const r = evaluate(nextToken(), date, ["A", "B", "C", "M", "Y", "W", "S"]);
+			return r
 		} else if (token === "W") {
-			const saveIndex = index;
+			let saveIndex = index;
 			if (tokens[index + 1] === "Y") {
 				return evaluate(nextToken(), date, ["Y"]);
 			}
 			date = evaluate(nextToken(), date, ["N", "Y"]);
 			index = saveIndex;
 			const secondNum = evaluate(nextToken(), text[index], ["N", "Y"]);
-			return connectingWord(date, secondNum);
+			const r = connectingWord(date, secondNum);
+			return r
 		} else if (token === "C") {
 			date = evaluate(nextToken(), date, ["A", "B", "W"]);
-			return century(date);
+			const r = century(date);
+			return r
 		} else if (token === "M") {
 			date = evaluate(nextToken(), date, ["A", "B", "W"]);
-			return millennium(date);
+			const r = millennium(date);
+			return r
 		} else if (token === "A") {
 			date = evaluate(nextToken(), date, ["W"]);
 			return date;
-		} else if (token === "B") {
-			date = evaluate(nextToken(), date, ["W"]);
+		} else if (token === "B") {	
 			return `-${date}`;
 		} else if (token === "Y") {
 			date = evaluate(nextToken(), date, ["W"]);
-			return yearOld(date);
+			const r = yearOld(date);
+			return r
+		} else if (token === "S") {
+			const saveIndex = index;
+			date = evaluate(nextToken(), date, ["N"]);
+			index = saveIndex;
+			const secondNum = evaluate(nextToken(), text[index], ["N"]);
+			const r = slash(date, secondNum);
+			return r
 		}
 	}
-	return date;
+
+	return date
 }
 
 function nextToken() {
@@ -116,10 +139,28 @@ function reset() {
 	index = 0;
 }
 
-function connectingWord(date: string, secondNum: string) {
+function connectingWord(date: string, second: string) {
+	Logger.info(`date: ${date}, secondNum: ${second}`);
+	if (!Utility.isNumber(second) || !Utility.isNumber(date)) {
+		return date;
+	}
+	const dateNr = +date;
+	const secondNr = +second
+	const r = ((dateNr + secondNr) / 2).toString();
+	console.log(`end of connecting word calc ${r}`)
+	return r
+}
+
+function slash(date: string, secondNum: string) {
 	Logger.debug(`date: ${date}, secondNum: ${secondNum}`);
 	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
 		return date;
+	}
+	console.log(`date: ${date}, secondNum: ${secondNum}`)
+	const lengthDiff = date.replace("-", "").length - secondNum.replace("-","").length;
+	if (lengthDiff > 0) {
+		const digits = date.substring(0, lengthDiff);
+		secondNum = digits + secondNum;
 	}
 	return ((+date + +secondNum) / 2).toString();
 }
@@ -133,7 +174,9 @@ function yearOld(date: string) {
 function century(date: string) {
 	let halfCentury = -50;
 	if (date.startsWith("-")) halfCentury = 50;
-	return (+date * 100 + halfCentury).toString();
+	const r = (+date * 100 + halfCentury).toString();
+	console.log(`century result ${r}`)
+	return r
 }
 
 function millennium(date: string) {
@@ -142,7 +185,6 @@ function millennium(date: string) {
 	return (+date * 1000 + halfMillennium).toString();
 }
 
-//[X,X,X,X, N, B, X, X, X]
 //Tokens:
 //N = number
 //C = century Word
@@ -151,3 +193,4 @@ function millennium(date: string) {
 //A = AD
 //B = BC
 //W = and, or, to, -
+//S = /

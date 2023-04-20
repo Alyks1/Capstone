@@ -88,6 +88,10 @@ export function isConnectingWord(str: string) {
 	return str.includes("-") || str.includes("to") || str === "or";
 }
 
+export function isSlash(str: string) {
+	return str === "/";
+}
+
 export function connectingWord(data: WorkingData, text: string[]) {
 	Logger.trace(`Connecting Word: ${text[data.pos]} for ${data.date}`);
 	//If nothing works, try range

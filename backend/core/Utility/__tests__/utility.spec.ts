@@ -1,10 +1,10 @@
 import {Utility} from "../utility";
 
 const testCases = [
-    {input: "Clean chars like – and ~", expect: "clean chars like  -  a  - "},
-    {input: "Remove punctuation like . , ;", expect: "remove punctuation like   "},
+    {input: "Clean chars like – and ~", expect: "clean chars like - a - "},
+    {input: "Remove punctuation like . , ;", expect: "remove punctuation like "},
     {input: "Remove img resolution like (1080x960),[1440 x 1080],(1080 x 960),[240×12]", expect: "remove img resolution like "},
-    {input: "Remove brackets like () or []", expect: "remove brackets like  or "},
+    {input: "Remove brackets like () or []", expect: "remove brackets like or "},
     {input: "Convert BCE or bce", expect: "convert bc or bc"},
     {input: "Convert CE or ce", expect: "convert ad or ad"},
     {input: "Clean numbers like 1st, 2nd, 3rd, 4th etc", expect: "clean numbers like 1 2 3 4 etc"},

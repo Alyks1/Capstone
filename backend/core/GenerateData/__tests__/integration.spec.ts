@@ -83,6 +83,15 @@ const data = [
 			pos: 0,
 		},
 	},
+	// {
+	// 	text: "1st century BC to 1st century AD From Alexandria",
+	// 	imgSrc: "test",
+	// 	data: {
+	// 		date: "",
+	// 		trust: 0,
+	// 		pos: 0,
+	// 	},
+	// }
 ];
 
 const expected = [
@@ -167,8 +176,16 @@ const expected = [
 			pos: 0,
 		},
 	},
+	// {
+	// 	text: "1st century BC to 1st century AD From Alexandria",
+	// 	imgSrc: "test",
+	// 	data: {
+	// 		date: "0",
+	// 		trust: 0,
+	// 		pos: 0,
+	// 	},
+	// }
 ];
-
 // describe("GenerateData", () => {
 // 	const result = getDateFromPosts(data);
 // 	it("should return the correct date", () => {
@@ -181,6 +198,7 @@ const expected = [
 
 describe("lexicalAnalyis", () => {
 	const result = start(data);
+	expect(data.length).toEqual(expected.length)
 	it("should return the correct date", () => {
 		result.forEach((x, i) => {
 			expect(x.data.date).toEqual(expected[i].data.date);
