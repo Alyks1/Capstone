@@ -1,5 +1,7 @@
 import { getDateFromPosts } from "../DEPRECIATED_generateData";
 import { lexicalAnalysis } from "../DEPRECIATED_lexicalAnalysis";
+import { ast } from "../abstractSyntaxTree";
+import { DateParser } from "../ast";
 
 const data = [
 	{
@@ -180,7 +182,7 @@ const expected = [
 		text: "1st century BC to 1st century AD From Alexandria",
 		imgSrc: "test",
 		data: {
-			date: "0",
+			date: "-50",
 			trust: 0,
 			pos: 0,
 		},
@@ -190,15 +192,14 @@ const expected = [
 describe("GenerateData", () => {
 	const result = getDateFromPosts(data);
 	it("should return the correct date", () => {
-		expect(result[0].data.date).toEqual(expected[0].data.date);
-		expect(result[1].data.date).toEqual(expected[1].data.date);
-		expect(result[2].data.date).toEqual(expected[2].data.date);
-		expect(result[3].data.date).toEqual(expected[3].data.date);
+		result.forEach((x, i) => {
+			expect(x.data.date).toBe(expected[i].data.date);
+		})
 	});
 });
 
 // describe("lexicalAnalyis", () => {
-// 	const result = start(data);
+// 	const result = lexicalAnalysis(data);
 // 	expect(data.length).toEqual(expected.length)
 // 	it("should return the correct date", () => {
 // 		result.forEach((x, i) => {
@@ -206,3 +207,12 @@ describe("GenerateData", () => {
 // 		})
 // 	});
 // });
+
+// describe("abstract syntax tree", () => {
+// 	const result = ast(data);
+// 	it("should return the correct date", () => {
+// 		result.forEach((x, i) => {
+// 			expect(x.data.date).toBe(expected[i].data.date);
+// 		})
+// 	});
+// })

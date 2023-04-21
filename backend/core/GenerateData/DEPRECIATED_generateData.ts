@@ -13,10 +13,12 @@ import {
 	isCenturies,
 	isConnectingWord,
 	isMillennium,
+	isSlash,
 	isYearOld,
 	millennium,
 	noMatch,
 	notYear,
+	slash,
 	yearOld,
 } from "./tokens";
 import { chooseMostTrusted, filterData } from "./processData";
@@ -41,7 +43,8 @@ export function getDateFromPosts(posts: Post[]) {
 		data = filterData(data);
 		if (data.length < 1) continue;
 		data = data.map((x) => {
-			x.trust = calcTrust(x.trust, x.date)
+			x.trust = calcTrust(x.trust, x.date);
+			x.date = Math.round(+x.date).toString()
 			return x;
 		})
 		post.data = chooseMostTrusted(data);
@@ -141,6 +144,10 @@ function switchTypes(data: WorkingData, text: string[]): WorkingData {
 	if (isCenturies(type)) return centuries(data);
 	if (isMillennium(type)) return millennium(data);
 	if (isYearOld(type)) return yearOld(data, YEAR_NOW);
+	if (isSlash(type)) {
+		const d = slash(data, text);
+		return treeStump(d, text);
+	}
 	if (isConnectingWord(type)) {
 		const d = connectingWord(data, text);
 		return treeStump(d, text);
