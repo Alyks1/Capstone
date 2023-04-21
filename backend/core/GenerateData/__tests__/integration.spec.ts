@@ -1,7 +1,6 @@
 import { getDateFromPosts } from "../DEPRECIATED_generateData";
 import { lexicalAnalysis } from "../DEPRECIATED_lexicalAnalysis";
 import { ast } from "../abstractSyntaxTree";
-import { DateParser } from "../ast";
 
 const data = [
 	{
