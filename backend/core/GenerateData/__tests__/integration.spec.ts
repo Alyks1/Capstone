@@ -188,14 +188,14 @@ const expected = [
 	}
 ];
 
-describe("GenerateData", () => {
-	const result = getDateFromPosts(data);
-	it("should return the correct date", () => {
-		result.forEach((x, i) => {
-			expect(x.data.date).toBe(expected[i].data.date);
-		})
-	});
-});
+// describe("GenerateData", () => {
+// 	const result = getDateFromPosts(data);
+// 	it("should return the correct date", () => {
+// 		result.forEach((x, i) => {
+// 			expect(x.data.date).toBe(expected[i].data.date);
+// 		})
+// 	});
+// });
 
 // describe("lexicalAnalyis", () => {
 // 	const result = lexicalAnalysis(data);
@@ -207,11 +207,11 @@ describe("GenerateData", () => {
 // 	});
 // });
 
-// describe("abstract syntax tree", () => {
-// 	const result = ast(data);
-// 	it("should return the correct date", () => {
-// 		result.forEach((x, i) => {
-// 			expect(x.data.date).toBe(expected[i].data.date);
-// 		})
-// 	});
-// })
+describe("abstract syntax tree", () => {
+	const result = ast(data);
+	it("should return the correct date", () => {
+		result.forEach((x, i) => {
+			expect(x.data.date).toBe(expected[i].data.date);
+		})
+	});
+})

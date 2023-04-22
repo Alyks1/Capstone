@@ -19,6 +19,7 @@ export function ast(posts: Post[]): Post[] {
         const tokens = tokenize(text);
         const result = getDate(tokens);
         console.log(`Result: ${JSON.stringify(result)}`)
+        if (result === undefined) continue;
         post.data.date = result.word;
 
     }
@@ -26,52 +27,11 @@ export function ast(posts: Post[]): Post[] {
 }
 
 function getDate(tokens: Token[]) {
-    console.log(`Tokens: ${JSON.stringify(tokens)}`)
-    //TODO: if includes S or W, change logic
-    if (tokens.filter(x => x.token === "S").length > 0) {
-        return {
-            token: "S",
-            word: "not implemented"
-        }
-    }
-    if (tokens.filter(x => x.token === "W").length > 0) {
-        if (tokens.filter(x => x.token === "Y").length > 0) 
-            return {
-                token: "Y",
-                word: tokens[tokens.findIndex(x => x.token === "Y")].word,
-            };
-        const index = tokens.findIndex(x => x.token === "W");
-        console.log(`W index: ${index}`)
-        const leftTokens = tokens.slice(0, index);
-        const rightTokens = tokens.slice(index + 1);
-        console.log(`leftTokens: ${JSON.stringify(leftTokens)}`)
-        console.log(`rightTokens: ${JSON.stringify(rightTokens)}`)
-        const leftTree = buildTree(leftTokens);
-        const rightTree = buildTree(rightTokens);
-        //TODO: if right tree is bigger, left tree might need right tree logic
-        console.log(`leftTree: ${JSON.stringify(leftTree)}`)
-        console.log(`rightTree: ${JSON.stringify(rightTree)}`)
-        const left = leftTree.filter(x => x.token.token !== "X");
-        const right = rightTree.filter(x => x.token.token !== "X");
-        console.log(`left: ${JSON.stringify(left)}`)
-        console.log(`right: ${JSON.stringify(right)}`)
-        const l = chooseMostTrusted(left);
-        const r = chooseMostTrusted(right);
-        console.log(`l: ${JSON.stringify(l)}`)
-        console.log(`r: ${JSON.stringify(r)}`)
-        const leftResult = traverseTree(l, l.token);
-        const rightResult = traverseTree(r, r.token);
-        const result = ((+leftResult.word + +rightResult.word) / 2).toString();
-
-        return {
-            token: "N",
-            word: result,
-        }
-    } 
     const trees = buildTree(tokens);
     const t = chooseMostTrusted(trees);
-    return traverseTree(t, t.token);
-
+    console.log(`Most trusted Tree: ${JSON.stringify(t)}`)
+    //return traverseTree(t, t.token);
+    return t.token;
 }
 
 function buildTree(tokens: Token[]) {
@@ -89,11 +49,11 @@ function buildTree(tokens: Token[]) {
     return trees;
 }
 
-function buildLeaf(tokens: Token[], trust): Tree {
+function buildLeaf(tokens: Token[], trust: number): Tree {
     const currentToken = tokens[0];
     if (!currentToken) return undefined;
     if (currentToken.token === "X") return undefined;
-    if (["C", "M", "Y", "A", "B", "N"].includes(currentToken.token)) {
+    if (["C", "M", "Y", "A", "B", "N", "S", "W"].includes(currentToken.token)) {
         const left = buildLeaf(tokens.slice(1), ++trust) ?? undefined;
         return {
             token: currentToken,
@@ -111,11 +71,14 @@ function buildLeaf(tokens: Token[], trust): Tree {
 function traverseTree(tree: Tree, token: Token): Token {
     console.log(`Traverse: token: ${tree.token.token} word: ${tree.token.word}`)
     tree.token.word = token.word;
-    const date = calculateToken(tree.token);
+    console.log(`after switch: token: ${tree.token.token} word: ${tree.token.word}`)
+    token = calculateToken(tree);
+    console.log(`Date: token: ${JSON.stringify(token)}`)
     if (tree.child !== undefined) {
         return traverseTree(tree.child, token);
     }
-    return date
+    console.log(`Return: token: ${JSON.stringify(token)}`)
+    return token
 }
 
 function getTokens(word: string) {;
@@ -147,38 +110,147 @@ function tokenize(text: string[]) {
     return result;
 }
 
-function calculateToken(token: Token) {
+function calculateToken(tree: Tree) {
+    const token = tree.token;
     console.log(`Calc: token: ${token.token} word: ${token.word}`)
     if (token === undefined) return undefined;
     if (token.token === "N") {
         return token;
     } else if (token.token === "C") {
+        console.log(`C: ${token.word}`)
         let halfCentury = -50;
         if (token.word.startsWith("-")) halfCentury = 50;
         const nr = +token.word * 100 + halfCentury;
+        console.log(`after C calc: ${nr}`)
         return {
             token: "C",
             word: `${nr}`
         };
     } else if (token.token === "Y") {
-        return token = {
+        return  {
             token: "Y",
             word: `${2023 - +token.word}`
         };
     } else if (token.token === "A") {
         return token;
     } else if (token.token === "B") {
-        return token =  {
+        return  {
             token: "B",
             word: `-${token.word}`,
         }
+    } else if (token.token === "S") {
+        return {
+            token: "S",
+            word: slash(tree.child.token.word, token.word),
+        }
+    } else if (token.token === "W") {
+        const futureTree = tree.child.child;
+        console.log(`futureTree: ${JSON.stringify(futureTree)} token: ${token.token}`)
+        let t = token;
+        const saveToken = token;
+        if (futureTree === undefined) {
+            console.log(`error futureTree: ${JSON.stringify(futureTree)} token: ${token.token}`)
+            return token;
+        };
+        console.log(`includes token ${futureTree.token.token}`)
+        if (["C", "M", "A", "B",].includes(futureTree.token.token)) {
+            console.log("in if")
+            t = traverseTree(futureTree, tree.child.token);
+        }
+        return {
+            token: "N",
+            word: connectingWord(saveToken.word, t.word),
+        };
     }
 }
 
 function chooseMostTrusted(trees: Tree[]) {
 	let result: Tree = trees[0];
-	trees.forEach((x) => {
-		if (x.trust > result.trust) result = x;
-	});
+    let totalTrust: number = 0;
+    for (const tree of trees) {
+        let currentTree = tree;
+        let trust = 1;
+        while (currentTree.child !== undefined) {
+            trust = currentTree.child.trust;
+            currentTree = currentTree.child;
+            if (trust > totalTrust) {
+                result = tree;
+                totalTrust = trust;
+            }
+        }
+    }
+
 	return result;
 }
+
+function slash(date: string, secondNum: string) {
+	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
+		return date;
+	}
+	console.log(`date: ${date}, secondNum: ${secondNum}`)
+	const lengthDiff = secondNum.replace("-","").length - date.replace("-", "").length;
+	if (lengthDiff > 0) {
+		const digits = secondNum.substring(0, lengthDiff);
+        console.log(`digits: ${digits}`)
+		date = digits + date;
+	}
+	return Math.round(((+date + +secondNum) / 2)).toString();
+}
+
+function connectingWord(date: string, secondNum: string) {
+    if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
+		return date;
+	}
+	console.log(`date: ${date}, secondNum: ${secondNum}`)
+
+	return Math.round(((+date + +secondNum) / 2)).toString();
+}
+
+
+// console.log(`Tokens: ${JSON.stringify(tokens)}`)
+// //TODO: if includes S or W, change logic
+// if (tokens.filter(x => x.token === "S").length > 0) {
+//     const index = tokens.findIndex(x => x.token === "W");
+//     console.log(`W index: ${index}`)
+//     const leftTokens = tokens.slice(0, index);
+//     const rightTokens = tokens.slice(index + 1);
+//     console.log(`leftTokens: ${JSON.stringify(leftTokens)}`)
+//     console.log(`rightTokens: ${JSON.stringify(rightTokens)}`)
+//     const leftTree = buildTree(leftTokens);
+//     const rightTree = buildTree(rightTokens);
+
+//     return {
+//         token: "S",
+//         word: "not implemented"
+//     }
+// }
+// if (tokens.filter(x => x.token === "W").length > 0) {
+//     if (tokens.filter(x => x.token === "Y").length > 0) 
+//         return {
+//             token: "Y",
+//             word: tokens[tokens.findIndex(x => x.token === "Y")].word,
+//         };
+//     const index = tokens.findIndex(x => x.token === "W");
+//     console.log(`W index: ${index}`)
+//     const leftTokens = tokens.slice(0, index);
+//     const rightTokens = tokens.slice(index + 1);
+//     console.log(`leftTokens: ${JSON.stringify(leftTokens)}`)
+//     console.log(`rightTokens: ${JSON.stringify(rightTokens)}`)
+//     const leftTree = buildTree(leftTokens);
+//     const rightTree = buildTree(rightTokens);
+//     //TODO: if right tree is bigger, left tree might need right tree logic
+//     console.log(`leftTree: ${JSON.stringify(leftTree)}`)
+//     console.log(`rightTree: ${JSON.stringify(rightTree)}`)
+//     const l = chooseMostTrusted(leftTree);
+//     const r = chooseMostTrusted(rightTree);
+//     console.log(`l: ${JSON.stringify(l)}`)
+//     console.log(`r: ${JSON.stringify(r)}`)
+//     const leftResult = traverseTree(l, l.token);
+//     const rightResult = traverseTree(r, r.token);
+//     const result = ((+leftResult.word + +rightResult.word) / 2).toString();
+
+//     return {
+//         token: "N",
+//         word: result,
+//     }
+// } 
