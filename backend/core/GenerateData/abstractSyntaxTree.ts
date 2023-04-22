@@ -20,7 +20,7 @@ export function ast(posts: Post[]): Post[] {
         const result = getDate(tokens);
         console.log(`Result: ${JSON.stringify(result)}`)
         if (result === undefined) continue;
-        post.data.date = result.word;
+        post.data.date = result;
 
     }
     return posts
@@ -28,10 +28,10 @@ export function ast(posts: Post[]): Post[] {
 
 function getDate(tokens: Token[]) {
     const trees = buildTree(tokens);
-    const t = chooseMostTrusted(trees);
-    console.log(`Most trusted Tree: ${JSON.stringify(t)}`)
-    //return traverseTree(t, t.token);
-    return t.token;
+    const tree = chooseMostTrusted(trees);
+    console.log(`Most trusted Tree: ${JSON.stringify(tree)}`)
+    const result = traverseTree(tree);
+    return result;
 }
 
 function buildTree(tokens: Token[]) {
@@ -68,17 +68,22 @@ function buildLeaf(tokens: Token[], trust: number): Tree {
     };
 }
 
-function traverseTree(tree: Tree, token: Token): Token {
-    console.log(`Traverse: token: ${tree.token.token} word: ${tree.token.word}`)
-    tree.token.word = token.word;
-    console.log(`after switch: token: ${tree.token.token} word: ${tree.token.word}`)
-    token = calculateToken(tree);
-    console.log(`Date: token: ${JSON.stringify(token)}`)
-    if (tree.child !== undefined) {
-        return traverseTree(tree.child, token);
+function traverseTree(tree: Tree) {
+    console.log(`Traverse: ${JSON.stringify(tree)}`)
+    //If W exists, split the tree and traverse both sides
+    //putting them together at the W pos
+    //If, after the split, the right side is longer, then append
+    //right side to the left side
+    let d = calculateToken(tree.token);
+    let child = tree.child;
+    while (child !== undefined) {
+      child.token.word = d;
+      if (child.token.token === "W") return handleW(child, tree);
+      d = calculateToken(child.token);
+      child = child.child;
     }
-    console.log(`Return: token: ${JSON.stringify(token)}`)
-    return token
+    
+    return d;    
 }
 
 function getTokens(word: string) {;
@@ -110,57 +115,28 @@ function tokenize(text: string[]) {
     return result;
 }
 
-function calculateToken(tree: Tree) {
-    const token = tree.token;
+function calculateToken(token: Token): string {
     console.log(`Calc: token: ${token.token} word: ${token.word}`)
-    if (token === undefined) return undefined;
     if (token.token === "N") {
-        return token;
+        return token.word;
     } else if (token.token === "C") {
         console.log(`C: ${token.word}`)
         let halfCentury = -50;
         if (token.word.startsWith("-")) halfCentury = 50;
         const nr = +token.word * 100 + halfCentury;
         console.log(`after C calc: ${nr}`)
-        return {
-            token: "C",
-            word: `${nr}`
-        };
+        return `${nr}`
     } else if (token.token === "Y") {
-        return  {
-            token: "Y",
-            word: `${2023 - +token.word}`
-        };
+        return `${2023 - +token.word}`
     } else if (token.token === "A") {
-        return token;
+        return token.word;
     } else if (token.token === "B") {
-        return  {
-            token: "B",
-            word: `-${token.word}`,
-        }
+        return `-${token.word}`
     } else if (token.token === "S") {
-        return {
-            token: "S",
-            word: slash(tree.child.token.word, token.word),
-        }
+        return slash(token.word, token.word)
     } else if (token.token === "W") {
-        const futureTree = tree.child.child;
-        console.log(`futureTree: ${JSON.stringify(futureTree)} token: ${token.token}`)
-        let t = token;
-        const saveToken = token;
-        if (futureTree === undefined) {
-            console.log(`error futureTree: ${JSON.stringify(futureTree)} token: ${token.token}`)
-            return token;
-        };
-        console.log(`includes token ${futureTree.token.token}`)
-        if (["C", "M", "A", "B",].includes(futureTree.token.token)) {
-            console.log("in if")
-            t = traverseTree(futureTree, tree.child.token);
-        }
-        return {
-            token: "N",
-            word: connectingWord(saveToken.word, t.word),
-        };
+
+        return connectingWord(token.word, token.word)
     }
 }
 
@@ -181,6 +157,27 @@ function chooseMostTrusted(trees: Tree[]) {
     }
 
 	return result;
+}
+
+function handleW(currentTree: Tree, fullTree: Tree) {
+    if (currentTree.child.token.token === "Y") {
+        return `${2023 - +currentTree.child.token.word}`
+    }
+    //1300 - 1400: currentTree = - 1400, fullTree = 1300 - 1400
+    //N W N: currentTree = W N, fullTree = N W N
+    //1st - 2nd century: currentTree = - 2nd century, fullTree = 1st - 2nd century
+    //N W N C: currentTree = W N C, fullTree = N W N C
+    //1st century BC - 2nd century AD: currentTree = BC - 2nd century AD, fullTree = 1st century BC - 2nd century AD
+    //N C B W N C A: currentTree = B W N C A, fullTree = N C B W N C A
+
+    //Find pos of W in fullTree
+    let pos = 0;
+    let current = fullTree;
+    while (current.token.token !== "W") {
+        pos++;
+        current = current.child;
+    }
+    
 }
 
 function slash(date: string, secondNum: string) {
