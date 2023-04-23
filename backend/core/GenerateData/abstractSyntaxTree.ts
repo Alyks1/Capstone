@@ -79,6 +79,7 @@ function traverseTree(tree: Tree) {
     while (child !== undefined) {
       child.token.word = d;
       if (child.token.token === "W") return handleW(child, tree);
+      if (child.token.token === "S") return handleS(child);
       d = calculateToken(child.token);
       child = child.child;
     }
@@ -132,11 +133,6 @@ function calculateToken(token: Token): string {
         return token.word;
     } else if (token.token === "B") {
         return `-${token.word}`
-    } else if (token.token === "S") {
-        return slash(token.word, token.word)
-    } else if (token.token === "W") {
-
-        return connectingWord(token.word, token.word)
     }
 }
 
@@ -160,8 +156,9 @@ function chooseMostTrusted(trees: Tree[]) {
 }
 
 function handleW(currentTree: Tree, fullTree: Tree) {
+    console.log(`Handle W: ${JSON.stringify(currentTree)}`)
     if (currentTree.child.token.token === "Y") {
-        return `${2023 - +currentTree.child.token.word}`
+        return `${2023 - +currentTree.token.word}`
     }
     //1300 - 1400: currentTree = - 1400, fullTree = 1300 - 1400
     //N W N: currentTree = W N, fullTree = N W N
@@ -170,27 +167,31 @@ function handleW(currentTree: Tree, fullTree: Tree) {
     //1st century BC - 2nd century AD: currentTree = BC - 2nd century AD, fullTree = 1st century BC - 2nd century AD
     //N C B W N C A: currentTree = B W N C A, fullTree = N C B W N C A
 
-    //Find pos of W in fullTree
-    let pos = 0;
+    //Find W in fullTree
     let current = fullTree;
     while (current.token.token !== "W") {
-        pos++;
         current = current.child;
     }
-    
+    const afterWDate = traverseTree(current.child);
+    return connectingWord(currentTree.token.word, afterWDate);
+}
+
+function handleS(currentTree: Tree) {
+        return slash(currentTree.token.word, currentTree.child.token.word)
 }
 
 function slash(date: string, secondNum: string) {
 	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
 		return date;
 	}
-	console.log(`date: ${date}, secondNum: ${secondNum}`)
-	const lengthDiff = secondNum.replace("-","").length - date.replace("-", "").length;
+	console.log(`Slash: date: ${date}, secondNum: ${secondNum}`)
+	const lengthDiff = date.replace("-","").length - secondNum.replace("-", "").length;
 	if (lengthDiff > 0) {
-		const digits = secondNum.substring(0, lengthDiff);
+		const digits = date.substring(0, lengthDiff);
         console.log(`digits: ${digits}`)
-		date = digits + date;
+		secondNum = digits + secondNum;
 	}
+    if (date.startsWith("-")) secondNum = `-${secondNum}`;
 	return Math.round(((+date + +secondNum) / 2)).toString();
 }
 
@@ -199,6 +200,7 @@ function connectingWord(date: string, secondNum: string) {
 		return date;
 	}
 	console.log(`date: ${date}, secondNum: ${secondNum}`)
+    if (secondNum.startsWith("-")) date = `-${date}`;
 
 	return Math.round(((+date + +secondNum) / 2)).toString();
 }

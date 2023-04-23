@@ -181,7 +181,7 @@ const expected = [
 		text: "1st century BC to 1st century AD From Alexandria",
 		imgSrc: "test",
 		data: {
-			date: "-50",
+			date: "0",
 			trust: 0,
 			pos: 0,
 		},
