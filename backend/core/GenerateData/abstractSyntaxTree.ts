@@ -1,4 +1,5 @@
 import { Post } from "../Types/Post";
+import { Logger } from "../Utility/logging";
 import { Utility } from "../Utility/utility";
 import {
 	isAD,
@@ -26,10 +27,11 @@ let totalTrust = 0;
 export function ast(posts: Post[]): Post[] {
 	for (const post of posts) {
 		totalTrust = 0;
+		Logger.debug(post.text);
 		const text = Utility.sanatizeText(post.text).split(" ");
 		const tokens = tokenize(text);
 		const result = getDate(tokens);
-		console.log(`Result: ${JSON.stringify(result)}`);
+		Logger.info(`Result: ${JSON.stringify(result)}`);
 		if (result === undefined) continue;
 		post.data.date = result;
 		post.data.trust = totalTrust;
@@ -39,8 +41,9 @@ export function ast(posts: Post[]): Post[] {
 
 function getDate(tokens: Token[]) {
 	const trees = buildTree(tokens);
+	if (trees.length === 0) return undefined;
 	const tree = chooseMostTrusted(trees);
-	console.log(`Most trusted Tree: ${JSON.stringify(tree)}`);
+	Logger.debug(`Most trusted Tree: ${JSON.stringify(tree)}`);
 	const result = traverseTree(tree);
 	return result;
 }
@@ -56,7 +59,7 @@ function buildTree(tokens: Token[]) {
 		}
 	}
 	trees.filter((x) => x.token.token !== "X");
-	console.log(`Trees: ${JSON.stringify(trees)}`);
+	Logger.trace(`Trees: ${JSON.stringify(trees)}`);
 	return trees;
 }
 
@@ -80,7 +83,7 @@ function buildLeaf(tokens: Token[], trust: number): Tree {
 }
 
 function traverseTree(tree: Tree): string {
-	console.log(`Traverse: ${JSON.stringify(tree)}`);
+	Logger.trace(`Traverse: ${JSON.stringify(tree)}`);
 	let d = calculateToken(tree.token);
 	let child = tree.child;
 	while (child !== undefined) {
@@ -126,22 +129,22 @@ function tokenize(text: string[]) {
 }
 
 function calculateToken(token: Token): string {
-	console.log(`Calc: token: ${token.token} word: ${token.word}`);
+	Logger.debug(`Calc: token: ${token.token} word: ${token.word}`);
 	if (token.token === "N") {
 		return token.word;
 	} else if (token.token === "C") {
-		console.log(`C: ${token.word}`);
+		Logger.trace(`C: ${token.word}`);
 		let halfCentury = -50;
 		if (token.word.startsWith("-")) halfCentury = 50;
 		const nr = +token.word * 100 + halfCentury;
-		console.log(`after C calc: ${nr}`);
+		Logger.trace(`after C calc: ${nr}`);
 		return `${nr}`;
 	} else if (token.token === "M") {
-		console.log(`M: ${token.word}`);
+		Logger.trace(`M: ${token.word}`);
 		let halfMillennium = -500;
 		if (token.word.startsWith("-")) halfMillennium = 500;
 		const nr = +token.word * 1000 + halfMillennium;
-		console.log(`after M calc: ${nr}`);
+		Logger.trace(`after M calc: ${nr}`);
 		return `${nr}`;
 	} else if (token.token === "Y") {
 		return `${2023 - +token.word}`;
@@ -175,7 +178,8 @@ function chooseMostTrusted(trees: Tree[]) {
 }
 
 function handleW(currentTree: Tree, fullTree: Tree) {
-	console.log(`Handle W: ${JSON.stringify(currentTree)}`);
+	Logger.trace(`Handle W: ${JSON.stringify(currentTree)}`);
+	if (!currentTree.child) return currentTree.token.word;
 	if (currentTree.child.token.token === "Y") {
 		return `${2023 - +currentTree.token.word}`;
 	}
@@ -203,12 +207,12 @@ function slash(date: string, secondNum: string) {
 	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
 		return date;
 	}
-	console.log(`Slash: date: ${date}, secondNum: ${secondNum}`);
+	Logger.trace(`Slash: date: ${date}, secondNum: ${secondNum}`);
 	const lengthDiff =
 		date.replace("-", "").length - secondNum.replace("-", "").length;
 	if (lengthDiff > 0) {
 		const digits = date.substring(0, lengthDiff);
-		console.log(`digits: ${digits}`);
+		Logger.trace(`digits: ${digits}`);
 		secondNum = digits + secondNum;
 	}
 	if (date.startsWith("-")) secondNum = `-${secondNum}`;
@@ -219,7 +223,7 @@ function connectingWord(date: string, secondNum: string) {
 	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
 		return date;
 	}
-	console.log(`date: ${date}, secondNum: ${secondNum}`);
+	Logger.trace(`date: ${date}, secondNum: ${secondNum}`);
 	if (secondNum.startsWith("-")) date = `-${date}`;
 
 	return Math.round((+date + +secondNum) / 2).toString();
