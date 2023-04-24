@@ -21,14 +21,18 @@ interface Token {
 	word: string;
 }
 
+let totalTrust = 0;
+
 export function ast(posts: Post[]): Post[] {
 	for (const post of posts) {
+		totalTrust = 0;
 		const text = Utility.sanatizeText(post.text).split(" ");
 		const tokens = tokenize(text);
 		const result = getDate(tokens);
 		console.log(`Result: ${JSON.stringify(result)}`);
 		if (result === undefined) continue;
 		post.data.date = result;
+		post.data.trust = totalTrust;
 	}
 	return posts;
 }
@@ -75,7 +79,7 @@ function buildLeaf(tokens: Token[], trust: number): Tree {
 	};
 }
 
-function traverseTree(tree: Tree) {
+function traverseTree(tree: Tree): string {
 	console.log(`Traverse: ${JSON.stringify(tree)}`);
 	let d = calculateToken(tree.token);
 	let child = tree.child;
@@ -152,18 +156,19 @@ function calculateToken(token: Token): string {
 
 function chooseMostTrusted(trees: Tree[]) {
 	let result: Tree = trees[0];
-	let totalTrust: number = 0;
+	let total: number = 0;
 	for (const tree of trees) {
 		let currentTree = tree;
 		let trust = 1;
 		while (currentTree.child !== undefined) {
 			trust = currentTree.child.trust;
 			currentTree = currentTree.child;
-			if (trust > totalTrust) {
+			if (trust > total) {
 				result = tree;
-				totalTrust = trust;
+				total = trust;
 			}
 		}
+		totalTrust = total;
 	}
 
 	return result;
