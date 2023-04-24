@@ -92,7 +92,16 @@ const data = [
 			trust: 0,
 			pos: 0,
 		},
-	}
+	},
+	{
+		text: "1st / 2nd century AD from Egypt",
+		imgSrc: "test",
+		data: {
+			date: "",
+			trust: 0,
+			pos: 0,
+		},
+	},
 ];
 
 const expected = [
@@ -185,7 +194,16 @@ const expected = [
 			trust: 0,
 			pos: 0,
 		},
-	}
+	},
+	{
+		text: "1st / 2nd century AD from Egypt",
+		imgSrc: "test",
+		data: {
+			date: "150",
+			trust: 0,
+			pos: 0,
+		},
+	},
 ];
 
 // describe("GenerateData", () => {
@@ -212,6 +230,6 @@ describe("abstract syntax tree", () => {
 	it("should return the correct date", () => {
 		result.forEach((x, i) => {
 			expect(x.data.date).toBe(expected[i].data.date);
-		})
+		});
 	});
-})
+});
