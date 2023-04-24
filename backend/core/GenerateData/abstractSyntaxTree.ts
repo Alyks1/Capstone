@@ -36,6 +36,7 @@ export function ast(posts: Post[]): Post[] {
 		post.data.date = result;
 		post.data.trust = totalTrust;
 	}
+	posts = posts.filter((x) => x.data.date !== "");
 	return posts;
 }
 
@@ -200,6 +201,7 @@ function handleW(currentTree: Tree, fullTree: Tree) {
 }
 
 function handleS(currentTree: Tree) {
+	if (!currentTree.child) return currentTree.token.word;
 	return slash(currentTree.token.word, currentTree.child.token.word);
 }
 
