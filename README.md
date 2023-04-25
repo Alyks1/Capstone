@@ -13,7 +13,7 @@ Install dependencies with `$ pnpm install`
 
 ### Docker
 To run the docker image, run:
-`$ docker run -p 5001:3000 scraper`
+`$ docker run -p 5001:3000 ghcr.io/alyks1/capstone:latest`
 
 ## Usage:
 Start the application with `pnpm start`. The loglevel can be set like so: `pnpm start -- -l [loglevel]` where the loglevels are: 
