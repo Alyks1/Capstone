@@ -1,19 +1,3 @@
-export function notYear(str: string) {
-	const shorthand =
-		str === "kg" ||
-		str === "g" ||
-		str === "km" ||
-		str === "m" ||
-		str === "x" ||
-		str === "mm";
-	const long =
-		str === "kilogram" ||
-		str === "gram" ||
-		str === "kilometer" ||
-		str === "meter";
-	return shorthand || long;
-}
-
 export function isBC(str: string) {
 	return str.includes("bc") || str === "v";
 }
