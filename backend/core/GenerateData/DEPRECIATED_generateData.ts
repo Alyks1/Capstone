@@ -13,10 +13,12 @@ import {
 	isCenturies,
 	isConnectingWord,
 	isMillennium,
+	isSlash,
 	isYearOld,
 	millennium,
 	noMatch,
 	notYear,
+	slash,
 	yearOld,
 } from "./tokens";
 import { chooseMostTrusted, filterData } from "./processData";
@@ -24,7 +26,6 @@ import { calcTrust } from "./trustCalculations";
 
 const YEAR_NOW = 2023;
 
-//TODO: Maybe use Semantic Analyis or Recursive Decent
 /**
  * Returns a list of posts with updated Data field
  * containing a post date chosen based on the most trusted
@@ -39,10 +40,13 @@ export function getDateFromPosts(posts: Post[]) {
 		const text = Utility.sanatizeText(post.text);
 		const textArr = text.split(" ");
 		let data = createDate(textArr);
-
 		data = filterData(data);
 		if (data.length < 1) continue;
-		data = calcTrust(data);
+		data = data.map((x) => {
+			x.trust = calcTrust(x.trust, x.date);
+			x.date = Math.round(+x.date).toString()
+			return x;
+		})
 		post.data = chooseMostTrusted(data);
 		Logger.debug(`(${post.data.date} : ${post.data.trust})`);
 	}
@@ -140,6 +144,10 @@ function switchTypes(data: WorkingData, text: string[]): WorkingData {
 	if (isCenturies(type)) return centuries(data);
 	if (isMillennium(type)) return millennium(data);
 	if (isYearOld(type)) return yearOld(data, YEAR_NOW);
+	if (isSlash(type)) {
+		const d = slash(data, text);
+		return treeStump(d, text);
+	}
 	if (isConnectingWord(type)) {
 		const d = connectingWord(data, text);
 		return treeStump(d, text);

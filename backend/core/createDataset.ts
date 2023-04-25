@@ -153,9 +153,11 @@ export async function updateDataset(ignoreIDs: string[]) {
 async function createImage(src: string, fileName: string, page: Page) {
 	const response = await page.goto(src);
 	const imageBuffer = await response.buffer();
-	//TODO: Allow user to choose image format?
 	await sharp(imageBuffer)
 		.resize(IMAGE_SIZE, IMAGE_SIZE, { fit: "fill" })
 		.toFile(fileName)
+		.catch((err) => {
+			Logger.warn(err);
+		})
 		.finally(() => {});
 }

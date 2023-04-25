@@ -80,6 +80,7 @@ async function moveToNextPageSuccessful(
 			if (element.includes("{ID#"))
 				element = await getElementSelectorWithInteralID(element, page);
 
+			if (element === "Error") return false;
 			Logger.trace(`Clicking "${element} > a"`);
 			await page.click(`${element} > a`);
 			await Utility.sleep(1000);
@@ -128,4 +129,5 @@ async function getElementSelectorWithInteralID(element: string, page: Page) {
 		}
 	}
 	Logger.warn(`[Scraper.ts, 130] Could not find li with innerHTML ${id}`);
+	return "Error";
 }

@@ -4,13 +4,15 @@ import { Post } from "./Types/Post";
 import { Logger } from "./Utility/logging";
 import { PuppeteerBlocker } from "@cliqz/adblocker-puppeteer";
 import * as Adblock from "./Utility/adBlock/adblock";
-import { getDateFromPosts } from "./GenerateData/generateData";
+import { getDateFromPosts } from "./GenerateData/DEPRECIATED_generateData";
 import { createDataset } from "./createDataset";
 import { addWebsiteWeight } from "./GenerateData/processData";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { getActiveWebsites } from "./Database/dbWebsite";
 import { getWebsiteGroupInfo } from "./Database/dbWebsiteGroupInfo";
+import { lexicalAnalysis } from "./GenerateData/DEPRECIATED_lexicalAnalysis";
+import { ast } from "./GenerateData/abstractSyntaxTree";
 
 export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,
@@ -66,7 +68,7 @@ export async function startScraper(
 			alreadyScrapedPosts,
 		);
 
-		const processedPosts = getDateFromPosts(newPosts);
+		const processedPosts = ast(newPosts);
 		const weightedPosts = addWebsiteWeight(processedPosts, website.weight);
 		socket.emit("log", "Downloading images");
 		allPosts.push(...weightedPosts);

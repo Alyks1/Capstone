@@ -57,7 +57,7 @@ export function centuries(data: WorkingData): WorkingData {
 }
 
 export function isMillennium(str: string) {
-	return str === "millennium" || str === "millenia";
+	return str === "millennium" || str === "millenia" || str === "jt";
 }
 export function millennium(data: WorkingData): WorkingData {
 	Logger.trace(`converting ${data.date} to millennium`);
@@ -85,7 +85,29 @@ export function yearOld(data: WorkingData, now: number): WorkingData {
 }
 
 export function isConnectingWord(str: string) {
-	return str.includes("-") || str.includes("to");
+	return str === "-" || str === "to" || str === "or";
+}
+
+export function isSlash(str: string) {
+	return str === "/";
+}
+
+export function slash(data: WorkingData, text: string[]) {
+	const date = data.date;
+	let secondNum = text[data.pos + 1];
+	Logger.debug(`date: ${date}, secondNum: ${secondNum}`);
+	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
+		return data;
+	}
+	console.log(`date: ${date}, secondNum: ${secondNum}`);
+	const lengthDiff =
+		date.replace("-", "").length - secondNum.replace("-", "").length;
+	if (lengthDiff > 0) {
+		const digits = date.substring(0, lengthDiff);
+		secondNum = digits + secondNum;
+	}
+	data.date = ((+date + +secondNum) / 2).toString();
+	return data;
 }
 
 export function connectingWord(data: WorkingData, text: string[]) {

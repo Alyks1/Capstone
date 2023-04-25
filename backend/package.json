@@ -2,7 +2,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "ts-node app.ts",
-    "test": "jest --silent"
+    "test": "jest"
   },
   "dependencies": {
     "@cliqz/adblocker-puppeteer": "^1.26.1",

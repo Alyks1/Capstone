@@ -15,6 +15,7 @@ socket.on("log", (msg) => {
 
 socket.on("error", (msg) => {
 	console.log(msg);
+	window.location.href = "index.html";
 });
 
 socket.on("sendDatasetInfo", (urls) => {
