@@ -10,6 +10,7 @@ import {
 	isSlash,
 	isYearOld,
 } from "./tokens";
+import { calcTrust } from "./trustCalculations";
 
 interface Tree {
 	token: Token;
@@ -30,11 +31,13 @@ export function ast(posts: Post[]): Post[] {
 		Logger.debug(post.text);
 		const text = Utility.sanatizeText(post.text).split(" ");
 		const tokens = tokenize(text);
-		const result = getDate(tokens);
+		let result = getDate(tokens);
 		Logger.info(`Result: ${JSON.stringify(result)}`);
+		if (+result > 1940) result = undefined;
 		if (result === undefined) continue;
+		const trust = calcTrust(totalTrust, result);
 		post.data.date = result;
-		post.data.trust = totalTrust;
+		post.data.trust = trust;
 	}
 	posts = posts.filter((x) => x.data.date !== "");
 	return posts;
