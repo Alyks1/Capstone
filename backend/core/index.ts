@@ -97,5 +97,6 @@ export async function startScraper(
 export async function getBrowser(headless: boolean = true) {
 	return await puppeteer.launch({
 		headless: headless,
+		executablePath: '/usr/bin/google-chrome',
 	});
 }
