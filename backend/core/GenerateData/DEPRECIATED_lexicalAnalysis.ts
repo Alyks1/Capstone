@@ -16,16 +16,6 @@ const text: string[] = [];
 let index = 0;
 
 let newTrust = 0;
-//TODO: Fix 1st century BC to 1st century AD
-//Century is computed twice. Once for the pass after W,
-//Then again on the way back to N before the W
-//N1 C B W N2 C A
-//goes: N1 C B W -> N1 C A
-//				 -> N2 C A
-//So path back: A C N2 and A C N1 B C
-//Problem is 1st - 2nd century BC needs to read all the way through
-//But 1st century BC - 1st century AD should stop calculating after the -
-//TODO: Create "ignore tokens" like kg, cm, m, dynasty, etc
 
 export function lexicalAnalysis(posts: Post[]) {
 	for (const post of posts) {
