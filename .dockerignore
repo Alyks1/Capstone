@@ -1,1 +1,4 @@
 node_modules
+output/dataset/*
+output/backup/*
+dataset.tar.gz

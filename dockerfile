@@ -1,20 +1,17 @@
-FROM ubuntu
+FROM ubuntu:22.04
 
 WORKDIR /
 
 #Install Node
-RUN apt-get update
-RUN apt-get install curl -y
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-RUN apt-get install nodejs -y
-RUN node -v
-RUN npm -v
+RUN apt-get update \
+    && apt-get install curl chromium-bsu chromium-browser -y \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
 #Install Pnpm
 RUN npm install -g pnpm@7.29.1
 COPY pnpm-lock.yaml .
-#Install Chromium for puppeteer
-RUN apt-get install chromium-bsu -y
-RUN apt-get install chromium-browser -y
+
 #Setup pnpm
 RUN pnpm fetch --prod
 ADD . ./
