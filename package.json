@@ -1,7 +1,8 @@
 {
     "scripts": {
         "start": "cd backend && npm start",
-        "test": "cd backend && npm test"
+        "test": "cd backend && npm test",
+        "dockerbuild": "docker build -t scraper -t ghcr.io/alyks1/capstone:latest ."
     },
     "dependencies": {
         "rome": "^11.0.0"

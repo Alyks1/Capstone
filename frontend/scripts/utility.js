@@ -3,5 +3,5 @@ export function cleanUrl(url) {
 }
 
 export function getSocketURL() {
-    return "http://localhost:3000";
+    return document.location.protocol + "//" + document.location.host;
 }
