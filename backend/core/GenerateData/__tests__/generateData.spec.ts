@@ -1,5 +1,5 @@
 import { Post } from "../../Types/Post";
-import { getDateFromPosts } from "../DEPRECIATED_generateData";
+import { getDateFromPosts } from "../originalGenerateData";
 
 const testingPosts: Post[] = [
 	{

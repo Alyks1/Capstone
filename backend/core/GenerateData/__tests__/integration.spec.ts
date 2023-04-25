@@ -1,6 +1,4 @@
-import { getDateFromPosts } from "../DEPRECIATED_generateData";
-import { lexicalAnalysis } from "../DEPRECIATED_lexicalAnalysis";
-import { ast } from "../abstractSyntaxTree";
+import { getDateFromPosts } from "../originalGenerateData";
 
 const data = [
 	{
@@ -206,27 +204,8 @@ const expected = [
 	},
 ];
 
-// describe("GenerateData", () => {
-// 	const result = getDateFromPosts(data);
-// 	it("should return the correct date", () => {
-// 		result.forEach((x, i) => {
-// 			expect(x.data.date).toBe(expected[i].data.date);
-// 		})
-// 	});
-// });
-
-// describe("lexicalAnalyis", () => {
-// 	const result = lexicalAnalysis(data);
-// 	expect(data.length).toEqual(expected.length)
-// 	it("should return the correct date", () => {
-// 		result.forEach((x, i) => {
-// 			expect(x.data.date).toEqual(expected[i].data.date);
-// 		})
-// 	});
-// });
-
-describe("abstract syntax tree", () => {
-	const result = ast(data);
+describe("GenerateData", () => {
+	const result = getDateFromPosts(data);
 	it("should return the correct date", () => {
 		result.forEach((x, i) => {
 			expect(x.data.date).toBe(expected[i].data.date);
