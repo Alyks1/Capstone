@@ -156,5 +156,8 @@ async function createImage(src: string, fileName: string, page: Page) {
 	await sharp(imageBuffer)
 		.resize(IMAGE_SIZE, IMAGE_SIZE, { fit: "fill" })
 		.toFile(fileName)
+		.catch((err) => {
+			Logger.warn(err);
+		})
 		.finally(() => {});
 }
