@@ -37,8 +37,8 @@ export async function createDataset(page: Page, posts: Post[]) {
 
 	const csv: CSVType[] = [];
 	for (const post of posts) {
-		const date = post.data.date;
-		const trust = post.data.trust;
+		const date = post.date;
+		const trust = post.trust;
 		const src = post.imgSrc;
 		const id = uuidv4().toString();
 		csv.push({

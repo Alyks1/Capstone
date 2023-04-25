@@ -43,8 +43,8 @@ export function lexicalAnalysis(posts: Post[]) {
 		}
 		if (trust === 0) continue;
 		Logger.info(`Final result: ${result} with trust: ${trust}`);
-		post.data.date = Math.round(+result).toString();
-		post.data.trust = trust;
+		post.date = Math.round(+result).toString();
+		post.trust = trust;
 	}
 	posts.filter((x) => x === undefined);
 	return posts;

@@ -1,5 +1,4 @@
 import { Logger } from "../Utility/logging";
-import { WorkingData } from "../Types/WorkingData";
 
 export function notYear(str: string) {
 	const shorthand =
@@ -49,9 +48,4 @@ export function isConnectingWord(str: string) {
 
 export function isSlash(str: string) {
 	return str === "/";
-}
-
-export function noMatch(data: WorkingData): WorkingData {
-	Logger.trace(`No match was found for ${data.date}`);
-	return data;
 }
