@@ -36,10 +36,10 @@ export function ast(posts: Post[]): Post[] {
 		if (+result > 1940) result = undefined;
 		if (result === undefined) continue;
 		const trust = calcTrust(totalTrust, result);
-		post.data.date = result;
-		post.data.trust = trust;
+		post.date = result;
+		post.trust = trust;
 	}
-	posts = posts.filter((x) => x.data.date !== "");
+	posts = posts.filter((x) => x.date !== "");
 	return posts;
 }
 
