@@ -137,19 +137,9 @@ function calculateToken(token: Token): string {
 	if (token.token === "N") {
 		return token.word;
 	} else if (token.token === "C") {
-		Logger.trace(`C: ${token.word}`);
-		let halfCentury = -50;
-		if (token.word.startsWith("-")) halfCentury = 50;
-		const nr = +token.word * 100 + halfCentury;
-		Logger.trace(`after C calc: ${nr}`);
-		return `${nr}`;
+		return century(token.word);
 	} else if (token.token === "M") {
-		Logger.trace(`M: ${token.word}`);
-		let halfMillennium = -500;
-		if (token.word.startsWith("-")) halfMillennium = 500;
-		const nr = +token.word * 1000 + halfMillennium;
-		Logger.trace(`after M calc: ${nr}`);
-		return `${nr}`;
+		return millenium(token.word);
 	} else if (token.token === "Y") {
 		return `${2023 - +token.word}`;
 	} else if (token.token === "A") {
@@ -246,4 +236,10 @@ function century(date: string) {
 	let halfCentury = -50;
 	if (date.startsWith("-")) halfCentury = 50;
 	return (+date * 100 + halfCentury).toString();
+}
+
+function millenium(date: string) {
+	let halfMillennium = -500;
+	if (date.startsWith("-")) halfMillennium = 500;
+	return (+date * 1000 + halfMillennium).toString();
 }
