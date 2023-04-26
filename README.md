@@ -8,6 +8,7 @@ After the scrape, the dataset can be downloaded as a `.tar.gz` using the Downloa
 ### Requirements
 - nodejs
 - pnpm
+- Google Chrome
 
 ### Installation
 Clone the repository with `$ git clone https://github.com/Alyks1/Capstone.git` \
@@ -16,8 +17,8 @@ Install dependencies with `$ pnpm install`
 Start the application with `pnpm start`. The loglevel can be set like so: `pnpm start -- -l [loglevel]` where the loglevels are: 
 _Network_, _Trace_, _Debug_, _Info_ and _Warn_.
 
-### Usage
-To run the docker image, run:
+## Usage [Unstable]
+To run the docker image, run: \
 `$ docker run -p 5001:3000 ghcr.io/alyks1/capstone:latest`
 
 ## Licence: 
