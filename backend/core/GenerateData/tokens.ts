@@ -6,28 +6,6 @@ export interface Token {
 	word: string;
 }
 
-function getTokens(word: string) {
-	if (Utility.isNumber(word) && word !== "") {
-		return "N";
-	} else if (isCenturies(word)) {
-		return "C";
-	} else if (isMillennium(word)) {
-		return "M";
-	} else if (isYearOld(word)) {
-		return "Y";
-	} else if (isAD(word)) {
-		return "A";
-	} else if (isBC(word)) {
-		return "B";
-	} else if (isConnectingWord(word)) {
-		return "W";
-	} else if (isSlash(word)) {
-		return "S";
-	} else {
-		return "X";
-	}
-}
-
 export function tokenize(text: string[]) {
 	const result: Token[] = [];
 	for (const word of text) {
@@ -56,15 +34,37 @@ export function calculateToken(token: Token): string {
 	}
 }
 
-export function isBC(str: string) {
+function getTokens(word: string) {
+	if (Utility.isNumber(word) && word !== "") {
+		return "N";
+	} else if (isCenturies(word)) {
+		return "C";
+	} else if (isMillennium(word)) {
+		return "M";
+	} else if (isYearOld(word)) {
+		return "Y";
+	} else if (isAD(word)) {
+		return "A";
+	} else if (isBC(word)) {
+		return "B";
+	} else if (isConnectingWord(word)) {
+		return "W";
+	} else if (isSlash(word)) {
+		return "S";
+	} else {
+		return "X";
+	}
+}
+
+function isBC(str: string) {
 	return str.includes("bc") || str === "v";
 }
 
-export function isAD(str: string) {
+function isAD(str: string) {
 	return str.includes("ad") || str === "n";
 }
 
-export function isCenturies(str: string) {
+function isCenturies(str: string) {
 	return (
 		str === "century" ||
 		str === "c" ||
@@ -80,21 +80,21 @@ export function century(date: string) {
 	return (+date * 100 + halfCentury).toString();
 }
 
-export function isMillennium(str: string) {
+function isMillennium(str: string) {
 	return str === "millennium" || str === "millenia" || str === "jt";
 }
 
-export function millenium(date: string) {
+function millenium(date: string) {
 	let halfMillennium = -500;
 	if (date.startsWith("-")) halfMillennium = 500;
 	return (+date * 1000 + halfMillennium).toString();
 }
 
-export function isYearOld(str: string) {
+function isYearOld(str: string) {
 	return str.includes("year") || str.includes("years");
 }
 
-export function isConnectingWord(str: string) {
+function isConnectingWord(str: string) {
 	return str === "-" || str === "to" || str === "or";
 }
 
@@ -108,7 +108,7 @@ export function connectingWord(date: string, secondNum: string) {
 	return Math.round((+date + +secondNum) / 2).toString();
 }
 
-export function isSlash(str: string) {
+function isSlash(str: string) {
 	return str === "/";
 }
 
