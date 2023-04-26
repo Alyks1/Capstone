@@ -22,7 +22,7 @@ export function calculateToken(token: Token): string {
 	} else if (token.token === "C") {
 		return century(token.word);
 	} else if (token.token === "M") {
-		return millenium(token.word);
+		return millennium(token.word);
 	} else if (token.token === "Y") {
 		return `${2023 - +token.word}`;
 	} else if (token.token === "A") {
@@ -84,7 +84,7 @@ function isMillennium(str: string) {
 	return str === "millennium" || str === "millenia" || str === "jt";
 }
 
-function millenium(date: string) {
+export function millennium(date: string) {
 	let halfMillennium = -500;
 	if (date.startsWith("-")) halfMillennium = 500;
 	return (+date * 1000 + halfMillennium).toString();

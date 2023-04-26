@@ -5,6 +5,7 @@ import {
 	Token,
 	calculateToken,
 	century,
+	millennium,
 	connectingWord,
 	slash,
 	tokenize,
@@ -124,9 +125,10 @@ function handleW(currentTree: Tree, fullTree: Tree) {
 
 	//Check if a century has been applied already
 	let current = fullTree;
-	let hasCentury = false;
+	let hasCorM = false;
 	while (current.token.token !== "W") {
-		if (current.token.token === "C") hasCentury = true;
+		if (current.token.token === "C" || current.token.token === "M")
+			hasCorM = true;
 		current = current.child;
 	}
 
@@ -137,11 +139,14 @@ function handleW(currentTree: Tree, fullTree: Tree) {
 	//Check if a century has been applied, needs to ignore '-' so not to have to check for BC
 	const willBeCentury =
 		century(saveDate).replace("-", "") === secondDate.replace("-", "");
+	const willBeMillenium =
+		millennium(saveDate).replace("-", "") === secondDate.replace("-", "");
 
-	if (willBeCentury && !hasCentury) {
+	if (willBeCentury && !hasCorM) {
 		firstDate = century(firstDate);
+	} else if (willBeMillenium && !hasCorM) {
+		firstDate = millennium(firstDate);
 	}
-
 	return connectingWord(firstDate, secondDate);
 }
 
