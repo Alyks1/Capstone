@@ -67,6 +67,12 @@ const data = [
 		date: "",
 		trust: 0,
 	},
+	{
+		text: "2st - 3nd century AD from Egypt",
+		imgSrc: "test",
+		date: "",
+		trust: 0,
+	},
 ];
 
 const expected = [
@@ -134,6 +140,12 @@ const expected = [
 		text: "1st / 2nd century AD from Egypt",
 		imgSrc: "test",
 		date: "150",
+		trust: 0,
+	},
+	{
+		text: "2st - 3nd century AD from Egypt",
+		imgSrc: "test",
+		date: "200",
 		trust: 0,
 	},
 ];

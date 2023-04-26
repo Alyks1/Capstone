@@ -92,7 +92,7 @@ function traverseTree(tree: Tree): string {
 	let child = tree.child;
 	while (child !== undefined) {
 		child.token.word = d;
-		if (child.token.token === "W") return handleW(child);
+		if (child.token.token === "W") return handleW(child, tree);
 		if (child.token.token === "S") child.token.word = handleS(child);
 		d = calculateToken(child.token);
 		child = child.child;
@@ -181,15 +181,34 @@ function chooseMostTrusted(trees: Tree[]) {
 	return result;
 }
 
-function handleW(currentTree: Tree) {
+function handleW(currentTree: Tree, fullTree: Tree) {
 	Logger.trace(`Handle W: ${JSON.stringify(currentTree)}`);
 	if (!currentTree.child) return currentTree.token.word;
 	if (currentTree.child.token.token === "Y") {
 		return `${2023 - +currentTree.token.word}`;
 	}
 
-	const afterWDate = traverseTree(currentTree.child);
-	return connectingWord(currentTree.token.word, afterWDate);
+	//Check if a century has been applied already
+	let current = fullTree;
+	let hasCentury = false;
+	while (current.token.token !== "W") {
+		if (current.token.token === "C") hasCentury = true;
+		current = current.child;
+	}
+
+	let firstDate = currentTree.token.word;
+	const saveDate = currentTree.child.token.word;
+	const secondDate = traverseTree(currentTree.child);
+
+	//Check if a century has been applied, needs to ignore '-' so not to have to check for BC
+	const willBeCentury =
+		century(saveDate).replace("-", "") === secondDate.replace("-", "");
+
+	if (willBeCentury && !hasCentury) {
+		firstDate = century(firstDate);
+	}
+
+	return connectingWord(firstDate, secondDate);
 }
 
 function handleS(currentTree: Tree) {
@@ -221,4 +240,10 @@ function connectingWord(date: string, secondNum: string) {
 	if (secondNum.startsWith("-")) date = `-${date}`;
 
 	return Math.round((+date + +secondNum) / 2).toString();
+}
+
+function century(date: string) {
+	let halfCentury = -50;
+	if (date.startsWith("-")) halfCentury = 50;
+	return (+date * 100 + halfCentury).toString();
 }
