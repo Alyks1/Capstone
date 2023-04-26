@@ -1,6 +1,61 @@
 import { Logger } from "../Utility/logging";
 import { Utility } from "../Utility/utility";
 
+export interface Token {
+	token: string;
+	word: string;
+}
+
+function getTokens(word: string) {
+	if (Utility.isNumber(word) && word !== "") {
+		return "N";
+	} else if (isCenturies(word)) {
+		return "C";
+	} else if (isMillennium(word)) {
+		return "M";
+	} else if (isYearOld(word)) {
+		return "Y";
+	} else if (isAD(word)) {
+		return "A";
+	} else if (isBC(word)) {
+		return "B";
+	} else if (isConnectingWord(word)) {
+		return "W";
+	} else if (isSlash(word)) {
+		return "S";
+	} else {
+		return "X";
+	}
+}
+
+export function tokenize(text: string[]) {
+	const result: Token[] = [];
+	for (const word of text) {
+		const token = getTokens(word);
+		result.push({ token: token, word: word });
+	}
+	return result;
+}
+
+export function calculateToken(token: Token): string {
+	Logger.debug(`Calc: token: ${token.token} word: ${token.word}`);
+	if (token.token === "N") {
+		return token.word;
+	} else if (token.token === "C") {
+		return century(token.word);
+	} else if (token.token === "M") {
+		return millenium(token.word);
+	} else if (token.token === "Y") {
+		return `${2023 - +token.word}`;
+	} else if (token.token === "A") {
+		return token.word;
+	} else if (token.token === "B") {
+		return `-${token.word}`;
+	} else if (token.token === "S") {
+		return token.word;
+	}
+}
+
 export function isBC(str: string) {
 	return str.includes("bc") || str === "v";
 }

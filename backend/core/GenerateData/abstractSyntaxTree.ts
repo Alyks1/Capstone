@@ -2,17 +2,12 @@ import { Post } from "../Types/Post";
 import { Logger } from "../Utility/logging";
 import { Utility } from "../Utility/utility";
 import {
+	Token,
+	calculateToken,
 	century,
 	connectingWord,
-	isAD,
-	isBC,
-	isCenturies,
-	isConnectingWord,
-	isMillennium,
-	isSlash,
-	isYearOld,
-	millenium,
 	slash,
+	tokenize,
 } from "./tokens";
 import { calcTrust } from "./trustCalculations";
 
@@ -20,11 +15,6 @@ interface Tree {
 	token: Token;
 	child: Tree | undefined;
 	trust: number;
-}
-
-interface Token {
-	token: string;
-	word: string;
 }
 
 let totalTrust = 0;
@@ -103,56 +93,6 @@ function traverseTree(tree: Tree): string {
 	}
 
 	return d;
-}
-
-function getTokens(word: string) {
-	if (Utility.isNumber(word) && word !== "") {
-		return "N";
-	} else if (isCenturies(word)) {
-		return "C";
-	} else if (isMillennium(word)) {
-		return "M";
-	} else if (isYearOld(word)) {
-		return "Y";
-	} else if (isAD(word)) {
-		return "A";
-	} else if (isBC(word)) {
-		return "B";
-	} else if (isConnectingWord(word)) {
-		return "W";
-	} else if (isSlash(word)) {
-		return "S";
-	} else {
-		return "X";
-	}
-}
-
-function tokenize(text: string[]) {
-	const result: Token[] = [];
-	for (const word of text) {
-		const token = getTokens(word);
-		result.push({ token: token, word: word });
-	}
-	return result;
-}
-
-function calculateToken(token: Token): string {
-	Logger.debug(`Calc: token: ${token.token} word: ${token.word}`);
-	if (token.token === "N") {
-		return token.word;
-	} else if (token.token === "C") {
-		return century(token.word);
-	} else if (token.token === "M") {
-		return millenium(token.word);
-	} else if (token.token === "Y") {
-		return `${2023 - +token.word}`;
-	} else if (token.token === "A") {
-		return token.word;
-	} else if (token.token === "B") {
-		return `-${token.word}`;
-	} else if (token.token === "S") {
-		return token.word;
-	}
 }
 
 function chooseMostTrusted(trees: Tree[]) {
