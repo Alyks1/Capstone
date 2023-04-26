@@ -2,6 +2,8 @@ import { Post } from "../Types/Post";
 import { Logger } from "../Utility/logging";
 import { Utility } from "../Utility/utility";
 import {
+	century,
+	connectingWord,
 	isAD,
 	isBC,
 	isCenturies,
@@ -9,6 +11,8 @@ import {
 	isMillennium,
 	isSlash,
 	isYearOld,
+	millenium,
+	slash,
 } from "./tokens";
 import { calcTrust } from "./trustCalculations";
 
@@ -204,42 +208,4 @@ function handleW(currentTree: Tree, fullTree: Tree) {
 function handleS(currentTree: Tree) {
 	if (!currentTree.child) return currentTree.token.word;
 	return slash(currentTree.token.word, currentTree.child.token.word);
-}
-
-function slash(date: string, secondNum: string) {
-	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
-		return date;
-	}
-	Logger.trace(`Slash: date: ${date}, secondNum: ${secondNum}`);
-	const lengthDiff =
-		date.replace("-", "").length - secondNum.replace("-", "").length;
-	if (lengthDiff > 0) {
-		const digits = date.substring(0, lengthDiff);
-		Logger.trace(`digits: ${digits}`);
-		secondNum = digits + secondNum;
-	}
-	if (date.startsWith("-")) secondNum = `-${secondNum}`;
-	return Math.round((+date + +secondNum) / 2).toString();
-}
-
-function connectingWord(date: string, secondNum: string) {
-	if (!Utility.isNumber(secondNum) || !Utility.isNumber(date)) {
-		return date;
-	}
-	Logger.trace(`date: ${date}, secondNum: ${secondNum}`);
-	if (secondNum.startsWith("-")) date = `-${date}`;
-
-	return Math.round((+date + +secondNum) / 2).toString();
-}
-
-function century(date: string) {
-	let halfCentury = -50;
-	if (date.startsWith("-")) halfCentury = 50;
-	return (+date * 100 + halfCentury).toString();
-}
-
-function millenium(date: string) {
-	let halfMillennium = -500;
-	if (date.startsWith("-")) halfMillennium = 500;
-	return (+date * 1000 + halfMillennium).toString();
 }
