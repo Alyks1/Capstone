@@ -4,6 +4,11 @@ The idea is to attempt to use the dataset in the future with artificial intellig
 
 After the scrape, the dataset can be downloaded as a `.tar.gz` using the Download button in the Display Dataset Page.
 
+## Project Structure
+The Repository is divided into Frontend and Backend folders. \
+Inside the frontend folder, there is all the logic for the website frontend.
+The core folder inside the backend folder contains all the main logic such as the scraping and data generation.
+
 ## Development: 
 ### Requirements
 - nodejs (18.X)
