@@ -6,15 +6,20 @@ After the scrape, the dataset can be downloaded as a `.tar.gz` using the Downloa
 
 ## Development: 
 ### Requirements
-- nodejs
-- pnpm
-- Google Chrome
+- nodejs (18.X)
+- Google Chrome (for Puppeteer)
 
 ### Installation
-Clone the repository with `$ git clone https://github.com/Alyks1/Capstone.git` \
-Install dependencies with `$ pnpm install`
+```bash
+#1. Clone the repository 
+$ git clone https://github.com/Alyks1/Capstone.git && cd Capstone
+#2. Install pnpm 
+$ npm install -g pnpm
+#3. Install dependencies
+$ pnpm install
+```
 
-Start the application with `pnpm start`. The loglevel can be set like so: `pnpm start -- -l [loglevel]` where the loglevels are: 
+Start the application with `$ pnpm start`. The loglevel can be set like so: `$ pnpm start -l [loglevel]` where the loglevels are: 
 _Network_, _Trace_, _Debug_, _Info_ and _Warn_.
 
 ## Usage [Unstable]

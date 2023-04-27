@@ -1,8 +1,9 @@
 {
     "scripts": {
-        "start": "cd backend && npm start",
-        "test": "cd backend && npm test",
-        "dockerbuild": "docker build -t scraper -t ghcr.io/alyks1/capstone:latest ."
+        "start": "cd backend && pnpm start",
+        "test": "cd backend && pnpm test",
+        "dockerbuild": "docker build -t scraper -t ghcr.io/alyks1/capstone:latest .",
+        "postinstall": "cd backend && pnpm prisma generate"
     },
     "dependencies": {
         "rome": "^11.0.0"

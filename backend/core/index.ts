@@ -1,16 +1,16 @@
-import puppeteer from "puppeteer";
-import { Scraper } from "./scraper";
-import { Post } from "./Types/Post";
-import { Logger } from "./Utility/logging";
-import { PuppeteerBlocker } from "@cliqz/adblocker-puppeteer";
-import * as Adblock from "./Utility/adBlock/adblock";
-import { createDataset } from "./createDataset";
 import { addWebsiteWeight } from "./GenerateData/processData";
-import { Socket } from "socket.io";
+import { ast } from "./GenerateData/abstractSyntaxTree";
+import { createDataset } from "./createDataset";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { getActiveWebsites } from "./Database/dbWebsite";
 import { getWebsiteGroupInfo } from "./Database/dbWebsiteGroupInfo";
-import { ast } from "./GenerateData/abstractSyntaxTree";
+import { Logger } from "./Utility/logging";
+import { Post } from "./Types/Post";
+import { PuppeteerBlocker } from "@cliqz/adblocker-puppeteer";
+import { Scraper } from "./scraper";
+import { Socket } from "socket.io";
+import * as Adblock from "./Utility/adBlock/adblock";
+import puppeteer from "puppeteer";
 
 export async function startScraper(
 	socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>,

@@ -1,3 +1,7 @@
 node_modules
 Images
-dataset.tar.gz
+!frontend/output/backup/.gitkeep
+!frontend/output/dataset/.gitkeep
+frontend/output/backup/*
+frontend/output/dataset/*
+*.tar.gz

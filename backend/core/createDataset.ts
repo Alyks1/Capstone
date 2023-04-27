@@ -72,7 +72,9 @@ async function createCSV(csv: CSVType[], fileName: string, path: string) {
  */
 async function createTar() {
 	Logger.trace("Creating tar.gz file");
-	const files: string[] = await fs.promises.readdir(DATASET_PATH);
+	const f: string[] = await fs.promises.readdir(DATASET_PATH);
+
+	const files = f.filter((file) => file !== ".gitkeep");
 
 	const tarStream = tar.create({ gzip: true, cwd: DATASET_PATH }, files);
 	const fstream = fs.createWriteStream(RESULT_PATH);

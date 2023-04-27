@@ -2,7 +2,7 @@ import {
 	addWebsiteWeight,
 	chooseMostTrusted,
 	filterData,
-} from "../processData";
+} from "../ProcessData";
 
 describe("filterData", () => {
 	it("Should remove entries with less than 1 trust", () => {
