@@ -113,7 +113,8 @@ async function createFilesFromCSV(
  */
 async function clearDir() {
 	Logger.debug("Removing Files from previous dataset");
-	const files = await fs.promises.readdir(DATASET_PATH);
+	const f = await fs.promises.readdir(DATASET_PATH);
+	const files = f.filter((file) => file !== ".gitkeep");
 	for (const file of files) {
 		await fs.promises.unlink(join(`${DATASET_PATH}`, file));
 		Logger.trace(`Removed file: ${file}`);
