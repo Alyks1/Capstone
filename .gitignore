@@ -1,5 +1,3 @@
 node_modules
 Images
-output/backup/*
-output/dataset/*
 dataset.tar.gz
