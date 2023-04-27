@@ -1,5 +1,4 @@
 import fs from "fs";
-import { WorkingData } from "../Types/WorkingData";
 import { Logger } from "../Utility/logging";
 
 export interface TrustCalcOptions {

@@ -127,3 +127,10 @@ export function slash(date: string, secondNum: string) {
 	if (date.startsWith("-")) secondNum = `-${secondNum}`;
 	return Math.round((+date + +secondNum) / 2).toString();
 }
+
+export const isBCTesting = { isBC };
+export const isCenturiesTesting = { isCenturies };
+export const isMillenniumTesting = { isMillennium };
+export const isConnectingWordTesting = { isConnectingWord };
+export const isSlashTesting = { isSlash };
+export const isYearOldTesting = { isYearOld };
